@@ -231,7 +231,7 @@ export default function DealsPage() {
                                                 {label}
                                             </h2>
                                             {isToday && (
-                                                <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-accent)] bg-orange-50 border border-orange-200 px-2 py-0.5 rounded-full">
+                                                <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-accent)] bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-full">
                                                     Live
                                                 </span>
                                             )}

@@ -23,7 +23,7 @@ export function DealCard({ deal, isNew }: DealCardProps) {
 
             {/* New badge */}
             {isNew && (
-                <span className="absolute top-2.5 right-2.5 z-10 text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-orange-50 text-[var(--color-accent)] border border-orange-200 animate-pulse">
+                <span className="absolute top-2.5 right-2.5 z-10 text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-indigo-50 text-[var(--color-accent)] border border-indigo-200 animate-pulse">
                     New
                 </span>
             )}
