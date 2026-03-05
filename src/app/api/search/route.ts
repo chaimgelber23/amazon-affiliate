@@ -5,10 +5,14 @@ export const maxDuration = 30;
 
 export async function POST(req: Request) {
     try {
-        const { query } = await req.json();
+        const { messages, query } = await req.json();
 
-        if (!query || typeof query !== "string" || query.trim().length < 2) {
-            return Response.json({ error: "Please enter a search query." }, { status: 400 });
+        // Support both old {query} format and new {messages} format
+        const chatMessages = messages || [{ role: "user", content: query }];
+        const latestMessage = chatMessages[chatMessages.length - 1];
+
+        if (!latestMessage || typeof latestMessage.content !== "string") {
+            return Response.json({ error: "Please enter a valid search query." }, { status: 400 });
         }
 
         const { text } = await generateText({
@@ -39,8 +43,11 @@ JSON SCHEMA:
       "category": "Category Name"
     }
   ]
+      "category": "Category Name"
+    }
+  ]
 }`,
-            prompt: `Find the best Amazon products for: "${query.trim()}"`,
+            messages: chatMessages,
         });
 
         // Parse the JSON from the AI response

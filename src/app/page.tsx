@@ -8,22 +8,27 @@ export default function HomePage() {
             {/* ==========================================
           HERO — Search-First
           ========================================== */}
-            <section className="relative pt-32 pb-16 md:pt-44 md:pb-24 overflow-hidden">
-                {/* Background glow */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-[500px] bg-[var(--color-accent)] opacity-15 blur-[150px] rounded-full pointer-events-none" />
+            <section className="relative pt-32 pb-16 md:pt-44 md:pb-32 overflow-hidden flex flex-col items-center justify-center min-h-[85vh]">
+                {/* Aurora Background glow */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120%] max-w-6xl h-[600px] opacity-40 pointer-events-none animate-aurora mix-blend-screen">
+                    <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-accent)] via-[var(--color-purple)] to-[var(--color-pink)] blur-[120px] rounded-full opacity-60" />
+                </div>
 
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10 text-center">
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--color-bg-elevated)] border border-[var(--color-border-strong)] text-sm font-medium mb-8 animate-fade-in-up">
-                        <span className="w-2 h-2 rounded-full bg-[var(--color-success)] animate-pulse" />
+                {/* Grid overlay for texture */}
+                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')] opacity-30 pointer-events-none mask-image-radial-gradient" style={{ WebkitMaskImage: 'radial-gradient(circle at center, black, transparent 80%)' }} />
+
+                <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 relative z-10 text-center flex flex-col items-center">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-[rgba(255,255,255,0.1)] text-xs font-semibold tracking-wide uppercase mb-10 animate-fade-in-up hover:border-[rgba(255,255,255,0.3)] transition-colors">
+                        <span className="w-2 h-2 rounded-full bg-[var(--color-success)] animate-pulse shadow-[0_0_10px_var(--color-success)]" />
                         Powered by AI • Always free
                     </div>
 
-                    <h1 className="text-5xl md:text-7xl font-display font-black tracking-tight mb-6 animate-fade-in-up stagger-1">
+                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-black tracking-tight mb-8 animate-fade-in-up stagger-1 drop-shadow-2xl">
                         Find the <span className="text-gradient">best product</span>
                         <br />on Amazon.
                     </h1>
 
-                    <p className="text-xl md:text-2xl text-[var(--color-surface-muted)] mb-12 max-w-2xl mx-auto animate-fade-in-up stagger-2">
+                    <p className="text-lg md:text-xl text-[var(--color-surface-muted)] mb-14 max-w-2xl mx-auto animate-fade-in-up stagger-2 leading-relaxed">
                         Tell us what you need. Our AI cuts through the SEO noise and finds the product actually worth buying.
                     </p>
 

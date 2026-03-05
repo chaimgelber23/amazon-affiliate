@@ -31,26 +31,36 @@ const EXAMPLE_SEARCHES = [
 ];
 
 export function SearchBox() {
+    const [messages, setMessages] = useState<{ role: string, content: string }[]>([]);
     const [query, setQuery] = useState("");
+    const [followUpQuery, setFollowUpQuery] = useState("");
     const [results, setResults] = useState<SearchResult | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [expandedCard, setExpandedCard] = useState<number | null>(null);
 
-    const handleSearch = async (searchQuery?: string) => {
-        const q = searchQuery || query;
+    const handleSearch = async (searchQuery?: string, isFollowUp: boolean = false) => {
+        const q = searchQuery || (isFollowUp ? followUpQuery : query);
         if (!q.trim()) return;
 
         setLoading(true);
         setError(null);
-        setResults(null);
         setExpandedCard(null);
+
+        // If it's a new search, clear previous results
+        if (!isFollowUp) {
+            setResults(null);
+        }
+
+        const newMessages = isFollowUp
+            ? [...messages, { role: "user", content: q }]
+            : [{ role: "user", content: q }];
 
         try {
             const res = await fetch("/api/search", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ query: q }),
+                body: JSON.stringify({ messages: newMessages, query: q }),
             });
 
             const data = await res.json();
@@ -61,6 +71,8 @@ export function SearchBox() {
             }
 
             setResults(data);
+            setMessages(newMessages);
+            if (isFollowUp) setFollowUpQuery("");
         } catch {
             setError("Something went wrong. Please try again.");
         } finally {
@@ -70,7 +82,12 @@ export function SearchBox() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        handleSearch();
+        handleSearch(undefined, false);
+    };
+
+    const handleFollowUpSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        handleSearch(undefined, true);
     };
 
     const handleExampleClick = (example: string) => {
@@ -80,68 +97,73 @@ export function SearchBox() {
 
     return (
         <div className="w-full max-w-3xl mx-auto">
-            {/* Search Form */}
-            <form onSubmit={handleSubmit} className="relative w-full group">
-                {/* Glow effect */}
-                <div className="absolute -inset-1 bg-gradient-to-r from-[var(--color-accent)] via-[#8B5CF6] to-[var(--color-accent)] rounded-2xl blur-md opacity-30 group-hover:opacity-50 group-focus-within:opacity-60 transition duration-500" />
+            {/* Initial Search Form (hidden when results exist) */}
+            {!results && (
+                <>
+                    <form onSubmit={handleSubmit} className="relative w-full group">
+                        {/* Glow effect */}
+                        <div className="absolute -inset-1 bg-gradient-to-r from-[var(--color-accent)] via-[#8B5CF6] to-[var(--color-pink)] rounded-2xl blur-lg opacity-40 group-hover:opacity-60 group-focus-within:opacity-75 transition duration-500 animate-pulse" />
 
-                <div className="relative flex items-center bg-[var(--color-bg-elevated)] border border-[var(--color-border-strong)] rounded-xl overflow-hidden shadow-2xl">
-                    <div className="pl-5 text-[var(--color-accent)]">
-                        <Sparkles className="w-5 h-5" />
+                        <div className="relative flex items-center glass rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(0,240,255,0.15)]">
+                            <div className="pl-6 text-[var(--color-accent)]">
+                                <Sparkles className="w-6 h-6" />
+                            </div>
+                            <input
+                                className="w-full bg-transparent text-[var(--color-surface)] placeholder-[var(--color-surface-dim)] px-5 py-6 focus:outline-none text-lg sm:text-xl font-medium tracking-wide"
+                                placeholder="What are you looking for?"
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                                disabled={loading}
+                            />
+                            <button
+                                type="submit"
+                                disabled={loading || !query.trim()}
+                                className="flex items-center gap-2 px-8 py-4 mr-3 bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-purple)] hover:brightness-110 text-white font-bold rounded-xl disabled:opacity-40 transition-all text-base shadow-[0_0_20px_rgba(178,0,255,0.4)] hover:shadow-[0_0_30px_rgba(0,240,255,0.6)]"
+                            >
+                                {loading ? (
+                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                ) : (
+                                    <>
+                                        <Search className="w-5 h-5" />
+                                        Find
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </form>
+
+                    {/* Example searches */}
+                    <div className="mt-8 flex flex-wrap justify-center gap-3">
+                        {EXAMPLE_SEARCHES.map((example) => (
+                            <button
+                                key={example}
+                                onClick={() => handleExampleClick(example)}
+                                className="px-4 py-2 text-xs font-medium rounded-full glass border border-[rgba(255,255,255,0.05)] text-[var(--color-surface-muted)] hover:text-white hover:border-[rgba(255,255,255,0.2)] hover:bg-[var(--color-bg-elevated)] transition-all duration-300"
+                            >
+                                {example}
+                            </button>
+                        ))}
                     </div>
-                    <input
-                        className="w-full bg-transparent text-[var(--color-surface)] placeholder-[var(--color-surface-dim)] px-4 py-5 focus:outline-none text-base sm:text-lg"
-                        placeholder="What are you looking for?"
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        disabled={loading}
-                    />
-                    <button
-                        type="submit"
-                        disabled={loading || !query.trim()}
-                        className="flex items-center gap-2 px-6 py-3 mr-2 bg-[var(--color-accent)] hover:brightness-110 text-white font-semibold rounded-lg disabled:opacity-40 transition-all text-sm"
-                    >
-                        {loading ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                            <>
-                                <Search className="w-4 h-4" />
-                                Find
-                            </>
-                        )}
-                    </button>
-                </div>
-            </form>
-
-            {/* Example searches */}
-            {!results && !loading && (
-                <div className="mt-5 flex flex-wrap justify-center gap-2">
-                    {EXAMPLE_SEARCHES.map((example) => (
-                        <button
-                            key={example}
-                            onClick={() => handleExampleClick(example)}
-                            className="px-3 py-1.5 text-xs rounded-full bg-[var(--color-bg-card)] border border-[var(--color-border)] text-[var(--color-surface-muted)] hover:text-white hover:border-[var(--color-accent)] transition-colors"
-                        >
-                            {example}
-                        </button>
-                    ))}
-                </div>
+                </>
             )}
 
             {/* Loading */}
             {loading && (
-                <div className="mt-10 text-center animate-pulse">
-                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-[var(--color-accent)]" />
-                    <p className="mt-4 text-sm text-[var(--color-surface-muted)]">
-                        Analyzing thousands of products to find the best picks...
+                <div className="mt-16 text-center animate-pulse">
+                    <div className="relative inline-flex items-center justify-center p-6 rounded-3xl glass border border-[rgba(255,255,255,0.1)] mb-6 shadow-[0_0_40px_rgba(0,240,255,0.2)]">
+                        <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-purple)] rounded-3xl opacity-20 blur-xl"></div>
+                        <Loader2 className="relative w-12 h-12 text-[var(--color-accent)] animate-spin" />
+                    </div>
+                    <p className="text-xl font-display font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-white/60">
+                        Scanning Amazon for the perfect match...
                     </p>
                 </div>
             )}
 
             {/* Error */}
-            {error && (
-                <div className="mt-8 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm text-center">
-                    {error}
+            {error && !loading && (
+                <div className="mt-8 p-6 glass border border-red-500/30 rounded-2xl text-center shadow-[0_0_30px_rgba(239,68,68,0.1)]">
+                    <p className="text-red-400 font-medium text-lg">{error}</p>
                 </div>
             )}
 
@@ -163,13 +185,13 @@ export function SearchBox() {
                         {results.products.map((product) => (
                             <div
                                 key={product.rank}
-                                className="card p-5 bg-[var(--color-bg-elevated)] border-[var(--color-border)] hover:border-[var(--color-border-strong)] transition-colors"
+                                className="card p-6"
                             >
-                                <div className="flex items-start gap-4">
+                                <div className="flex items-start gap-5">
                                     {/* Rank Badge */}
-                                    <div className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm ${product.rank === 1
-                                            ? "bg-[var(--color-accent)] text-white"
-                                            : "bg-[var(--color-bg-card)] border border-[var(--color-border)] text-[var(--color-surface-muted)]"
+                                    <div className={`flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center font-black text-lg shadow-lg ${product.rank === 1
+                                        ? "bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-purple)] text-white shadow-[0_0_20px_rgba(0,240,255,0.4)]"
+                                        : "glass border border-[rgba(255,255,255,0.1)] text-[var(--color-surface)]"
                                         }`}>
                                         #{product.rank}
                                     </div>
@@ -178,12 +200,12 @@ export function SearchBox() {
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-start justify-between gap-3">
                                             <div>
-                                                <h3 className="font-semibold text-base leading-snug">{product.title}</h3>
-                                                <div className="flex items-center gap-3 mt-1.5">
-                                                    <span className="font-mono text-sm font-bold text-[var(--color-accent)]">{product.priceEstimate}</span>
-                                                    <div className="flex items-center gap-1">
+                                                <h3 className="font-display font-bold text-xl leading-snug">{product.title}</h3>
+                                                <div className="flex items-center gap-3 mt-2">
+                                                    <span className="font-mono text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-success)]">{product.priceEstimate}</span>
+                                                    <div className="flex items-center gap-1.5 bg-[var(--color-bg)]/50 px-2 py-1 rounded-md border border-[rgba(255,255,255,0.05)]">
                                                         <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
-                                                        <span className="text-xs text-[var(--color-surface-muted)]">{product.rating}</span>
+                                                        <span className="text-xs font-semibold text-[var(--color-surface)]">{product.rating}</span>
                                                     </div>
                                                     <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--color-bg-card)] border border-[var(--color-border)] text-[var(--color-surface-dim)]">
                                                         {product.category}
@@ -247,13 +269,42 @@ export function SearchBox() {
                         ))}
                     </div>
 
-                    {/* Search again */}
+                    {/* Follow-up / Conversational UI */}
+                    <div className="mt-12 pt-8 border-t border-[rgba(255,255,255,0.05)]">
+                        <form onSubmit={handleFollowUpSubmit} className="relative w-full max-w-2xl mx-auto group">
+                            <div className="relative flex items-center glass rounded-xl overflow-hidden shadow-lg border border-[rgba(255,255,255,0.1)] focus-within:border-[rgba(255,255,255,0.3)] transition-colors">
+                                <input
+                                    className="w-full bg-transparent text-[var(--color-surface)] placeholder-[var(--color-surface-dim)] px-5 py-4 focus:outline-none text-sm sm:text-base font-medium"
+                                    placeholder="Refine results? (e.g. 'find something cheaper', 'needs to be wireless')"
+                                    value={followUpQuery}
+                                    onChange={(e) => setFollowUpQuery(e.target.value)}
+                                    disabled={loading}
+                                />
+                                <button
+                                    type="submit"
+                                    disabled={loading || !followUpQuery.trim()}
+                                    className="flex items-center gap-2 px-6 py-3 mr-2 my-1 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg disabled:opacity-40 transition-all text-sm backdrop-blur-md"
+                                >
+                                    {loading ? (
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                    ) : (
+                                        <>
+                                            <Search className="w-4 h-4" />
+                                            Update
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    {/* Start Over */}
                     <div className="mt-8 text-center">
                         <button
-                            onClick={() => { setResults(null); setQuery(""); }}
-                            className="text-sm text-[var(--color-accent)] hover:underline flex items-center gap-1 mx-auto"
+                            onClick={() => { setResults(null); setQuery(""); setMessages([]); setFollowUpQuery(""); }}
+                            className="text-sm font-medium text-[var(--color-surface-muted)] hover:text-white transition-colors flex items-center gap-1.5 mx-auto"
                         >
-                            <ArrowRight className="w-3 h-3" /> Search for something else
+                            <ArrowRight className="w-4 h-4" /> Start a completely new search
                         </button>
                     </div>
                 </div>
