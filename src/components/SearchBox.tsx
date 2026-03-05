@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Loader2, Sparkles, ShoppingBag, Star, ChevronDown, ChevronUp, ArrowRight } from "lucide-react";
 import { buildAffiliateUrl } from "@/lib/affiliate";
 
 interface Product {
@@ -30,37 +29,52 @@ const EXAMPLE_SEARCHES = [
     "Running shoes for flat feet",
 ];
 
+function ProductImage({ asin, title }: { asin: string; title: string }) {
+    const [errored, setErrored] = useState(false);
+
+    if (asin === "SEARCH" || errored) {
+        return (
+            <div className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 rounded-xl bg-[var(--color-bg-elevated)] border border-[var(--color-border)]" />
+        );
+    }
+
+    return (
+        <img
+            src={`https://m.media-amazon.com/images/P/${asin}.01._SX300_SCLZZZZZZZ_.jpg`}
+            alt={title}
+            className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 rounded-xl object-contain bg-white border border-[var(--color-border)]"
+            onError={() => setErrored(true)}
+        />
+    );
+}
+
 export function SearchBox() {
-    const [messages, setMessages] = useState<{ role: string, content: string }[]>([]);
+    const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
     const [query, setQuery] = useState("");
-    const [followUpQuery, setFollowUpQuery] = useState("");
     const [results, setResults] = useState<SearchResult | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [expandedCard, setExpandedCard] = useState<number | null>(null);
 
-    const handleSearch = async (searchQuery?: string, isFollowUp: boolean = false) => {
-        const q = searchQuery || (isFollowUp ? followUpQuery : query);
-        if (!q.trim()) return;
+    const handleSearch = async (searchQuery: string, isFollowUp = false) => {
+        const q = searchQuery.trim();
+        if (!q) return;
 
         setLoading(true);
         setError(null);
         setExpandedCard(null);
 
-        // If it's a new search, clear previous results
-        if (!isFollowUp) {
-            setResults(null);
-        }
-
         const newMessages = isFollowUp
             ? [...messages, { role: "user", content: q }]
             : [{ role: "user", content: q }];
+
+        if (!isFollowUp) setResults(null);
 
         try {
             const res = await fetch("/api/search", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ messages: newMessages, query: q }),
+                body: JSON.stringify({ messages: newMessages }),
             });
 
             const data = await res.json();
@@ -71,8 +85,7 @@ export function SearchBox() {
             }
 
             setResults(data);
-            setMessages(newMessages);
-            if (isFollowUp) setFollowUpQuery("");
+            setMessages([...newMessages, { role: "assistant", content: JSON.stringify(data) }]);
         } catch {
             setError("Something went wrong. Please try again.");
         } finally {
@@ -80,103 +93,79 @@ export function SearchBox() {
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        handleSearch(undefined, false);
-    };
-
-    const handleFollowUpSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        handleSearch(undefined, true);
-    };
-
-    const handleExampleClick = (example: string) => {
-        setQuery(example);
-        handleSearch(example);
+        if (results) {
+            handleSearch(query, true);
+        } else {
+            handleSearch(query, false);
+        }
     };
 
     return (
         <div className="w-full max-w-3xl mx-auto">
-            {/* Initial Search Form (hidden when results exist) */}
-            {!results && (
-                <>
-                    <form onSubmit={handleSubmit} className="relative w-full group">
-                        {/* Glow effect */}
-                        <div className="absolute -inset-1 bg-gradient-to-r from-[var(--color-accent)] via-[#8B5CF6] to-[var(--color-pink)] rounded-2xl blur-lg opacity-40 group-hover:opacity-60 group-focus-within:opacity-75 transition duration-500 animate-pulse" />
 
-                        <div className="relative flex items-center glass rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(0,240,255,0.15)]">
-                            <div className="pl-6 text-[var(--color-accent)]">
-                                <Sparkles className="w-6 h-6" />
-                            </div>
-                            <input
-                                className="w-full bg-transparent text-[var(--color-surface)] placeholder-[var(--color-surface-dim)] px-5 py-6 focus:outline-none text-lg sm:text-xl font-medium tracking-wide"
-                                placeholder="What are you looking for?"
-                                value={query}
-                                onChange={(e) => setQuery(e.target.value)}
-                                disabled={loading}
-                            />
-                            <button
-                                type="submit"
-                                disabled={loading || !query.trim()}
-                                className="flex items-center gap-2 px-8 py-4 mr-3 bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-purple)] hover:brightness-110 text-white font-bold rounded-xl disabled:opacity-40 transition-all text-base shadow-[0_0_20px_rgba(178,0,255,0.4)] hover:shadow-[0_0_30px_rgba(0,240,255,0.6)]"
-                            >
-                                {loading ? (
-                                    <Loader2 className="w-5 h-5 animate-spin" />
-                                ) : (
-                                    <>
-                                        <Search className="w-5 h-5" />
-                                        Find
-                                    </>
-                                )}
-                            </button>
-                        </div>
-                    </form>
+            {/* Search Input — always visible */}
+            <form onSubmit={handleSubmit} className="w-full">
+                <div className="flex items-center bg-white border-2 border-[var(--color-border)] focus-within:border-[var(--color-accent)] rounded-2xl overflow-hidden transition-colors shadow-sm">
+                    <input
+                        className="w-full bg-transparent text-[var(--color-surface)] placeholder-[var(--color-surface-dim)] px-6 py-5 focus:outline-none text-lg font-medium"
+                        placeholder="What are you looking for?"
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        disabled={loading}
+                        autoComplete="off"
+                    />
+                    <button
+                        type="submit"
+                        disabled={loading || !query.trim()}
+                        className="btn-primary mx-3 py-3 px-7 text-sm disabled:opacity-40 whitespace-nowrap"
+                    >
+                        {loading ? "Searching..." : results ? "Refine" : "Find"}
+                    </button>
+                </div>
+            </form>
 
-                    {/* Example searches */}
-                    <div className="mt-8 flex flex-wrap justify-center gap-3">
-                        {EXAMPLE_SEARCHES.map((example) => (
-                            <button
-                                key={example}
-                                onClick={() => handleExampleClick(example)}
-                                className="px-4 py-2 text-xs font-medium rounded-full glass border border-[rgba(255,255,255,0.05)] text-[var(--color-surface-muted)] hover:text-white hover:border-[rgba(255,255,255,0.2)] hover:bg-[var(--color-bg-elevated)] transition-all duration-300"
-                            >
-                                {example}
-                            </button>
-                        ))}
-                    </div>
-                </>
+            {/* Example searches — only when no results */}
+            {!results && !loading && (
+                <div className="mt-5 flex flex-wrap justify-center gap-x-5 gap-y-2">
+                    {EXAMPLE_SEARCHES.map((example) => (
+                        <button
+                            key={example}
+                            onClick={() => { setQuery(example); handleSearch(example); }}
+                            className="text-xs text-[var(--color-surface-dim)] hover:text-[var(--color-accent)] transition-colors"
+                        >
+                            {example}
+                        </button>
+                    ))}
+                </div>
             )}
 
             {/* Loading */}
             {loading && (
-                <div className="mt-16 text-center animate-pulse">
-                    <div className="relative inline-flex items-center justify-center p-6 rounded-3xl glass border border-[rgba(255,255,255,0.1)] mb-6 shadow-[0_0_40px_rgba(0,240,255,0.2)]">
-                        <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-purple)] rounded-3xl opacity-20 blur-xl"></div>
-                        <Loader2 className="relative w-12 h-12 text-[var(--color-accent)] animate-spin" />
-                    </div>
-                    <p className="text-xl font-display font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-white/60">
-                        Scanning Amazon for the perfect match...
+                <div className="mt-14 text-center">
+                    <p className="text-[var(--color-surface-muted)] font-medium text-sm tracking-wide">
+                        Scanning Amazon for the best match...
                     </p>
                 </div>
             )}
 
             {/* Error */}
             {error && !loading && (
-                <div className="mt-8 p-6 glass border border-red-500/30 rounded-2xl text-center shadow-[0_0_30px_rgba(239,68,68,0.1)]">
-                    <p className="text-red-400 font-medium text-lg">{error}</p>
+                <div className="mt-6 p-5 bg-red-50 border border-red-200 rounded-xl text-center">
+                    <p className="text-red-600 text-sm font-medium">{error}</p>
                 </div>
             )}
 
             {/* Results */}
-            {results && (
+            {results && !loading && (
                 <div className="mt-10 animate-fade-in-up">
+
                     {/* Summary */}
-                    <div className="text-center mb-8">
-                        <p className="text-lg font-medium text-[var(--color-surface)]">
-                            {results.summary}
-                        </p>
-                        <p className="text-xs text-[var(--color-surface-dim)] mt-2">
-                            {results.products.length} products found • Prices are estimates
+                    <div className="mb-6">
+                        <p className="text-[var(--color-surface)] font-medium">{results.summary}</p>
+                        <p className="text-xs text-[var(--color-surface-dim)] mt-1">
+                            {results.products.length} recommendations · Prices are estimates · Links go to Amazon
                         </p>
                     </div>
 
@@ -185,81 +174,82 @@ export function SearchBox() {
                         {results.products.map((product) => (
                             <div
                                 key={product.rank}
-                                className="card p-6"
+                                className="bg-white border border-[var(--color-border)] rounded-2xl p-5 hover:border-[var(--color-border-strong)] hover:shadow-md transition-all"
                             >
-                                <div className="flex items-start gap-5">
-                                    {/* Rank Badge */}
-                                    <div className={`flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center font-black text-lg shadow-lg ${product.rank === 1
-                                        ? "bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-purple)] text-white shadow-[0_0_20px_rgba(0,240,255,0.4)]"
-                                        : "glass border border-[rgba(255,255,255,0.1)] text-[var(--color-surface)]"
-                                        }`}>
-                                        #{product.rank}
-                                    </div>
+                                <div className="flex gap-4">
+                                    {/* Product Image */}
+                                    <ProductImage asin={product.asin} title={product.title} />
 
                                     {/* Content */}
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-start justify-between gap-3">
-                                            <div>
-                                                <h3 className="font-display font-bold text-xl leading-snug">{product.title}</h3>
-                                                <div className="flex items-center gap-3 mt-2">
-                                                    <span className="font-mono text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-success)]">{product.priceEstimate}</span>
-                                                    <div className="flex items-center gap-1.5 bg-[var(--color-bg)]/50 px-2 py-1 rounded-md border border-[rgba(255,255,255,0.05)]">
-                                                        <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
-                                                        <span className="text-xs font-semibold text-[var(--color-surface)]">{product.rating}</span>
-                                                    </div>
-                                                    <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--color-bg-card)] border border-[var(--color-border)] text-[var(--color-surface-dim)]">
-                                                        {product.category}
+                                            <div className="min-w-0">
+                                                {product.rank === 1 && (
+                                                    <span className="inline-block text-[10px] font-bold uppercase tracking-widest text-[var(--color-accent)] mb-1">
+                                                        Top Pick
+                                                    </span>
+                                                )}
+                                                <h3 className="font-bold text-[var(--color-surface)] leading-snug text-sm sm:text-base line-clamp-2">
+                                                    {product.title}
+                                                </h3>
+                                                <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                                                    <span className="text-base font-bold text-[var(--color-surface)]">
+                                                        {product.priceEstimate}
+                                                    </span>
+                                                    <span className="text-xs text-[var(--color-surface-dim)]">
+                                                        {product.rating}/5
+                                                    </span>
+                                                    <span className="text-xs text-[var(--color-surface-dim)] hidden sm:inline">
+                                                        · {product.category}
                                                     </span>
                                                 </div>
                                             </div>
 
                                             {/* Amazon CTA */}
                                             <a
-                                                href={product.asin === "SEARCH"
-                                                    ? `https://www.amazon.com/s?k=${encodeURIComponent(product.title)}&tag=${process.env.NEXT_PUBLIC_AMAZON_TAG || "purefind-20"}`
-                                                    : buildAffiliateUrl(product.asin)
+                                                href={
+                                                    product.asin === "SEARCH"
+                                                        ? `https://www.amazon.com/s?k=${encodeURIComponent(product.title)}&tag=${process.env.NEXT_PUBLIC_AMAZON_TAG ?? "purefind-20"}`
+                                                        : buildAffiliateUrl(product.asin)
                                                 }
                                                 target="_blank"
                                                 rel="noopener noreferrer nofollow sponsored"
-                                                className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-[var(--color-amazon)] hover:bg-[var(--color-amazon-hover)] text-[#111] text-xs font-bold rounded-lg transition-colors"
+                                                className="flex-shrink-0 btn-amazon text-xs py-2 px-3 sm:px-4"
                                             >
-                                                <ShoppingBag className="w-3.5 h-3.5" />
                                                 View on Amazon
                                             </a>
                                         </div>
 
                                         {/* Why this pick */}
-                                        <p className="mt-3 text-sm text-[var(--color-surface-muted)] italic border-l-2 border-[var(--color-accent)]/30 pl-3">
+                                        <p className="mt-2.5 text-sm text-[var(--color-surface-muted)] leading-relaxed border-l-2 border-[var(--color-accent)] pl-3">
                                             {product.whyThisPick}
                                         </p>
 
-                                        {/* Expand/Collapse Pros/Cons */}
+                                        {/* Pros / Cons toggle */}
                                         <button
                                             onClick={() => setExpandedCard(expandedCard === product.rank ? null : product.rank)}
-                                            className="mt-3 flex items-center gap-1 text-xs text-[var(--color-accent)] hover:underline"
+                                            className="mt-2.5 text-xs text-[var(--color-accent)] hover:underline"
                                         >
-                                            {expandedCard === product.rank ? (
-                                                <>Hide details <ChevronUp className="w-3 h-3" /></>
-                                            ) : (
-                                                <>Show pros & cons <ChevronDown className="w-3 h-3" /></>
-                                            )}
+                                            {expandedCard === product.rank ? "Hide details" : "Show pros & cons"}
                                         </button>
 
                                         {expandedCard === product.rank && (
-                                            <div className="mt-3 grid grid-cols-2 gap-4 animate-fade-in">
-                                                <div className="space-y-1.5">
-                                                    {product.pros.map((pro, i) => (
-                                                        <div key={i} className="text-xs text-[var(--color-success)] flex gap-1.5">
-                                                            <span className="opacity-60">+</span>{pro}
-                                                        </div>
-                                                    ))}
+                                            <div className="mt-3 pt-3 border-t border-[var(--color-border)] grid grid-cols-2 gap-4 animate-fade-in">
+                                                <div>
+                                                    <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-success)] mb-2">Pros</p>
+                                                    <ul className="space-y-1">
+                                                        {product.pros.map((pro, i) => (
+                                                            <li key={i} className="text-xs text-[var(--color-surface-muted)]">+ {pro}</li>
+                                                        ))}
+                                                    </ul>
                                                 </div>
-                                                <div className="space-y-1.5">
-                                                    {product.cons.map((con, i) => (
-                                                        <div key={i} className="text-xs text-[var(--color-danger)] flex gap-1.5">
-                                                            <span className="opacity-60">−</span>{con}
-                                                        </div>
-                                                    ))}
+                                                <div>
+                                                    <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-danger)] mb-2">Cons</p>
+                                                    <ul className="space-y-1">
+                                                        {product.cons.map((con, i) => (
+                                                            <li key={i} className="text-xs text-[var(--color-surface-muted)]">- {con}</li>
+                                                        ))}
+                                                    </ul>
                                                 </div>
                                             </div>
                                         )}
@@ -269,42 +259,13 @@ export function SearchBox() {
                         ))}
                     </div>
 
-                    {/* Follow-up / Conversational UI */}
-                    <div className="mt-12 pt-8 border-t border-[rgba(255,255,255,0.05)]">
-                        <form onSubmit={handleFollowUpSubmit} className="relative w-full max-w-2xl mx-auto group">
-                            <div className="relative flex items-center glass rounded-xl overflow-hidden shadow-lg border border-[rgba(255,255,255,0.1)] focus-within:border-[rgba(255,255,255,0.3)] transition-colors">
-                                <input
-                                    className="w-full bg-transparent text-[var(--color-surface)] placeholder-[var(--color-surface-dim)] px-5 py-4 focus:outline-none text-sm sm:text-base font-medium"
-                                    placeholder="Refine results? (e.g. 'find something cheaper', 'needs to be wireless')"
-                                    value={followUpQuery}
-                                    onChange={(e) => setFollowUpQuery(e.target.value)}
-                                    disabled={loading}
-                                />
-                                <button
-                                    type="submit"
-                                    disabled={loading || !followUpQuery.trim()}
-                                    className="flex items-center gap-2 px-6 py-3 mr-2 my-1 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg disabled:opacity-40 transition-all text-sm backdrop-blur-md"
-                                >
-                                    {loading ? (
-                                        <Loader2 className="w-4 h-4 animate-spin" />
-                                    ) : (
-                                        <>
-                                            <Search className="w-4 h-4" />
-                                            Update
-                                        </>
-                                    )}
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    {/* Start Over */}
+                    {/* New search */}
                     <div className="mt-8 text-center">
                         <button
-                            onClick={() => { setResults(null); setQuery(""); setMessages([]); setFollowUpQuery(""); }}
-                            className="text-sm font-medium text-[var(--color-surface-muted)] hover:text-white transition-colors flex items-center gap-1.5 mx-auto"
+                            onClick={() => { setResults(null); setQuery(""); setMessages([]); setExpandedCard(null); }}
+                            className="text-sm text-[var(--color-surface-dim)] hover:text-[var(--color-accent)] transition-colors"
                         >
-                            <ArrowRight className="w-4 h-4" /> Start a completely new search
+                            Start a new search
                         </button>
                     </div>
                 </div>
