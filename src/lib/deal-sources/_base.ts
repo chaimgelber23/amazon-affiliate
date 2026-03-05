@@ -52,15 +52,32 @@ export function extractImage(html: string): string | undefined {
     return undefined;
 }
 
-/** Fetch a URL with a browser User-Agent, return HTML or empty string on error */
+const CHROME_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+
+/** Fetch a URL with a real Chrome User-Agent, return HTML or empty string on error */
 export async function fetchHtml(url: string, timeoutMs = 8000): Promise<string> {
     try {
         const res = await fetch(url, {
-            headers: { 'User-Agent': 'Mozilla/5.0 (compatible; PureFindBot/1.0)' },
+            headers: { 'User-Agent': CHROME_UA },
             signal: AbortSignal.timeout(timeoutMs),
         });
         return res.ok ? await res.text() : '';
     } catch {
         return '';
+    }
+}
+
+/** Follow redirect chain and return the final URL. Returns the original URL on error. */
+export async function followRedirect(url: string, timeoutMs = 6000): Promise<string> {
+    try {
+        const res = await fetch(url, {
+            method: 'HEAD',
+            redirect: 'follow',
+            headers: { 'User-Agent': CHROME_UA },
+            signal: AbortSignal.timeout(timeoutMs),
+        });
+        return res.url;
+    } catch {
+        return url;
     }
 }

@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio';
-import { fetchHtml, extractAmazonUrl, extractImage } from './_base';
+import { fetchHtml, followRedirect, extractAmazonUrl } from './_base';
 import type { DealSource, RawDeal } from './_base';
 
 const BASE = 'https://www.pzdeals.com';
@@ -33,30 +33,51 @@ const pzdeals: DealSource = {
             });
         }
 
-        // Fetch each product page to find Amazon URL
-        const CHUNK = 8;
+        const CHUNK = 6;
         const deals: RawDeal[] = [];
 
         for (let i = 0; i < items.length; i += CHUNK) {
             const chunk = items.slice(i, i + CHUNK);
-            const htmls = await Promise.all(
-                chunk.map((item) => {
+
+            // Fetch each product page HTML
+            const pageHtmls = await Promise.all(
+                chunk.map(item => {
                     const url = item.href.startsWith('http') ? item.href : `${BASE}${item.href}`;
                     return fetchHtml(url);
                 })
             );
 
-            chunk.forEach((item, idx) => {
-                const pageHtml = htmls[idx];
-                if (!extractAmazonUrl(pageHtml)) return; // skip non-Amazon deals
+            // For each product page, find /go/ redirect links and follow them to Amazon
+            await Promise.all(chunk.map(async (item, idx) => {
+                const pageHtml = pageHtmls[idx];
 
-                deals.push({
-                    title: item.title,
-                    contentHtml: pageHtml,
-                    imageUrl: item.img || extractImage(pageHtml),
-                    dealPageUrl: item.href.startsWith('http') ? item.href : `${BASE}${item.href}`,
-                });
-            });
+                // Strategy 1: Find pzdeals.com/go/XXXXX redirect links in the page
+                const goPattern = /https?:\/\/(?:www\.)?pzdeals\.com\/go\/[^\s"'<>&]*/gi;
+                const goLinks = [...new Set(pageHtml.match(goPattern) ?? [])];
+
+                for (const goUrl of goLinks) {
+                    const finalUrl = await followRedirect(goUrl);
+                    if (finalUrl.includes('amazon.com')) {
+                        deals.push({
+                            title: item.title,
+                            contentHtml: finalUrl, // put the Amazon URL here so sync route finds it
+                            imageUrl: item.img || undefined,
+                            dealPageUrl: item.href.startsWith('http') ? item.href : `${BASE}${item.href}`,
+                        });
+                        return; // found it — stop probing other /go/ links for this deal
+                    }
+                }
+
+                // Strategy 2: Amazon URL directly in the static HTML (fallback)
+                if (extractAmazonUrl(pageHtml)) {
+                    deals.push({
+                        title: item.title,
+                        contentHtml: pageHtml,
+                        imageUrl: item.img || undefined,
+                        dealPageUrl: item.href.startsWith('http') ? item.href : `${BASE}${item.href}`,
+                    });
+                }
+            }));
         }
 
         return deals;
