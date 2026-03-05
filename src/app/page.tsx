@@ -3,7 +3,7 @@ import { SearchBox } from "@/components/SearchBox";
 
 export default function HomePage() {
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen bg-[var(--color-bg)]">
 
             {/* ── HERO ── */}
             <section className="pt-20 pb-24 px-4 sm:px-8 text-center">
@@ -128,7 +128,7 @@ export default function HomePage() {
                                 desc: "You pay exactly what Amazon charges. We earn a tiny commission on the sale.",
                             },
                         ].map(({ title, desc }) => (
-                            <div key={title} className="bg-white px-8 py-10">
+                            <div key={title} className="bg-[var(--color-bg-card)] px-8 py-10">
                                 <h3 className="font-bold text-[var(--color-surface)] mb-3 text-sm uppercase tracking-wide">
                                     {title}
                                 </h3>

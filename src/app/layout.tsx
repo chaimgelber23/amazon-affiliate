@@ -33,7 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     rel="stylesheet"
                 />
             </head>
-            <body className="bg-white text-[var(--color-surface)] font-sans antialiased">
+            <body className="bg-[var(--color-bg)] text-[var(--color-surface)] font-sans antialiased">
                 <Header />
                 <main className="min-h-screen">{children}</main>
                 <Footer />

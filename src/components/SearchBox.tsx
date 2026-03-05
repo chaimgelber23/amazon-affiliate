@@ -105,7 +105,7 @@ export function SearchBox() {
                         Refine your results
                     </p>
                 )}
-                <div className="flex items-center bg-white border-2 border-[var(--color-border)] focus-within:border-[var(--color-accent)] rounded-2xl overflow-hidden transition-colors shadow-sm">
+                <div className="flex items-center bg-[var(--color-bg-card)] border-2 border-[var(--color-border)] focus-within:border-[var(--color-accent)] rounded-2xl overflow-hidden transition-colors shadow-sm">
                     <input
                         className="w-full bg-transparent text-[var(--color-surface)] placeholder-[var(--color-surface-dim)] px-6 py-5 focus:outline-none text-lg font-medium"
                         placeholder={results
@@ -184,7 +184,7 @@ export function SearchBox() {
                         {results.products.map((product) => (
                             <article
                                 key={product.rank}
-                                className="bg-white rounded-2xl p-6 sm:p-7 product-card cursor-pointer"
+                                className="bg-[var(--color-bg-card)] rounded-2xl p-6 sm:p-7 product-card cursor-pointer"
                             >
                                 <div className="flex gap-5 sm:gap-7">
 

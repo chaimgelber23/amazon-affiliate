@@ -5,36 +5,50 @@
   --font-display: "Plus Jakarta Sans", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", "Fira Code", monospace;
 
-  /* Light, conversion-focused palette */
-  --color-bg: #FFFFFF;
-  --color-bg-card: #F8FAFC;
-  --color-bg-elevated: #F1F5F9;
-  --color-bg-hover: #E8F0FE;
+  /* Premium SaaS Light Theme Palette */
+  --color-bg: #FAFAF9;
+  /* stone-50, warmer off-white */
+  --color-bg-card: #FFFFFF;
+  --color-bg-elevated: #F5F5F4;
+  /* stone-100 */
+  --color-bg-hover: #F3F4F6;
+  /* gray-100 */
 
-  --color-surface: #0F172A;
-  --color-surface-muted: #475569;
-  --color-surface-dim: #94A3B8;
+  --color-surface: #1C1917;
+  /* stone-900 */
+  --color-surface-muted: #57534E;
+  /* stone-500 */
+  --color-surface-dim: #A8A29E;
+  /* stone-400 */
 
-  /* Warm orange — drives action, urgency, purchases */
-  --color-accent: #F97316;
-  --color-accent-hover: #EA580C;
-  --color-accent-muted: rgba(249, 115, 22, 0.12);
+  /* Premium Indigo Accent */
+  --color-accent: #4F46E5;
+  /* indigo-600 */
+  --color-accent-hover: #4338CA;
+  /* indigo-700 */
+  --color-accent-muted: rgba(79, 70, 229, 0.08);
 
-  --color-success: #16A34A;
-  --color-success-muted: rgba(22, 163, 74, 0.1);
-  --color-warning: #D97706;
-  --color-warning-muted: rgba(217, 119, 6, 0.1);
-  --color-danger: #DC2626;
+  --color-success: #10B981;
+  /* emerald-500 */
+  --color-success-muted: rgba(16, 185, 129, 0.1);
+  --color-warning: #F59E0B;
+  /* amber-500 */
+  --color-warning-muted: rgba(245, 158, 11, 0.1);
+  --color-danger: #EF4444;
+  /* red-500 */
 
+  /* Keep Amazon brand color */
   --color-amazon: #FF9900;
   --color-amazon-hover: #E68900;
 
-  --color-border: #E2E8F0;
-  --color-border-strong: #CBD5E1;
+  --color-border: #E7E5E4;
+  /* stone-200 */
+  --color-border-strong: #D6D3D0;
+  /* stone-300 */
 
-  --color-badge-best: #2563EB;
+  --color-badge-best: #4F46E5;
   --color-badge-popular: #DB2777;
-  --color-badge-value: #16A34A;
+  --color-badge-value: #10B981;
 }
 
 /* ============================================
@@ -67,78 +81,129 @@ body {
 
 /* ui-ux-pro-max: reduced-motion */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* ============================================
    SCROLLBAR
    ============================================ */
 
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--color-border-strong); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--color-surface-dim); }
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-surface-dim);
+}
 
 /* ============================================
    ANIMATIONS
    ============================================ */
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes shimmer {
-  0%   { background-position: -200% 0; }
-  100% { background-position:  200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
 }
 
-.animate-fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
-.animate-fade-in    { animation: fadeIn  0.4s ease-out forwards; }
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
 
-.stagger-1 { animation-delay: 0.08s; }
-.stagger-2 { animation-delay: 0.16s; }
-.stagger-3 { animation-delay: 0.24s; }
-.stagger-4 { animation-delay: 0.32s; }
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.stagger-1 {
+  animation-delay: 0.08s;
+}
+
+.stagger-2 {
+  animation-delay: 0.16s;
+}
+
+.stagger-3 {
+  animation-delay: 0.24s;
+}
+
+.stagger-4 {
+  animation-delay: 0.32s;
+}
 
 /* ============================================
    UTILITY CLASSES
    ============================================ */
 
 .glass {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background: rgba(255, 255, 255, 0.80);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid var(--color-border);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 24px rgba(28, 25, 23, 0.04);
 }
 
 .card {
-  background: var(--color-bg);
+  background: var(--color-bg-card);
   border: 1px solid var(--color-border);
   border-radius: 16px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(28, 25, 23, 0.04);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .card:hover {
   border-color: var(--color-border-strong);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 12px 32px rgba(28, 25, 23, 0.08);
 }
 
 /* Luxury product card — shadow-based, no bounce */
 .product-card {
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05), 0 4px 16px rgba(0, 0, 0, 0.04);
-  transition: box-shadow 0.2s ease;
+  box-shadow: 0 2px 8px rgba(28, 25, 23, 0.04), 0 8px 24px rgba(28, 25, 23, 0.03);
+  transition: box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .product-card:hover {
-  box-shadow: 0 4px 28px rgba(0, 0, 0, 0.10), 0 1px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 32px rgba(28, 25, 23, 0.08), 0 2px 8px rgba(28, 25, 23, 0.04);
 }
 
 /* Orange "Buy" button — primary conversion CTA */
@@ -211,4 +276,6 @@ body {
 }
 
 /* Accent text */
-.text-accent { color: var(--color-accent); }
+.text-accent {
+  color: var(--color-accent);
+}

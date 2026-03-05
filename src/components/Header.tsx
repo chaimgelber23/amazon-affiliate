@@ -15,7 +15,7 @@ export function Header() {
     return (
         <>
             {/* Floating navbar — ui-ux-pro-max rule: top-4 left-4 right-4 spacing */}
-            <header className="fixed top-3 left-3 right-3 z-50 bg-white/95 backdrop-blur-md rounded-2xl shadow-md border border-[var(--color-border)]">
+            <header className="fixed top-3 left-3 right-3 z-50 bg-[var(--color-bg-card)]/80 backdrop-blur-xl rounded-2xl shadow-sm border border-[var(--color-border)] transition-all">
                 <div className="px-4 sm:px-6 h-14 flex items-center justify-between">
 
                     {/* Logo — flush left, no icon, luxury type */}
