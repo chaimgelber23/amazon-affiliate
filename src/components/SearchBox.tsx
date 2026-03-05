@@ -184,7 +184,7 @@ export function SearchBox() {
                         {results.products.map((product) => (
                             <article
                                 key={product.rank}
-                                className="bg-white rounded-2xl p-6 sm:p-7 product-card"
+                                className="bg-white rounded-2xl p-6 sm:p-7 product-card cursor-pointer"
                             >
                                 <div className="flex gap-5 sm:gap-7">
 

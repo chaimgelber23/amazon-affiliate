@@ -13,69 +13,77 @@ export function Header() {
     const [mobileOpen, setMobileOpen] = useState(false);
 
     return (
-        <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-[var(--color-border)]">
-            <div className="max-w-6xl mx-auto px-6 sm:px-8 h-16 flex items-center justify-between">
+        <>
+            {/* Floating navbar — ui-ux-pro-max rule: top-4 left-4 right-4 spacing */}
+            <header className="fixed top-3 left-3 right-3 z-50 bg-white/95 backdrop-blur-md rounded-2xl shadow-md border border-[var(--color-border)]">
+                <div className="px-4 sm:px-6 h-14 flex items-center justify-between">
 
-                {/* Logo — luxury text, no icon */}
-                <Link href="/" className="flex items-baseline gap-0 group">
-                    <span className="font-display text-xl uppercase tracking-[0.12em] font-light text-[var(--color-surface)] group-hover:opacity-80 transition-opacity">
-                        Pure
-                    </span>
-                    <span className="font-display text-xl uppercase tracking-[0.12em] font-black text-[var(--color-accent)] group-hover:opacity-80 transition-opacity">
-                        Find
-                    </span>
-                </Link>
-
-                {/* Desktop nav */}
-                <nav className="hidden md:flex items-center gap-8">
-                    {navLinks.map((link) => (
-                        <Link
-                            key={link.href}
-                            href={link.href}
-                            className="text-sm text-[var(--color-surface-muted)] hover:text-[var(--color-surface)] transition-colors tracking-wide"
-                        >
-                            {link.label}
-                        </Link>
-                    ))}
-                    <Link
-                        href="/deals"
-                        className="text-sm font-semibold text-white bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] px-5 py-2 rounded-lg transition-colors tracking-wide"
-                    >
-                        Live Deals
+                    {/* Logo — flush left, no icon, luxury type */}
+                    <Link href="/" className="flex items-baseline group">
+                        <span className="font-display text-xl uppercase tracking-[0.12em] font-light text-[var(--color-surface)] group-hover:opacity-70 transition-opacity duration-200">
+                            Pure
+                        </span>
+                        <span className="font-display text-xl uppercase tracking-[0.12em] font-black text-[var(--color-accent)] group-hover:opacity-70 transition-opacity duration-200">
+                            Find
+                        </span>
                     </Link>
-                </nav>
 
-                {/* Mobile toggle — no icon */}
-                <button
-                    className="md:hidden text-xs font-bold uppercase tracking-widest text-[var(--color-surface-muted)] hover:text-[var(--color-surface)] transition-colors"
-                    onClick={() => setMobileOpen(!mobileOpen)}
-                    aria-label="Toggle menu"
-                >
-                    {mobileOpen ? "Close" : "Menu"}
-                </button>
-            </div>
-
-            {mobileOpen && (
-                <nav className="md:hidden border-t border-[var(--color-border)] bg-white px-6 py-4 space-y-1">
-                    {navLinks.map((link) => (
+                    {/* Desktop nav */}
+                    <nav className="hidden md:flex items-center gap-6">
+                        {navLinks.map((link) => (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                className="text-sm text-[var(--color-surface-muted)] hover:text-[var(--color-surface)] transition-colors duration-200 tracking-wide"
+                            >
+                                {link.label}
+                            </Link>
+                        ))}
                         <Link
-                            key={link.href}
-                            href={link.href}
-                            className="block text-sm text-[var(--color-surface-muted)] hover:text-[var(--color-surface)] py-3 transition-colors tracking-wide"
+                            href="/deals"
+                            className="text-sm font-semibold text-white bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] px-5 py-2.5 rounded-xl transition-colors duration-200 tracking-wide min-h-[44px] flex items-center cursor-pointer"
+                        >
+                            Live Deals
+                        </Link>
+                    </nav>
+
+                    {/* Mobile toggle */}
+                    <button
+                        className="md:hidden text-xs font-bold uppercase tracking-widest text-[var(--color-surface-muted)] hover:text-[var(--color-surface)] transition-colors duration-200 min-h-[44px] min-w-[44px] flex items-center justify-end cursor-pointer"
+                        onClick={() => setMobileOpen(!mobileOpen)}
+                        aria-label="Toggle menu"
+                        aria-expanded={mobileOpen}
+                    >
+                        {mobileOpen ? "Close" : "Menu"}
+                    </button>
+                </div>
+
+                {/* Mobile menu */}
+                {mobileOpen && (
+                    <nav className="md:hidden border-t border-[var(--color-border)] px-4 py-3 space-y-0.5">
+                        {navLinks.map((link) => (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                className="flex items-center text-sm text-[var(--color-surface-muted)] hover:text-[var(--color-surface)] min-h-[44px] transition-colors duration-200 tracking-wide cursor-pointer"
+                                onClick={() => setMobileOpen(false)}
+                            >
+                                {link.label}
+                            </Link>
+                        ))}
+                        <Link
+                            href="/deals"
+                            className="flex items-center text-sm font-semibold text-[var(--color-accent)] min-h-[44px] tracking-wide cursor-pointer"
                             onClick={() => setMobileOpen(false)}
                         >
-                            {link.label}
+                            Live Deals
                         </Link>
-                    ))}
-                    <Link
-                        href="/deals"
-                        className="block text-sm font-semibold text-[var(--color-accent)] py-3 tracking-wide"
-                        onClick={() => setMobileOpen(false)}
-                    >
-                        Live Deals
-                    </Link>
-                </nav>
-            )}
-        </header>
+                    </nav>
+                )}
+            </header>
+
+            {/* Spacer so page content starts below the floating nav */}
+            <div className="h-20" />
+        </>
     );
 }

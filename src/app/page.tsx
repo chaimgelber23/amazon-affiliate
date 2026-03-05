@@ -6,7 +6,7 @@ export default function HomePage() {
         <div className="min-h-screen bg-white">
 
             {/* ── HERO ── */}
-            <section className="pt-40 pb-24 px-4 sm:px-8 text-center">
+            <section className="pt-20 pb-24 px-4 sm:px-8 text-center">
                 <div className="max-w-3xl mx-auto">
 
                     <div className="inline-block px-4 py-1.5 rounded-full border border-[var(--color-border)] text-[11px] font-semibold uppercase tracking-[0.15em] text-[var(--color-surface-muted)] mb-10">
