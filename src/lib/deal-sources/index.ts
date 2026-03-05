@@ -1,0 +1,12 @@
+// Registry of all deal sources.
+// To add a new site: import its adapter here and add to ALL_SOURCES.
+
+import type { DealSource } from './_base';
+import dansdeals from './dansdeals';
+import pzdeals from './pzdeals';
+import simplexdeals from './simplexdeals';
+
+export const ALL_SOURCES: DealSource[] = [dansdeals, pzdeals, simplexdeals];
+
+export { dansdeals, pzdeals, simplexdeals };
+export type { DealSource, RawDeal } from './_base';

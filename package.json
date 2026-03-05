@@ -14,10 +14,12 @@
         "@ai-sdk/react": "^3.0.118",
         "@supabase/supabase-js": "^2.49.0",
         "ai": "^6.0.116",
+        "cheerio": "^1.2.0",
         "lucide-react": "^0.469.0",
         "next": "^15.1.0",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
+        "rss-parser": "^3.13.0",
         "zod": "^4.3.6"
     },
     "devDependencies": {
