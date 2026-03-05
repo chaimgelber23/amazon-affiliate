@@ -1,4 +1,4 @@
-import { generateText } from "ai";
+import { streamText } from "ai";
 import { google } from "@ai-sdk/google";
 
 export const maxDuration = 30;
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
             return Response.json({ error: "Please enter a valid search query." }, { status: 400 });
         }
 
-        const { text } = await generateText({
+        const result = streamText({
             model: google("gemini-2.5-flash-lite"),
             system: `You are PureFind's product recommendation engine. Cut through Amazon's noise and find genuinely great products.
 
@@ -44,10 +44,7 @@ JSON SCHEMA:
             messages: chatMessages,
         });
 
-        const cleaned = text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
-        const data = JSON.parse(cleaned);
-
-        return Response.json(data);
+        return result.toTextStreamResponse();
     } catch (error: unknown) {
         console.error("Search error:", error);
         const msg = error instanceof Error ? error.message : "";

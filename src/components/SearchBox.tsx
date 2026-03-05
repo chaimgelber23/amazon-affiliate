@@ -48,6 +48,39 @@ function ProductImage({ asin, title }: { asin: string; title: string }) {
     );
 }
 
+function SkeletonCard() {
+    return (
+        <div className="bg-[var(--color-bg-card)] rounded-2xl p-6 sm:p-7 animate-pulse">
+            <div className="flex gap-5 sm:gap-7">
+                <div className="w-28 h-28 sm:w-36 sm:h-36 flex-shrink-0 rounded-2xl bg-[var(--color-bg-elevated)]" />
+                <div className="flex-1 space-y-3">
+                    <div className="h-3 bg-[var(--color-bg-elevated)] rounded w-1/4" />
+                    <div className="h-5 bg-[var(--color-bg-elevated)] rounded w-3/4" />
+                    <div className="h-4 bg-[var(--color-bg-elevated)] rounded w-1/3 mt-1" />
+                    <div className="h-px bg-[var(--color-border)] mt-4" />
+                    <div className="h-3 bg-[var(--color-bg-elevated)] rounded w-full mt-3" />
+                    <div className="h-3 bg-[var(--color-bg-elevated)] rounded w-5/6" />
+                </div>
+            </div>
+        </div>
+    );
+}
+
+const CACHE_PREFIX = "pf-search:";
+
+function getCached(q: string): SearchResult | null {
+    try {
+        const raw = sessionStorage.getItem(CACHE_PREFIX + q.toLowerCase().trim());
+        return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
+}
+
+function setCached(q: string, data: SearchResult) {
+    try {
+        sessionStorage.setItem(CACHE_PREFIX + q.toLowerCase().trim(), JSON.stringify(data));
+    } catch { /* quota exceeded — ignore */ }
+}
+
 export function SearchBox() {
     const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
     const [query, setQuery] = useState("");
@@ -58,15 +91,28 @@ export function SearchBox() {
 
     const doSearch = async (q: string, isRefinement = false) => {
         if (!q.trim()) return;
-        setLoading(true);
         setError(null);
         setExpandedCard(null);
+
+        // Check session cache for non-refinement searches
+        if (!isRefinement) {
+            const cached = getCached(q);
+            if (cached) {
+                setResults(cached);
+                setMessages([
+                    { role: "user", content: q },
+                    { role: "assistant", content: JSON.stringify(cached) },
+                ]);
+                return;
+            }
+            setResults(null);
+        }
+
+        setLoading(true);
 
         const newMessages = isRefinement
             ? [...messages, { role: "user", content: q }]
             : [{ role: "user", content: q }];
-
-        if (!isRefinement) setResults(null);
 
         try {
             const res = await fetch("/api/search", {
@@ -74,10 +120,30 @@ export function SearchBox() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ messages: newMessages }),
             });
-            const data = await res.json();
-            if (!res.ok) { setError(data.error || "Search failed. Please try again."); return; }
+
+            if (!res.ok || !res.body) {
+                const errData = await res.json().catch(() => ({}));
+                setError((errData as { error?: string }).error || "Search failed. Please try again.");
+                return;
+            }
+
+            // Read the stream and accumulate text
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            let text = "";
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                text += decoder.decode(value, { stream: true });
+            }
+
+            const cleaned = text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+            const data: SearchResult = JSON.parse(cleaned);
+
             setResults(data);
             setMessages([...newMessages, { role: "assistant", content: JSON.stringify(data) }]);
+            if (!isRefinement) setCached(q, data);
         } catch {
             setError("Something went wrong. Please try again.");
         } finally {
@@ -153,12 +219,10 @@ export function SearchBox() {
                 </div>
             )}
 
-            {/* ── LOADING ── */}
+            {/* ── LOADING SKELETONS ── */}
             {loading && (
-                <div className="mt-16 text-center">
-                    <p className="text-sm font-medium text-[var(--color-surface-muted)] tracking-wide">
-                        Scanning Amazon for the best match...
-                    </p>
+                <div className="mt-10 space-y-5">
+                    {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
                 </div>
             )}
 
