@@ -5,39 +5,36 @@
   --font-display: "Plus Jakarta Sans", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", "Fira Code", monospace;
 
-  /* Premium Aurora & Glass Theme Colors */
-  --color-bg: #030305;
-  --color-bg-card: rgba(15, 15, 20, 0.5);
-  --color-bg-elevated: rgba(25, 25, 35, 0.6);
-  --color-bg-hover: rgba(40, 40, 60, 0.7);
-  --color-surface: #FFFFFF;
-  --color-surface-muted: #A0A0B0;
-  --color-surface-dim: #606070;
+  /* Light, conversion-focused palette */
+  --color-bg: #FFFFFF;
+  --color-bg-card: #F8FAFC;
+  --color-bg-elevated: #F1F5F9;
+  --color-bg-hover: #E8F0FE;
 
-  --color-accent: #00F0FF;
-  --color-accent-hover: #5CE1E6;
-  --color-accent-muted: rgba(0, 240, 255, 0.15);
-  
-  --color-purple: #B200FF;
-  --color-pink: #FF00A0;
+  --color-surface: #0F172A;
+  --color-surface-muted: #475569;
+  --color-surface-dim: #94A3B8;
 
-  --color-success: #00FF85;
-  --color-success-muted: rgba(0, 255, 133, 0.15);
-  --color-warning: #FFB800;
-  --color-warning-muted: rgba(255, 184, 0, 0.15);
-  --color-danger: #FF2A2A;
+  /* Warm orange — drives action, urgency, purchases */
+  --color-accent: #F97316;
+  --color-accent-hover: #EA580C;
+  --color-accent-muted: rgba(249, 115, 22, 0.12);
+
+  --color-success: #16A34A;
+  --color-success-muted: rgba(22, 163, 74, 0.1);
+  --color-warning: #D97706;
+  --color-warning-muted: rgba(217, 119, 6, 0.1);
+  --color-danger: #DC2626;
 
   --color-amazon: #FF9900;
-  --color-amazon-hover: #FFB340;
+  --color-amazon-hover: #E68900;
 
-  --color-border: rgba(255, 255, 255, 0.06);
-  --color-border-strong: rgba(255, 255, 255, 0.12);
+  --color-border: #E2E8F0;
+  --color-border-strong: #CBD5E1;
 
-  --color-badge-editor: #8B5CF6;
-  --color-badge-best: #3B82F6;
-  --color-badge-popular: #EC4899;
-  --color-badge-value: #22C55E;
-  --color-badge-gift: #F59E0B;
+  --color-badge-best: #2563EB;
+  --color-badge-popular: #DB2777;
+  --color-badge-value: #16A34A;
 }
 
 /* ============================================
@@ -65,152 +62,104 @@ body {
    SCROLLBAR
    ============================================ */
 
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--color-border-strong);
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-surface-dim);
-}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border-strong); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-surface-dim); }
 
 /* ============================================
    ANIMATIONS
    ============================================ */
 
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fadeIn {
   from { opacity: 0; }
-  to { opacity: 1; }
+  to   { opacity: 1; }
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
 }
 
-@keyframes pulse-soft {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
-}
+.animate-fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
+.animate-fade-in    { animation: fadeIn  0.4s ease-out forwards; }
 
-@keyframes aurora {
-  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-  25% { transform: translate(-5%, 5%) scale(1.05) rotate(5deg); }
-  50% { transform: translate(5%, -5%) scale(1.1) rotate(-5deg); }
-  75% { transform: translate(5%, 5%) scale(1.05) rotate(5deg); }
-  100% { transform: translate(0, 0) scale(1) rotate(0deg); }
-}
-
-@keyframes gradient-xy {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.4s ease-out forwards;
-}
-
-.animate-aurora {
-  animation: aurora 20s infinite alternate ease-in-out;
-}
-
-.animate-gradient-xy {
-  background-size: 200% 200%;
-  animation: gradient-xy 6s ease infinite;
-}
-
-.stagger-1 { animation-delay: 0.1s; }
-.stagger-2 { animation-delay: 0.2s; }
-.stagger-3 { animation-delay: 0.3s; }
-.stagger-4 { animation-delay: 0.4s; }
-.stagger-5 { animation-delay: 0.5s; }
-.stagger-6 { animation-delay: 0.6s; }
+.stagger-1 { animation-delay: 0.08s; }
+.stagger-2 { animation-delay: 0.16s; }
+.stagger-3 { animation-delay: 0.24s; }
+.stagger-4 { animation-delay: 0.32s; }
 
 /* ============================================
    UTILITY CLASSES
    ============================================ */
 
 .glass {
-  background: rgba(15, 15, 22, 0.4);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
 .card {
-  background: var(--color-bg-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
   border-radius: 16px;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  transition: all 0.25s ease;
 }
 
 .card:hover {
-  border-color: rgba(255, 255, 255, 0.15);
-  background: var(--color-bg-elevated);
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0, 240, 255, 0.1), 0 0 20px rgba(178, 0, 255, 0.05);
+  border-color: var(--color-border-strong);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
 }
 
+/* Orange "Buy" button — primary conversion CTA */
 .btn-amazon {
   background: var(--color-amazon);
   color: #111;
   font-weight: 700;
-  padding: 12px 24px;
-  border-radius: 12px;
+  padding: 11px 22px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.btn-amazon:hover {
+  background: var(--color-amazon-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(255, 153, 0, 0.35);
+}
+
+.btn-primary {
+  background: var(--color-accent);
+  color: white;
+  font-weight: 700;
+  padding: 12px 28px;
+  border-radius: 10px;
   transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
   gap: 8px;
   text-decoration: none;
   font-size: 15px;
-}
-
-.btn-amazon:hover {
-  background: var(--color-amazon-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(255, 153, 0, 0.3);
-}
-
-.btn-primary {
-  background: var(--color-accent);
-  color: white;
-  font-weight: 600;
-  padding: 10px 20px;
-  border-radius: 10px;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.3);
 }
 
 .btn-primary:hover {
   background: var(--color-accent-hover);
   transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
 }
 
 .badge {
@@ -224,35 +173,21 @@ body {
   text-transform: uppercase;
 }
 
-.text-gradient {
-  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-purple) 50%, var(--color-pink) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
 .section-heading {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 5vw, 4rem);
+  font-size: clamp(2rem, 5vw, 3.5rem);
   font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 1.05;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--color-surface);
 }
 
 .section-sub {
   color: var(--color-surface-muted);
   font-size: clamp(1rem, 2vw, 1.125rem);
   line-height: 1.6;
-  max-width: 640px;
+  max-width: 600px;
 }
 
-/* Noise overlay */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  pointer-events: none;
-  opacity: 0.03;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
+/* Accent text */
+.text-accent { color: var(--color-accent); }
