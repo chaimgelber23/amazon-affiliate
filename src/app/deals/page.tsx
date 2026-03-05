@@ -82,7 +82,7 @@ export default function DealsPage() {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             .on('postgres_changes' as any, { event: 'UPDATE', schema: 'public', table: 'external_deals' }, (payload: any) => {
                 const updated = payload.new as ExternalDeal;
-                if (updated.status === 'expired') setDeals(prev => prev.filter(d => d.asin !== updated.asin));
+                setDeals(prev => prev.map(d => d.asin === updated.asin ? updated : d));
             })
             .subscribe();
 

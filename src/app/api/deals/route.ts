@@ -18,7 +18,7 @@ export async function GET(req: Request) {
     const { data, error } = await supabase
         .from('external_deals')
         .select('*')
-        .eq('status', 'live')
+        .in('status', ['live', 'expired'])
         .gte('posted_at', since.toISOString())
         .order('posted_at', { ascending: false })
         .limit(limit);
@@ -34,7 +34,7 @@ export async function GET(req: Request) {
         const { data: fallback } = await supabase
             .from('external_deals')
             .select('*')
-            .eq('status', 'live')
+            .in('status', ['live', 'expired'])
             .order('posted_at', { ascending: false })
             .limit(limit);
 
