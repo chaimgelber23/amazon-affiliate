@@ -16,7 +16,7 @@ export async function POST(req: Request) {
         }
 
         const { text } = await generateText({
-            model: google("gemini-2.0-flash"),
+            model: google("gemini-2.5-flash-lite"),
             system: `You are PureFind's product recommendation engine. Your job is to cut through Amazon's SEO noise and find the genuinely best products.
 
 RULES:
