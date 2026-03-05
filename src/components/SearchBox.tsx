@@ -7,6 +7,7 @@ interface Product {
     rank: number;
     title: string;
     asin: string;
+    imageUrl?: string;
     whyThisPick: string;
     pros: string[];
     cons: string[];
@@ -29,20 +30,20 @@ const EXAMPLE_SEARCHES = [
     "Running shoes for flat feet",
 ];
 
-function ProductImage({ asin, title }: { asin: string; title: string }) {
+function ProductImage({ imageUrl, title }: { imageUrl?: string; title: string }) {
     const [errored, setErrored] = useState(false);
 
-    if (asin === "SEARCH" || errored) {
+    if (!imageUrl || errored) {
         return (
-            <div className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 rounded-xl bg-[var(--color-bg-elevated)] border border-[var(--color-border)]" />
+            <div className="w-20 h-20 sm:w-28 sm:h-28 flex-shrink-0 rounded-xl bg-[var(--color-bg-elevated)] border border-[var(--color-border)]" />
         );
     }
 
     return (
         <img
-            src={`https://m.media-amazon.com/images/P/${asin}.01._SX300_SCLZZZZZZZ_.jpg`}
+            src={imageUrl}
             alt={title}
-            className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 rounded-xl object-contain bg-white border border-[var(--color-border)]"
+            className="w-20 h-20 sm:w-28 sm:h-28 flex-shrink-0 rounded-xl object-contain bg-white border border-[var(--color-border)] p-1"
             onError={() => setErrored(true)}
         />
     );
@@ -95,22 +96,23 @@ export function SearchBox() {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (results) {
-            handleSearch(query, true);
-        } else {
-            handleSearch(query, false);
-        }
+        handleSearch(query, !!results);
     };
 
     return (
         <div className="w-full max-w-3xl mx-auto">
 
-            {/* Search Input — always visible */}
+            {/* Search / Refine bar — always at top */}
             <form onSubmit={handleSubmit} className="w-full">
+                {results && !loading && (
+                    <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-accent)] mb-2 text-left">
+                        Refine your results
+                    </p>
+                )}
                 <div className="flex items-center bg-white border-2 border-[var(--color-border)] focus-within:border-[var(--color-accent)] rounded-2xl overflow-hidden transition-colors shadow-sm">
                     <input
                         className="w-full bg-transparent text-[var(--color-surface)] placeholder-[var(--color-surface-dim)] px-6 py-5 focus:outline-none text-lg font-medium"
-                        placeholder="What are you looking for?"
+                        placeholder={results ? "Refine results — e.g. \"make it cheaper\" or \"needs to be wireless\"" : "What are you looking for?"}
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         disabled={loading}
@@ -124,6 +126,18 @@ export function SearchBox() {
                         {loading ? "Searching..." : results ? "Refine" : "Find"}
                     </button>
                 </div>
+                {results && !loading && (
+                    <p className="text-xs text-[var(--color-surface-dim)] mt-2 text-left">
+                        Type a follow-up above to narrow it down — or{" "}
+                        <button
+                            type="button"
+                            onClick={() => { setResults(null); setQuery(""); setMessages([]); setExpandedCard(null); }}
+                            className="text-[var(--color-accent)] hover:underline"
+                        >
+                            start a new search
+                        </button>
+                    </p>
+                )}
             </form>
 
             {/* Example searches — only when no results */}
@@ -159,7 +173,7 @@ export function SearchBox() {
 
             {/* Results */}
             {results && !loading && (
-                <div className="mt-10 animate-fade-in-up">
+                <div className="mt-8 animate-fade-in-up">
 
                     {/* Summary */}
                     <div className="mb-6">
@@ -178,10 +192,12 @@ export function SearchBox() {
                             >
                                 <div className="flex gap-4">
                                     {/* Product Image */}
-                                    <ProductImage asin={product.asin} title={product.title} />
+                                    <ProductImage imageUrl={product.imageUrl} title={product.title} />
 
                                     {/* Content */}
                                     <div className="flex-1 min-w-0">
+
+                                        {/* Header row: title + CTA */}
                                         <div className="flex items-start justify-between gap-3">
                                             <div className="min-w-0">
                                                 {product.rank === 1 && (
@@ -197,15 +213,11 @@ export function SearchBox() {
                                                         {product.priceEstimate}
                                                     </span>
                                                     <span className="text-xs text-[var(--color-surface-dim)]">
-                                                        {product.rating}/5
-                                                    </span>
-                                                    <span className="text-xs text-[var(--color-surface-dim)] hidden sm:inline">
-                                                        · {product.category}
+                                                        {product.rating}/5 · {product.category}
                                                     </span>
                                                 </div>
                                             </div>
 
-                                            {/* Amazon CTA */}
                                             <a
                                                 href={
                                                     product.asin === "SEARCH"
@@ -220,17 +232,22 @@ export function SearchBox() {
                                             </a>
                                         </div>
 
-                                        {/* Why this pick */}
-                                        <p className="mt-2.5 text-sm text-[var(--color-surface-muted)] leading-relaxed border-l-2 border-[var(--color-accent)] pl-3">
-                                            {product.whyThisPick}
-                                        </p>
+                                        {/* Why we picked it — prominently labeled */}
+                                        <div className="mt-3 bg-orange-50 border border-orange-100 rounded-lg px-3 py-2.5">
+                                            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-accent)] mb-1">
+                                                Why we picked it
+                                            </p>
+                                            <p className="text-sm text-[var(--color-surface-muted)] leading-relaxed">
+                                                {product.whyThisPick}
+                                            </p>
+                                        </div>
 
                                         {/* Pros / Cons toggle */}
                                         <button
                                             onClick={() => setExpandedCard(expandedCard === product.rank ? null : product.rank)}
                                             className="mt-2.5 text-xs text-[var(--color-accent)] hover:underline"
                                         >
-                                            {expandedCard === product.rank ? "Hide details" : "Show pros & cons"}
+                                            {expandedCard === product.rank ? "Hide pros & cons" : "Show pros & cons"}
                                         </button>
 
                                         {expandedCard === product.rank && (
@@ -257,16 +274,6 @@ export function SearchBox() {
                                 </div>
                             </div>
                         ))}
-                    </div>
-
-                    {/* New search */}
-                    <div className="mt-8 text-center">
-                        <button
-                            onClick={() => { setResults(null); setQuery(""); setMessages([]); setExpandedCard(null); }}
-                            className="text-sm text-[var(--color-surface-dim)] hover:text-[var(--color-accent)] transition-colors"
-                        >
-                            Start a new search
-                        </button>
                     </div>
                 </div>
             )}
