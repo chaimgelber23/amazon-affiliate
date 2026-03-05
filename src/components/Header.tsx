@@ -14,14 +14,14 @@ export function Header() {
     const [mobileOpen, setMobileOpen] = useState(false);
 
     return (
-        <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-[var(--color-bg)]/80 border-b border-[var(--color-border)]">
+        <header className="fixed top-0 left-0 right-0 z-50 glass border-t-0 border-l-0 border-r-0 border-b border-[rgba(255,255,255,0.05)] bg-[var(--color-bg)]/40 transition-all duration-300">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-2 group">
-                    <div className="w-8 h-8 rounded-lg bg-[var(--color-accent)] flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[var(--color-accent)] to-[var(--color-purple)] flex items-center justify-center shadow-[0_0_15px_rgba(0,240,255,0.4)] group-hover:scale-105 transition-transform duration-300">
                         <Zap className="w-4 h-4 text-white" />
                     </div>
-                    <span className="font-display font-bold text-lg tracking-tight">
+                    <span className="font-display font-bold text-xl tracking-tight text-white drop-shadow-[0_2px_10px_rgba(255,255,255,0.2)]">
                         Pure<span className="text-[var(--color-accent)]">Find</span>
                     </span>
                 </Link>

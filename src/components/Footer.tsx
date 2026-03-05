@@ -3,11 +3,11 @@ import { Zap } from "lucide-react";
 
 export function Footer() {
     return (
-        <footer className="border-t border-[var(--color-border)] bg-[var(--color-bg)]">
+        <footer className="border-t border-[rgba(255,255,255,0.05)] bg-[var(--color-bg)]/80 backdrop-blur-lg pt-4">
             {/* Affiliate Disclosure — LEGALLY REQUIRED */}
-            <div className="bg-[var(--color-bg-card)] border-b border-[var(--color-border)] px-4 py-3">
-                <p className="max-w-4xl mx-auto text-[10px] text-[var(--color-surface-dim)] text-center leading-relaxed">
-                    <strong>Affiliate Disclosure:</strong> PureFind is a participant in the Amazon
+            <div className="px-4 py-3 border-b border-[rgba(255,255,255,0.05)] bg-gradient-to-r from-transparent via-[rgba(255,255,255,0.03)] to-transparent">
+                <p className="max-w-4xl mx-auto text-[10px] text-[var(--color-surface-dim)] text-center leading-relaxed font-medium">
+                    <strong className="text-[var(--color-surface-muted)]">Affiliate Disclosure:</strong> PureFind is a participant in the Amazon
                     Services LLC Associates Program. When you click links on our site and make a
                     purchase, we may earn a commission at no extra cost to you. This helps us keep
                     the site running and free to use.
@@ -18,11 +18,11 @@ export function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
                     {/* Brand */}
                     <div>
-                        <Link href="/" className="flex items-center gap-2 mb-4">
-                            <div className="w-7 h-7 rounded-lg bg-[var(--color-accent)] flex items-center justify-center">
-                                <Zap className="w-3.5 h-3.5 text-white" />
+                        <Link href="/" className="flex items-center gap-2 mb-4 group">
+                            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[var(--color-accent)] to-[var(--color-purple)] flex items-center justify-center shadow-[0_0_15px_rgba(0,240,255,0.3)] group-hover:scale-105 transition-transform duration-300">
+                                <Zap className="w-4 h-4 text-white" />
                             </div>
-                            <span className="font-display font-bold text-base">
+                            <span className="font-display font-bold text-xl tracking-tight text-white">
                                 Pure<span className="text-[var(--color-accent)]">Find</span>
                             </span>
                         </Link>
