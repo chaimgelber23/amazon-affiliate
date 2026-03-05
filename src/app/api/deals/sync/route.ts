@@ -90,6 +90,7 @@ export async function POST(req: Request) {
                     sources: [sourceId],
                     status: 'live',
                     price,
+                    image_url: raw.imageUrl ?? null,
                     original_deal_url: raw.dealPageUrl || null,
                     posted_at: raw.publishedAt ?? now,
                     last_seen_at: now,

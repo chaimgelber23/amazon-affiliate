@@ -6,6 +6,7 @@ export interface RawDeal {
     contentHtml: string;   // full HTML/text content to scan for Amazon URLs
     dealPageUrl: string;   // link back to the source's deal post
     publishedAt?: string;
+    imageUrl?: string;
 }
 
 export interface DealSource {
@@ -40,4 +41,26 @@ export function extractPrice(title: string): string | undefined {
 export function buildAffiliateUrl(asin: string): string {
     const tag = process.env.NEXT_PUBLIC_AMAZON_TAG ?? 'purefind-20';
     return `https://www.amazon.com/dp/${asin}?tag=${tag}&linkCode=ll1`;
+}
+
+/** Extract og:image or first product image from page HTML */
+export function extractImage(html: string): string | undefined {
+    // og:image is most reliable
+    const og = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i)
+        ?? html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
+    if (og) return og[1];
+    return undefined;
+}
+
+/** Fetch a URL with a browser User-Agent, return HTML or empty string on error */
+export async function fetchHtml(url: string, timeoutMs = 8000): Promise<string> {
+    try {
+        const res = await fetch(url, {
+            headers: { 'User-Agent': 'Mozilla/5.0 (compatible; PureFindBot/1.0)' },
+            signal: AbortSignal.timeout(timeoutMs),
+        });
+        return res.ok ? await res.text() : '';
+    } catch {
+        return '';
+    }
 }
