@@ -240,7 +240,7 @@ export function SearchBox() {
                     <div className="mb-8">
                         <p className="font-semibold text-[var(--color-surface)]">{results.summary}</p>
                         <p className="text-xs text-[var(--color-surface-dim)] mt-1">
-                            {results.products.length} picks · Prices are estimates · All links go to Amazon
+                            {results.products.length} AI-powered picks · Prices are estimates — click to see current price on Amazon · All links are affiliate links
                         </p>
                     </div>
 
@@ -259,11 +259,16 @@ export function SearchBox() {
                                     <div className="flex-1 min-w-0">
 
                                         {/* Rank + Title */}
-                                        {product.rank === 1 && (
-                                            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-accent)] mb-1">
-                                                Top Pick
+                                        <div className="flex items-center gap-2 mb-1">
+                                            {product.rank === 1 && (
+                                                <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-accent)]">
+                                                    Top Pick
+                                                </p>
+                                            )}
+                                            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-surface-dim)]">
+                                                AI Pick
                                             </p>
-                                        )}
+                                        </div>
                                         <h3 className="font-bold text-[var(--color-surface)] text-base sm:text-lg leading-snug line-clamp-2">
                                             {product.title}
                                         </h3>

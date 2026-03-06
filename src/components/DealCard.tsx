@@ -71,6 +71,12 @@ export function DealCard({ deal, isNew }: DealCardProps) {
                     </span>
                 </div>
 
+                {deal.price && !isExpired && (
+                    <p className="text-[10px] text-[var(--color-surface-dim)] -mt-1">
+                        Price at time of posting — verify on Amazon
+                    </p>
+                )}
+
                 {isExpired ? (
                     <div className="flex items-center justify-center w-full text-xs py-2.5 rounded-xl bg-[var(--color-bg-elevated)] text-[var(--color-surface-dim)] font-medium">
                         Deal ended

@@ -8,6 +8,7 @@ export function Footer() {
             <div className="border-b border-[var(--color-border)] px-6 py-3">
                 <p className="max-w-4xl mx-auto text-[11px] text-[var(--color-surface-dim)] text-center leading-relaxed">
                     <strong className="text-[var(--color-surface-muted)]">Affiliate Disclosure:</strong>{" "}
+                    As an Amazon Associate I earn from qualifying purchases.
                     PureFind earns a small commission when you buy through our links, at no extra cost to you.
                     We are a participant in the Amazon Services LLC Associates Program.
                 </p>
