@@ -81,3 +81,82 @@ export async function followRedirect(url: string, timeoutMs = 6000): Promise<str
         return url;
     }
 }
+
+// ── Generic Shopify deal site adapter ─────────────────────────────────────────
+// Most deal aggregator sites run on Shopify. This factory handles all of them:
+// 1. Fetch /products.json for the full product list
+// 2. Check body_html for Amazon URLs (fast — no extra request)
+// 3. If not found, fetch the product page and scan all HTML for amazon.com URLs
+//    (this catches JS variables like `var amazonLink = '...'` in the page source)
+//
+// Adding a new Shopify deal site = one call to createShopifySource() in index.ts
+
+interface ShopifyProduct {
+    title: string;
+    body_html: string;
+    handle: string;
+    images: { src: string }[];
+}
+
+async function fetchShopifyProducts(baseUrl: string, limit: number): Promise<ShopifyProduct[]> {
+    try {
+        const res = await fetch(`${baseUrl}/products.json?limit=${limit}`, {
+            headers: { 'User-Agent': CHROME_UA },
+            signal: AbortSignal.timeout(10000),
+        });
+        if (!res.ok) return [];
+        const json = await res.json() as { products: ShopifyProduct[] };
+        return json.products ?? [];
+    } catch {
+        return [];
+    }
+}
+
+export function createShopifySource(config: {
+    id: string;
+    displayName: string;
+    baseUrl: string;
+    /** Max products to scan per sync (default 30) */
+    limit?: number;
+}): DealSource {
+    return {
+        id: config.id,
+        displayName: config.displayName,
+
+        async fetch(): Promise<RawDeal[]> {
+            const products = await fetchShopifyProducts(config.baseUrl, config.limit ?? 30);
+            const deals: RawDeal[] = [];
+            const CHUNK = 6;
+
+            for (let i = 0; i < products.length; i += CHUNK) {
+                const chunk = products.slice(i, i + CHUNK);
+                const found = await Promise.all(chunk.map(async (product): Promise<RawDeal | null> => {
+                    const dealPageUrl = `${config.baseUrl}/products/${product.handle}`;
+
+                    // Strategy 1: Amazon URL in body_html (no extra request)
+                    let amazonUrl = extractAmazonUrl(product.body_html ?? '');
+
+                    // Strategy 2: Fetch product page, scan all HTML
+                    // Catches JS vars like: var amazonLink = 'https://amazon.com/...'
+                    if (!amazonUrl) {
+                        const pageHtml = await fetchHtml(dealPageUrl);
+                        amazonUrl = extractAmazonUrl(pageHtml);
+                    }
+
+                    if (!amazonUrl) return null;
+
+                    return {
+                        title: product.title,
+                        contentHtml: amazonUrl, // sync route calls extractAmazonUrl(contentHtml)
+                        dealPageUrl,
+                        imageUrl: product.images?.[0]?.src,
+                    };
+                }));
+
+                for (const r of found) if (r) deals.push(r);
+            }
+
+            return deals;
+        },
+    };
+}
