@@ -42,7 +42,7 @@ function ProductImage({ asin, title }: { asin: string; title: string }) {
             alt={title}
             width={144}
             height={144}
-            className="w-28 h-28 sm:w-36 sm:h-36 flex-shrink-0 rounded-2xl object-contain bg-white border border-[var(--color-border)] p-2"
+            className="w-28 h-28 sm:w-36 sm:h-36 flex-shrink-0 rounded-2xl object-contain bg-white border border-[var(--color-border)] p-2 shadow-sm"
             onError={() => setErrored(true)}
         />
     );
@@ -50,16 +50,16 @@ function ProductImage({ asin, title }: { asin: string; title: string }) {
 
 function SkeletonCard() {
     return (
-        <div className="bg-[var(--color-bg-card)] rounded-2xl p-6 sm:p-7 animate-pulse">
+        <div className="product-card p-6 sm:p-7 shimmer-bg">
             <div className="flex gap-5 sm:gap-7">
-                <div className="w-28 h-28 sm:w-36 sm:h-36 flex-shrink-0 rounded-2xl bg-[var(--color-bg-elevated)]" />
-                <div className="flex-1 space-y-3">
-                    <div className="h-3 bg-[var(--color-bg-elevated)] rounded w-1/4" />
-                    <div className="h-5 bg-[var(--color-bg-elevated)] rounded w-3/4" />
-                    <div className="h-4 bg-[var(--color-bg-elevated)] rounded w-1/3 mt-1" />
-                    <div className="h-px bg-[var(--color-border)] mt-4" />
-                    <div className="h-3 bg-[var(--color-bg-elevated)] rounded w-full mt-3" />
-                    <div className="h-3 bg-[var(--color-bg-elevated)] rounded w-5/6" />
+                <div className="w-28 h-28 sm:w-36 sm:h-36 flex-shrink-0 rounded-2xl bg-slate-200/50" />
+                <div className="flex-1 space-y-4 py-2">
+                    <div className="h-4 bg-slate-200/50 rounded-full w-1/4" />
+                    <div className="h-6 bg-slate-200/50 rounded-full w-3/4" />
+                    <div className="h-5 bg-slate-200/50 rounded-full w-1/3 mt-2" />
+                    <div className="h-px bg-[var(--color-border)] mt-5 mb-2" />
+                    <div className="h-4 bg-slate-200/50 rounded-full w-full" />
+                    <div className="h-4 bg-slate-200/50 rounded-full w-5/6" />
                 </div>
             </div>
         </div>
@@ -162,20 +162,24 @@ export function SearchBox() {
             : buildAffiliateUrl(p.asin);
 
     return (
-        <div className="w-full max-w-3xl mx-auto">
+        <div className="w-full max-w-3xl mx-auto relative z-20">
 
-            {/* ── SEARCH BAR ── always at top */}
-            <form onSubmit={handleSubmit}>
+            {/* ── SEARCH BAR ── */}
+            <form onSubmit={handleSubmit} className="relative group">
                 {results && !loading && (
-                    <p className="text-[11px] font-bold uppercase tracking-widest text-[var(--color-accent)] mb-2">
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-[var(--color-accent)] mb-3">
                         Refine your results
                     </p>
                 )}
-                <div className="flex items-center bg-[var(--color-bg-card)] border-2 border-[var(--color-border)] focus-within:border-[var(--color-accent)] rounded-2xl overflow-hidden transition-colors shadow-sm">
+
+                {/* The glowing border effect on focus */}
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-[var(--color-accent)] to-purple-500 rounded-[28px] opacity-0 group-focus-within:opacity-100 blur transition duration-500 group-focus-within:duration-200" />
+
+                <div className="relative flex items-center bg-white/90 backdrop-blur-3xl border border-[var(--color-border-strong)] rounded-[26px] overflow-hidden transition-all shadow-xl shadow-slate-200/50">
                     <input
-                        className="w-full bg-transparent text-[var(--color-surface)] placeholder-[var(--color-surface-dim)] px-6 py-5 focus:outline-none text-lg font-medium"
+                        className="w-full bg-transparent text-[var(--color-surface)] placeholder-[var(--color-surface-dim)] px-8 py-6 focus:outline-none text-xl font-semibold"
                         placeholder={results
-                            ? "Narrow it down — e.g. \"under $100\" or \"needs to be wireless\""
+                            ? "Narrow it down — e.g. \"under $100\" or \"wireless\""
                             : "What are you looking for?"}
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
@@ -185,18 +189,18 @@ export function SearchBox() {
                     <button
                         type="submit"
                         disabled={loading || !query.trim()}
-                        className="btn-primary mx-3 py-3 px-7 text-sm disabled:opacity-40 whitespace-nowrap"
+                        className="btn-primary mx-3 py-4 px-8 text-base disabled:opacity-50 whitespace-nowrap shadow-md"
                     >
-                        {loading ? "Searching..." : results ? "Refine" : "Find"}
+                        {loading ? "Searching..." : results ? "Refine" : "Find Specs"}
                     </button>
                 </div>
                 {results && !loading && (
-                    <p className="text-xs text-[var(--color-surface-dim)] mt-2">
+                    <p className="text-xs font-semibold text-[var(--color-surface-dim)] mt-4">
                         Type above to narrow down · or{" "}
                         <button
                             type="button"
                             onClick={() => { setResults(null); setQuery(""); setMessages([]); setExpandedCard(null); }}
-                            className="text-[var(--color-accent)] hover:underline"
+                            className="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] hover:underline transition-colors"
                         >
                             start fresh
                         </button>
@@ -204,14 +208,14 @@ export function SearchBox() {
                 )}
             </form>
 
-            {/* ── EXAMPLES ── only on empty state */}
+            {/* ── EXAMPLES ── */}
             {!results && !loading && (
-                <div className="mt-5 flex flex-wrap justify-center gap-x-6 gap-y-2">
-                    {EXAMPLES.map((ex) => (
+                <div className="mt-8 flex flex-wrap justify-center gap-x-4 gap-y-3">
+                    {EXAMPLES.map((ex, i) => (
                         <button
                             key={ex}
                             onClick={() => { setQuery(ex); doSearch(ex); }}
-                            className="text-xs text-[var(--color-surface-dim)] hover:text-[var(--color-accent)] transition-colors"
+                            className={`px-4 py-2 rounded-full glass text-xs font-medium text-[var(--color-surface-muted)] hover:text-[var(--color-accent)] hover:bg-white transition-all animate-fade-in-up stagger-${(i % 4) + 1}`}
                         >
                             {ex}
                         </button>
@@ -221,120 +225,123 @@ export function SearchBox() {
 
             {/* ── LOADING SKELETONS ── */}
             {loading && (
-                <div className="mt-10 space-y-5">
-                    {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
+                <div className="mt-12 space-y-6 animate-fade-in">
+                    {Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)}
                 </div>
             )}
 
             {/* ── ERROR ── */}
             {error && !loading && (
-                <div className="mt-6 p-5 bg-red-50 border border-red-200 rounded-xl text-center">
-                    <p className="text-red-600 text-sm font-medium">{error}</p>
+                <div className="mt-8 p-6 bg-red-50/80 backdrop-blur-md border border-red-200 rounded-3xl text-center shadow-sm">
+                    <p className="text-red-600 text-sm font-semibold">{error}</p>
                 </div>
             )}
 
             {/* ── RESULTS ── */}
             {results && !loading && (
-                <div className="mt-10 animate-fade-in-up">
-
-                    <div className="mb-8">
-                        <p className="font-semibold text-[var(--color-surface)]">{results.summary}</p>
-                        <p className="text-xs text-[var(--color-surface-dim)] mt-1">
-                            {results.products.length} AI-powered picks · Prices are estimates — click to see current price on Amazon · All links are affiliate links
+                <div className="mt-12 animate-fade-in-up">
+                    <div className="mb-10 text-left pl-2 text-center sm:text-left">
+                        <p className="text-xl font-bold text-[var(--color-surface)] leading-relaxed">{results.summary}</p>
+                        <p className="text-sm font-medium text-[var(--color-surface-dim)] mt-3">
+                            {results.products.length} AI-verified recommendations · Prices are estimates
                         </p>
                     </div>
 
-                    <div className="space-y-5">
+                    <div className="space-y-6">
                         {results.products.map((product) => (
                             <article
                                 key={product.rank}
-                                className="bg-[var(--color-bg-card)] rounded-2xl p-6 sm:p-7 product-card cursor-pointer"
+                                className="product-card p-6 sm:p-8 cursor-pointer relative overflow-hidden"
                             >
-                                <div className="flex gap-5 sm:gap-7">
+                                {/* Subtle rank watermark */}
+                                <div className="absolute -top-10 -right-4 text-[120px] font-black text-slate-100/50 select-none pointer-events-none z-0">
+                                    #{product.rank}
+                                </div>
 
+                                <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 relative z-10">
                                     {/* Image */}
                                     <ProductImage asin={product.asin} title={product.title} />
 
                                     {/* Body */}
                                     <div className="flex-1 min-w-0">
-
                                         {/* Rank + Title */}
-                                        <div className="flex items-center gap-2 mb-1">
+                                        <div className="flex items-center gap-3 mb-2">
                                             {product.rank === 1 && (
-                                                <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-accent)]">
+                                                <span className="px-3 py-1 bg-[var(--color-accent-muted)] text-[var(--color-accent)] text-xs font-black uppercase tracking-widest rounded-md">
                                                     Top Pick
-                                                </p>
+                                                </span>
                                             )}
-                                            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-surface-dim)]">
-                                                AI Pick
-                                            </p>
                                         </div>
-                                        <h3 className="font-bold text-[var(--color-surface)] text-base sm:text-lg leading-snug line-clamp-2">
+                                        <h3 className="font-bold text-[var(--color-surface)] text-lg sm:text-xl leading-snug">
                                             {product.title}
                                         </h3>
 
                                         {/* Price + meta */}
-                                        <div className="flex flex-wrap items-baseline gap-3 mt-2">
-                                            <span className="text-xl sm:text-2xl font-bold text-[var(--color-surface)]">
+                                        <div className="flex flex-wrap items-baseline gap-4 mt-3">
+                                            <span className="text-2xl sm:text-3xl font-black text-[var(--color-surface)]">
                                                 {product.priceEstimate}
                                             </span>
-                                            <span className="text-xs text-[var(--color-surface-dim)]">
-                                                {product.rating}/5 · {product.category}
+                                            <span className="text-sm font-semibold text-[var(--color-surface-dim)] flex items-center gap-1.5">
+                                                <span className="text-amber-400 text-base">★</span> {product.rating}/5
+                                                <span className="mx-1">·</span> {product.category}
                                             </span>
                                         </div>
 
                                         {/* Why we picked it */}
-                                        <div className="mt-4 pt-4 border-t border-[var(--color-border)]">
-                                            <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-surface-dim)] mb-1.5">
+                                        <div className="mt-6 pt-5 border-t border-[var(--color-border)]">
+                                            <p className="text-[11px] font-black uppercase tracking-[0.15em] text-[var(--color-accent)] mb-2">
                                                 Why we picked it
                                             </p>
-                                            <p className="text-sm text-[var(--color-surface-muted)] leading-relaxed">
+                                            <p className="text-base text-[var(--color-surface-muted)] leading-relaxed font-medium">
                                                 {product.whyThisPick}
                                             </p>
                                         </div>
 
                                         {/* Footer row */}
-                                        <div className="flex items-center justify-between mt-5">
+                                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
                                             <button
-                                                onClick={() => setExpandedCard(expandedCard === product.rank ? null : product.rank)}
-                                                className="text-xs text-[var(--color-accent)] hover:underline"
+                                                onClick={(e) => { e.stopPropagation(); setExpandedCard(expandedCard === product.rank ? null : product.rank); }}
+                                                className="w-full sm:w-auto btn-secondary text-sm py-3"
                                             >
-                                                {expandedCard === product.rank ? "Hide pros & cons" : "Show pros & cons"}
+                                                {expandedCard === product.rank ? "Hide deep dive" : "Show pros & cons"}
                                             </button>
 
                                             <a
                                                 href={amazonHref(product)}
                                                 target="_blank"
                                                 rel="noopener noreferrer nofollow sponsored"
-                                                className="btn-amazon text-xs py-2.5 px-5"
+                                                className="w-full sm:w-auto btn-amazon text-sm py-3 px-8"
+                                                onClick={(e) => e.stopPropagation()}
                                             >
-                                                View on Amazon
+                                                Check Amazon Price
                                             </a>
                                         </div>
 
                                         {/* Pros / Cons */}
                                         {expandedCard === product.rank && (
-                                            <div className="mt-4 pt-4 border-t border-[var(--color-border)] grid grid-cols-2 gap-5 animate-fade-in">
-                                                <div>
-                                                    <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-success)] mb-2">
-                                                        Pros
+                                            <div className="mt-6 pt-6 border-t border-[var(--color-border)] grid grid-cols-1 sm:grid-cols-2 gap-8 animate-fade-in">
+                                                <div className="bg-emerald-50/50 p-5 rounded-2xl border border-emerald-100/50">
+                                                    <p className="text-xs font-black uppercase tracking-widest text-[var(--color-success)] mb-3 flex items-center gap-2">
+                                                        <span>✓</span> Advantages
                                                     </p>
-                                                    <ul className="space-y-1.5">
+                                                    <ul className="space-y-2.5">
                                                         {product.pros.map((pro, i) => (
-                                                            <li key={i} className="text-xs text-[var(--color-surface-muted)]">
-                                                                + {pro}
+                                                            <li key={i} className="text-sm font-medium text-[var(--color-surface-muted)] flex items-start gap-2">
+                                                                <span className="text-emerald-500 mt-0.5">•</span>
+                                                                {pro}
                                                             </li>
                                                         ))}
                                                     </ul>
                                                 </div>
-                                                <div>
-                                                    <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-danger)] mb-2">
-                                                        Cons
+                                                <div className="bg-red-50/50 p-5 rounded-2xl border border-red-100/50">
+                                                    <p className="text-xs font-black uppercase tracking-widest text-[var(--color-danger)] mb-3 flex items-center gap-2">
+                                                        <span>✕</span> Drawbacks
                                                     </p>
-                                                    <ul className="space-y-1.5">
+                                                    <ul className="space-y-2.5">
                                                         {product.cons.map((con, i) => (
-                                                            <li key={i} className="text-xs text-[var(--color-surface-muted)]">
-                                                                - {con}
+                                                            <li key={i} className="text-sm font-medium text-[var(--color-surface-muted)] flex items-start gap-2">
+                                                                <span className="text-red-400 mt-0.5">•</span>
+                                                                {con}
                                                             </li>
                                                         ))}
                                                     </ul>
