@@ -13,16 +13,16 @@ export function Header() {
 
     return (
         <>
-            {/* Floating navbar — Pro Max style: ultra frosted glass */}
+            {/* Floating navbar */}
             <header className="fixed top-4 left-4 right-4 z-50 bg-white/60 backdrop-blur-2xl rounded-[20px] shadow-sm border border-[var(--color-border-glass)] transition-all">
                 <div className="px-5 sm:px-8 h-16 flex items-center justify-between">
 
                     {/* Logo */}
-                    <Link href="/" className="flex items-baseline group pt-1">
-                        <span className="font-display text-2xl tracking-tight font-extrabold text-[var(--color-surface)] group-hover:opacity-80 transition-opacity duration-200">
+                    <Link href="/" className="flex items-center group gap-0">
+                        <span className="font-display text-[22px] font-black tracking-tight text-slate-900 group-hover:opacity-80 transition-opacity duration-200">
                             Pure
                         </span>
-                        <span className="font-display text-2xl tracking-tight font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-accent)] to-purple-500 group-hover:opacity-80 transition-opacity duration-200">
+                        <span className="font-display text-[22px] font-black tracking-tight text-gradient group-hover:opacity-80 transition-opacity duration-200">
                             Find
                         </span>
                     </Link>
@@ -38,10 +38,16 @@ export function Header() {
                                 {link.label}
                             </Link>
                         ))}
+
+                        {/* Live Deals — special CTA */}
                         <Link
                             href="/deals"
-                            className="text-[15px] font-bold text-white bg-[var(--color-accent-gradient)] hover:shadow-lg hover:shadow-indigo-500/20 px-6 py-2.5 rounded-xl transition-all duration-300 flex items-center"
+                            className="flex items-center gap-2 text-[15px] font-semibold text-[var(--color-surface-muted)] hover:text-[var(--color-surface)] transition-colors duration-200"
                         >
+                            <span className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                            </span>
                             Live Deals
                         </Link>
                     </nav>
@@ -72,9 +78,13 @@ export function Header() {
                         ))}
                         <Link
                             href="/deals"
-                            className="flex items-center justify-center text-[15px] font-bold text-white bg-[var(--color-accent-gradient)] shadow-md min-h-[44px] rounded-xl mt-4"
+                            className="flex items-center gap-2 text-[15px] font-bold text-[var(--color-surface-muted)] hover:text-[var(--color-surface)] min-h-[44px] transition-colors"
                             onClick={() => setMobileOpen(false)}
                         >
+                            <span className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                            </span>
                             Live Deals
                         </Link>
                     </nav>
