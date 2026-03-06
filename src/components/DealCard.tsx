@@ -12,6 +12,24 @@ function timeAgo(dateStr: string): string {
     return `${Math.floor(hrs / 24)}d ago`;
 }
 
+/** Extract discount string from deal title, e.g. "60% off" or "Save $30" */
+function extractDiscount(title: string): string | undefined {
+    const pct = title.match(/(\d+)%\s*off/i);
+    if (pct) return `${pct[1]}% off`;
+    const save = title.match(/save\s+\$?([\d,]+(?:\.\d{2})?)/i);
+    if (save) return `Save $${save[1]}`;
+    return undefined;
+}
+
+const SOURCE_LABELS: Record<string, string> = {
+    dansdeals:     'DansDeals',
+    pzdeals:       'PZDeals',
+    simplexdeals:  'SimplexDeals',
+    savecrazydeals:'SaveCrazyDeals',
+    kesefdeals:    'KesefDeals',
+    stundeals:     'StunDeals',
+};
+
 interface DealCardProps {
     deal: ExternalDeal;
     isNew?: boolean;
@@ -19,14 +37,23 @@ interface DealCardProps {
 
 export function DealCard({ deal, isNew }: DealCardProps) {
     const isExpired = deal.status === 'expired';
+    const discount  = extractDiscount(deal.title);
+    const sourceName = SOURCE_LABELS[deal.source] ?? deal.source;
 
     return (
         <div className={`bg-white border border-[var(--color-border)] rounded-2xl flex flex-col relative overflow-hidden group product-card cursor-pointer${isExpired ? ' opacity-60' : ''}`}>
 
-            {/* New badge */}
+            {/* New badge — top right */}
             {isNew && !isExpired && (
                 <span className="absolute top-2.5 right-2.5 z-10 text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-indigo-50 text-[var(--color-accent)] border border-indigo-200 animate-pulse">
                     New
+                </span>
+            )}
+
+            {/* Discount badge — top left */}
+            {discount && !isExpired && (
+                <span className="absolute top-2.5 left-2.5 z-10 text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">
+                    {discount}
                 </span>
             )}
 
@@ -55,7 +82,7 @@ export function DealCard({ deal, isNew }: DealCardProps) {
             </div>
 
             {/* Content */}
-            <div className="p-4 flex flex-col gap-3 flex-1">
+            <div className="p-4 flex flex-col gap-2 flex-1">
                 <h3 className="text-sm font-semibold text-[var(--color-surface)] leading-snug line-clamp-3">
                     {deal.title}
                 </h3>
@@ -76,6 +103,11 @@ export function DealCard({ deal, isNew }: DealCardProps) {
                         Price at time of posting — verify on Amazon
                     </p>
                 )}
+
+                {/* Source tag */}
+                <p className="text-[10px] text-[var(--color-surface-dim)]">
+                    via {sourceName}
+                </p>
 
                 {isExpired ? (
                     <div className="flex items-center justify-center w-full text-xs py-2.5 rounded-xl bg-[var(--color-bg-elevated)] text-[var(--color-surface-dim)] font-medium">

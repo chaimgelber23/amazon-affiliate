@@ -5,7 +5,29 @@ import { createClient } from '@supabase/supabase-js';
 import { DealCard } from '@/components/DealCard';
 import type { ExternalDeal } from '@/lib/types';
 
-// ── helpers ──────────────────────────────────────────────────────────────────
+// ── category detection ────────────────────────────────────────────────────────
+
+function guessCategory(title: string): string {
+    const t = title.toLowerCase();
+    if (/headphone|earphone|earbud|airpod|soundbar|bose|sony wh|jbl|speaker.*bluetooth|bluetooth.*speaker/.test(t)) return 'Audio';
+    if (/\btv\b|television|oled|qled|monitor|display|projector/.test(t)) return 'TV & Display';
+    if (/laptop|macbook|chromebook|surface pro|notebook.*computer/.test(t)) return 'Computers';
+    if (/iphone|android|smartphone|\bphone\b|power bank|usb.c|charging cable/.test(t)) return 'Phones';
+    if (/camera|mirrorless|dslr|gopro|lens\b|tripod|drone|ring light/.test(t)) return 'Camera';
+    if (/\btablet\b|ipad|e.?reader/.test(t)) return 'Tablets';
+    if (/air fryer|instant pot|coffee maker|coffee machine|blender|food processor|cookware|\bknife\b|\bpan\b|\bpot\b|toaster|waffle maker|espresso|microwave/.test(t)) return 'Kitchen';
+    if (/vacuum|robot mop|laundry|detergent|\bbed\b|pillow|mattress|bedsheet|towel|shower|bath|furniture|\blamp\b|light bulb|humidifier/.test(t)) return 'Home';
+    if (/\btoy\b|lego|\bboard game\b|puzzle|action figure|playset|children|kids.*game/.test(t)) return 'Toys';
+    if (/\bshirt\b|\bpants\b|\bdress\b|\bshoes\b|sneaker|jacket|hoodie|\bsocks\b|clothing|apparel/.test(t)) return 'Clothing';
+    if (/vitamin|supplement|protein powder|fitness|yoga mat|dumbbell|treadmill|exercise bike|weight/.test(t)) return 'Sports & Health';
+    if (/skincare|shampoo|conditioner|makeup|lipstick|moisturizer|serum|perfume|cologne|sunscreen/.test(t)) return 'Beauty';
+    if (/baby|diaper|stroller|car seat|infant|toddler/.test(t)) return 'Baby';
+    if (/\bdrill\b|\bsaw\b|wrench|garden hose|lawn mower|shovel|tool set/.test(t)) return 'Tools';
+    if (/office|desk|office chair|printer|backpack|school supply/.test(t)) return 'Office';
+    return 'Other';
+}
+
+// ── helpers ───────────────────────────────────────────────────────────────────
 
 function getDayKey(deal: ExternalDeal): string {
     return new Date(deal.posted_at).toDateString();
@@ -25,13 +47,14 @@ function dayLabel(dateStr: string): string {
 // ── component ─────────────────────────────────────────────────────────────────
 
 export default function DealsPage() {
-    const [deals, setDeals]         = useState<ExternalDeal[]>([]);
-    const [newAsins, setNewAsins]   = useState<Set<string>>(new Set());
-    const [loading, setLoading]     = useState(true);
-    const [error, setError]         = useState<string | null>(null);
-    const [fallback, setFallback]   = useState(false);
-    const [query, setQuery]         = useState('');
-    const [openDays, setOpenDays]   = useState<Set<string>>(new Set());
+    const [deals, setDeals]                   = useState<ExternalDeal[]>([]);
+    const [newAsins, setNewAsins]             = useState<Set<string>>(new Set());
+    const [loading, setLoading]               = useState(true);
+    const [error, setError]                   = useState<string | null>(null);
+    const [fallback, setFallback]             = useState(false);
+    const [query, setQuery]                   = useState('');
+    const [activeCategory, setActiveCategory] = useState('All');
+    const [openDays, setOpenDays]             = useState<Set<string>>(new Set());
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const supabaseRef = useRef<any>(null);
 
@@ -47,7 +70,6 @@ export default function DealsPage() {
                 const all: ExternalDeal[] = data.deals ?? [];
                 setDeals(all);
                 setFallback(data.fallback ?? false);
-                // Open the most recent day by default
                 if (all.length > 0) setOpenDays(new Set([getDayKey(all[0])]));
             } catch (e) {
                 setError(e instanceof Error ? e.message : 'Failed to load deals');
@@ -75,7 +97,6 @@ export default function DealsPage() {
                 const d = payload.new as ExternalDeal;
                 setDeals(prev => [d, ...prev]);
                 setNewAsins(prev => new Set(prev).add(d.asin));
-                // Open today's section if it isn't already
                 setOpenDays(prev => new Set(prev).add(getDayKey(d)));
                 setTimeout(() => setNewAsins(prev => { const s = new Set(prev); s.delete(d.asin); return s; }), 30000);
             })
@@ -90,11 +111,37 @@ export default function DealsPage() {
     }, []);
 
     // ── derived state ─────────────────────────────────────────────────────────
+
+    // Category counts from all deals (unfiltered)
+    const categoryMap = useMemo(() => {
+        const m: Record<string, number> = { All: deals.length };
+        for (const d of deals) {
+            const cat = guessCategory(d.title);
+            m[cat] = (m[cat] ?? 0) + 1;
+        }
+        return m;
+    }, [deals]);
+
+    // Categories sorted by count descending
+    const sortedCategories = useMemo(() =>
+        Object.entries(categoryMap)
+            .filter(([cat]) => cat !== 'All')
+            .sort((a, b) => b[1] - a[1])
+            .map(([cat]) => cat),
+        [categoryMap]
+    );
+
     const filtered = useMemo(() => {
-        if (!query.trim()) return deals;
-        const q = query.toLowerCase();
-        return deals.filter(d => d.title.toLowerCase().includes(q));
-    }, [deals, query]);
+        let result = deals;
+        if (activeCategory !== 'All') {
+            result = result.filter(d => guessCategory(d.title) === activeCategory);
+        }
+        if (query.trim()) {
+            const q = query.toLowerCase();
+            result = result.filter(d => d.title.toLowerCase().includes(q));
+        }
+        return result;
+    }, [deals, query, activeCategory]);
 
     const grouped = useMemo(() => {
         const g: Record<string, ExternalDeal[]> = {};
@@ -138,7 +185,7 @@ export default function DealsPage() {
                 </div>
 
                 {/* ── Search bar ── */}
-                <div className="mb-10 max-w-xl mx-auto">
+                <div className="mb-5 max-w-xl mx-auto">
                     <div className="flex items-center bg-white border-2 border-[var(--color-border)] focus-within:border-[var(--color-accent)] rounded-2xl overflow-hidden transition-colors shadow-sm">
                         <input
                             className="w-full bg-transparent px-5 py-4 text-sm text-[var(--color-surface)] placeholder-[var(--color-surface-dim)] focus:outline-none"
@@ -161,6 +208,37 @@ export default function DealsPage() {
                         </p>
                     )}
                 </div>
+
+                {/* ── Category filter chips ── */}
+                {!loading && deals.length > 0 && (
+                    <div className="mb-8 overflow-x-auto pb-1">
+                        <div className="flex items-center gap-2 min-w-max">
+                            <button
+                                onClick={() => setActiveCategory('All')}
+                                className={`whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-bold transition-colors cursor-pointer ${
+                                    activeCategory === 'All'
+                                        ? 'bg-[var(--color-accent)] text-white'
+                                        : 'bg-[var(--color-bg-elevated)] text-[var(--color-surface-muted)] hover:bg-[var(--color-bg-hover)]'
+                                }`}
+                            >
+                                All <span className="opacity-60 font-semibold">{categoryMap['All']}</span>
+                            </button>
+                            {sortedCategories.map(cat => (
+                                <button
+                                    key={cat}
+                                    onClick={() => setActiveCategory(cat)}
+                                    className={`whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-bold transition-colors cursor-pointer ${
+                                        activeCategory === cat
+                                            ? 'bg-[var(--color-accent)] text-white'
+                                            : 'bg-[var(--color-bg-elevated)] text-[var(--color-surface-muted)] hover:bg-[var(--color-bg-hover)]'
+                                    }`}
+                                >
+                                    {cat} <span className="opacity-60 font-semibold">{categoryMap[cat]}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 {/* Loading skeletons */}
                 {loading && (
@@ -186,7 +264,7 @@ export default function DealsPage() {
                     </div>
                 )}
 
-                {/* Empty state (no deals at all) */}
+                {/* Empty state */}
                 {!loading && !error && deals.length === 0 && (
                     <div className="text-center py-24">
                         <p className="text-[var(--color-surface-muted)] text-sm">No deals yet — check back soon.</p>
@@ -194,17 +272,17 @@ export default function DealsPage() {
                     </div>
                 )}
 
-                {/* No search results */}
-                {!loading && query && filtered.length === 0 && deals.length > 0 && (
+                {/* No results for current filter */}
+                {!loading && filtered.length === 0 && deals.length > 0 && (
                     <div className="text-center py-16">
                         <p className="text-[var(--color-surface-muted)] text-sm">
-                            No deals matching &ldquo;{query}&rdquo;
+                            No deals{query ? ` for "${query}"` : ''}{activeCategory !== 'All' ? ` in ${activeCategory}` : ''}.
                         </p>
                         <button
-                            onClick={() => setQuery('')}
+                            onClick={() => { setQuery(''); setActiveCategory('All'); }}
                             className="text-[var(--color-accent)] text-xs mt-2 hover:underline cursor-pointer"
                         >
-                            Clear search
+                            Clear filters
                         </button>
                     </div>
                 )}
@@ -221,7 +299,6 @@ export default function DealsPage() {
 
                             return (
                                 <section key={dayKey}>
-                                    {/* Day header — clickable to expand/collapse */}
                                     <button
                                         onClick={() => toggleDay(dayKey)}
                                         className="w-full flex items-center justify-between pb-3 border-b border-[var(--color-border)] mb-5 group cursor-pointer"
@@ -251,7 +328,6 @@ export default function DealsPage() {
                                         </div>
                                     </button>
 
-                                    {/* Deal grid — hidden when collapsed */}
                                     {isOpen && (
                                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 animate-fade-in">
                                             {dayDeals.map(deal => (
