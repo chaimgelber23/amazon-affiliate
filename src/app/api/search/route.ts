@@ -1,9 +1,39 @@
 import { streamText } from "ai";
 import { google } from "@ai-sdk/google";
+import { NextRequest } from "next/server";
 
 export const maxDuration = 30;
 
-export async function POST(req: Request) {
+// Simple in-memory rate limiter (per warm serverless instance)
+// Limits each IP to 10 searches per minute
+const ipRequests = new Map<string, number[]>();
+const WINDOW_MS = 60_000;
+const MAX_PER_WINDOW = 10;
+
+function isRateLimited(ip: string): boolean {
+    const now = Date.now();
+    const recent = (ipRequests.get(ip) ?? []).filter(t => now - t < WINDOW_MS);
+    if (recent.length >= MAX_PER_WINDOW) return true;
+    recent.push(now);
+    ipRequests.set(ip, recent);
+    // Prevent unbounded growth
+    if (ipRequests.size > 5000) {
+        for (const [key, times] of ipRequests) {
+            if (times.every(t => now - t >= WINDOW_MS)) ipRequests.delete(key);
+        }
+    }
+    return false;
+}
+
+export async function POST(req: NextRequest) {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+    if (isRateLimited(ip)) {
+        return Response.json(
+            { error: "Too many searches. Please wait a minute and try again." },
+            { status: 429, headers: { "Retry-After": "60" } }
+        );
+    }
+
     try {
         const { messages } = await req.json();
 
