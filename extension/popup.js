@@ -16,6 +16,15 @@ queryEl.addEventListener("keydown", (e) => {
 });
 searchBtn.addEventListener("click", runSearch);
 
+function extractAsinFromText(text) {
+  const match = text.match(/(?:dp|product|gp\/product|d)\/([A-Z0-9]{10})(?:[/?]|$)/i);
+  return match ? match[1].toUpperCase() : null;
+}
+
+function isAmazonUrl(text) {
+  return /amazon\.com/i.test(text) && extractAsinFromText(text) !== null;
+}
+
 function buildAmazonUrl(asin, title) {
   if (!asin || asin === "SEARCH") {
     const q = encodeURIComponent(title ?? "");
@@ -93,8 +102,13 @@ function showError(msg) {
 }
 
 async function runSearch() {
-  const q = queryEl.value.trim();
+  let q = queryEl.value.trim();
   if (!q) return;
+  // If user pasted an Amazon link, rewrite query
+  if (isAmazonUrl(q)) {
+    const asin = extractAsinFromText(q);
+    q = `I'm looking at Amazon product ASIN ${asin}. Show me this exact product first, then find me similar alternatives that are better — better reviews, better price, or better overall value for the same use case.`;
+  }
 
   chrome.storage.local.set({ lastQuery: q });
   searchBtn.disabled = true;

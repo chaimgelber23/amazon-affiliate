@@ -20,6 +20,15 @@ interface SearchResult {
     products: Product[];
 }
 
+function extractAsinFromText(text: string): string | null {
+    const match = text.match(/(?:dp|product|gp\/product|d)\/([A-Z0-9]{10})(?:[/?]|$)/i);
+    return match ? match[1].toUpperCase() : null;
+}
+
+function isAmazonUrl(text: string): boolean {
+    return /amazon\.com/i.test(text) && extractAsinFromText(text) !== null;
+}
+
 const EXAMPLES = [
     "Best noise cancelling headphones under $200",
     "Quiet mechanical keyboard for office",
@@ -84,14 +93,30 @@ function setCached(q: string, data: SearchResult) {
 export function SearchBox() {
     const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
     const [query, setQuery] = useState("");
+    const [detectedAsin, setDetectedAsin] = useState<string | null>(null);
     const [results, setResults] = useState<SearchResult | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [expandedCard, setExpandedCard] = useState<number | null>(null);
     const [showAll, setShowAll] = useState(false);
 
+    const handleQueryChange = (val: string) => {
+        setQuery(val);
+        if (isAmazonUrl(val)) {
+            setDetectedAsin(extractAsinFromText(val));
+        } else {
+            setDetectedAsin(null);
+        }
+    };
+
     const doSearch = async (q: string, isRefinement = false) => {
         if (!q.trim()) return;
+        // If user pasted an Amazon link, rewrite query to ask for that product + alternatives
+        const asin = extractAsinFromText(q);
+        if (asin && isAmazonUrl(q)) {
+            q = `I'm looking at Amazon product ASIN ${asin}. Show me this exact product first, then find me similar alternatives that are better — better reviews, better price, or better overall value for the same use case.`;
+            setDetectedAsin(null);
+        }
         setError(null);
         setExpandedCard(null);
         setShowAll(false);
@@ -182,18 +207,23 @@ export function SearchBox() {
                         className="w-full bg-transparent text-[var(--color-surface)] placeholder-[var(--color-surface-dim)] px-8 py-6 focus:outline-none text-xl font-semibold"
                         placeholder={results
                             ? "Narrow it down — e.g. \"under $100\" or \"wireless\""
-                            : "What are you looking for?"}
+                            : "What are you looking for? Or paste an Amazon link."}
                         value={query}
-                        onChange={(e) => setQuery(e.target.value)}
+                        onChange={(e) => handleQueryChange(e.target.value)}
                         disabled={loading}
                         autoComplete="off"
                     />
+                    {detectedAsin && (
+                        <span className="mx-3 px-3 py-1.5 bg-indigo-50 border border-indigo-200 text-indigo-600 text-xs font-bold rounded-full whitespace-nowrap flex items-center gap-1.5 flex-shrink-0">
+                            🔗 Amazon link
+                        </span>
+                    )}
                     <button
                         type="submit"
                         disabled={loading || !query.trim()}
                         className="btn-primary mx-3 py-4 px-8 text-base disabled:opacity-50 whitespace-nowrap shadow-md"
                     >
-                        {loading ? "Searching..." : results ? "Refine" : "Find Specs"}
+                        {loading ? "Searching..." : detectedAsin ? "Compare" : results ? "Search Within" : "Find Specs"}
                     </button>
                 </div>
                 {results && !loading && (
@@ -201,7 +231,7 @@ export function SearchBox() {
                         Type above to narrow down · or{" "}
                         <button
                             type="button"
-                            onClick={() => { setResults(null); setQuery(""); setMessages([]); setExpandedCard(null); }}
+                            onClick={() => { setResults(null); setQuery(""); setMessages([]); setExpandedCard(null); setDetectedAsin(null); }}
                             className="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] hover:underline transition-colors"
                         >
                             start fresh
