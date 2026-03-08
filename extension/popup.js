@@ -3,7 +3,10 @@ const TAG = "purefind-20";
 
 const queryEl = document.getElementById("query");
 const searchBtn = document.getElementById("search-btn");
+const refineQueryEl = document.getElementById("refine-query");
+const refineBtn = document.getElementById("refine-btn");
 const searchContainer = document.getElementById("search-container");
+const refineContainer = document.getElementById("refine-container");
 const resultsEl = document.getElementById("results");
 const clearBtn = document.getElementById("clear-btn");
 const closeWidgetBtn = document.getElementById("close-widget-btn");
@@ -28,27 +31,27 @@ chrome.storage.local.get(["lastQuery", "messages", "resultsHtml", "isFollowUp"],
 
   // Restore follow-up UI state
   if (data.isFollowUp) {
-    searchContainer.classList.add("follow-up");
-    searchBtn.textContent = "Ask AI";
+    refineContainer.style.display = "flex";
     clearBtn.style.display = "block";
-    queryEl.placeholder = "Ask a follow up... (e.g. which is best for the money?)";
-    queryEl.value = ""; // Don't show the previous query text in follow-up mode
   }
 });
 
 queryEl.focus();
 queryEl.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") runSearch();
+  if (e.key === "Enter") runSearch(false);
 });
-searchBtn.addEventListener("click", runSearch);
+searchBtn.addEventListener("click", () => runSearch(false));
+
+refineQueryEl.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") runSearch(true);
+});
+refineBtn.addEventListener("click", () => runSearch(true));
 
 clearBtn.addEventListener("click", () => {
   messages = [];
   queryEl.value = "";
-  queryEl.placeholder = "What are you looking for?";
-  searchContainer.classList.remove("follow-up");
-  searchBtn.textContent = "Search";
-  clearBtn.style.display = "none";
+  refineQueryEl.value = "";
+  refineContainer.style.display = "none";
   clearBtn.style.display = "none";
   chrome.storage.local.remove(["lastQuery", "messages", "resultsHtml", "isFollowUp"]);
 
@@ -186,8 +189,8 @@ function bindBuyButtons() {
 function bindChips() {
   resultsEl.querySelectorAll(".chip").forEach((chip) => {
     chip.addEventListener("click", () => {
-      queryEl.value = chip.dataset.q;
-      runSearch();
+      refineQueryEl.value = chip.dataset.q;
+      runSearch(true);
     });
   });
 }
@@ -204,17 +207,28 @@ function showError(msg) {
   resultsEl.innerHTML = `<div class="error-msg">${escHtml(msg)}</div>`;
 }
 
-async function runSearch() {
-  let q = queryEl.value.trim();
+async function runSearch(isRefine = false) {
+  const activeInput = isRefine ? refineQueryEl : queryEl;
+  let q = activeInput.value.trim();
   if (!q) return;
+
   // If user pasted an Amazon link, rewrite query
-  if (isAmazonUrl(q)) {
+  if (isAmazonUrl(q) && !isRefine) {
     const asin = extractAsinFromText(q);
     q = `I'm looking at Amazon product ASIN ${asin}. Show me this exact product first, then find me similar alternatives that are better — better reviews, better price, or better overall value for the same use case.`;
   }
 
   chrome.storage.local.set({ lastQuery: q });
-  searchBtn.disabled = true;
+
+  if (isRefine) {
+    refineBtn.disabled = true;
+    refineQueryEl.value = ""; // Clear input after sending
+  } else {
+    searchBtn.disabled = true;
+    messages = []; // Clear history on a fresh search
+    refineContainer.style.display = "none";
+  }
+
   showLoading();
 
   // Add the new user query to the active conversation history
@@ -269,10 +283,7 @@ async function runSearch() {
     messages.push({ role: "assistant", content: aiContext });
 
     // Change input to show it is now a follow-up
-    queryEl.value = "";
-    queryEl.placeholder = "Ask a follow up... (e.g. which is best for the money?)";
-    searchContainer.classList.add("follow-up");
-    searchBtn.textContent = "Ask AI";
+    refineContainer.style.display = "flex";
     clearBtn.style.display = "block";
 
     // Persist the active conversation memory and UI state
@@ -287,6 +298,10 @@ async function runSearch() {
     if (err.name === "AbortError") return;
     showError("Connection error. Check your internet and try again.");
   } finally {
-    searchBtn.disabled = false;
+    if (isRefine) {
+      refineBtn.disabled = false;
+    } else {
+      searchBtn.disabled = false;
+    }
   }
 }
