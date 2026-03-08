@@ -24,7 +24,8 @@ export function buildAffiliateUrl(rawAsin: string): string {
         asin = rawAsin.split("?")[0].replace(/[^A-Z0-9]/gi, "");
     }
 
-    return `https://www.amazon.com/dp/${asin}?tag=${tag}&linkCode=ogi&th=1&psc=1`;
+    // Remove linkCode parameters that trigger adblockers
+    return `https://www.amazon.com/dp/${asin}?tag=${tag}`;
 }
 
 /**

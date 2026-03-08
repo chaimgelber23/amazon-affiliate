@@ -18,17 +18,12 @@
     btn.type = "button";
     btn.title = "PureFind AI Assistant";
 
-    // Luxurious minimalist diamond spark SVG
+    // Vibrant icon + text for the wider pill button
     btn.innerHTML = `
-      <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M14 2L16.5 11.5L26 14L16.5 16.5L14 26L11.5 16.5L2 14L11.5 11.5L14 2Z" fill="url(#pf-grad)"/>
-        <defs>
-          <linearGradient id="pf-grad" x1="2" y1="2" x2="26" y2="26" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#334155"/>
-            <stop offset="1" stop-color="#0F172A"/>
-          </linearGradient>
-        </defs>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
       </svg>
+      PureFind AI
     `;
 
     document.body.appendChild(btn);

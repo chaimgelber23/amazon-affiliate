@@ -41,7 +41,8 @@ function buildAmazonUrl(rawAsin, title) {
     asin = cleanAsin.split("?")[0].replace(/[^A-Z0-9]/gi, "");
   }
 
-  return `https://www.amazon.com/dp/${asin}?tag=${TAG}&linkCode=ll1`;
+  // Remove linkCode parameters that trigger adblockers on blank windows
+  return `https://www.amazon.com/dp/${asin}?tag=${TAG}`;
 }
 
 function escHtml(s) {
