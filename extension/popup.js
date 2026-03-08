@@ -92,10 +92,7 @@ function buildAmazonUrl(rawAsin, title) {
     asin = cleanAsin.split("?")[0].replace(/[^A-Z0-9]/gi, "");
   }
 
-  // Instead of hitting the direct /dp/ ASIN route (which Amazon frequently blocks with a blank page
-  // when launched via chrome.tabs from an extension), use the organic search path. 
-  // Amazon perfectly resolves an ASIN search to the exact product while bypassing the bot-shield.
-  return `https://www.amazon.com/s?k=${asin}&tag=${TAG}`;
+  return `https://www.amazon.com/dp/${asin}?tag=${TAG}`;
 }
 
 function escHtml(s) {
