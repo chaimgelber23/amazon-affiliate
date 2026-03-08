@@ -260,20 +260,25 @@ async function runSearch(isRefine = false) {
       accumulated += decoder.decode(value, { stream: true });
     }
 
-    // Find JSON in the accumulated text
-    const jsonStart = accumulated.indexOf("{");
-    const jsonEnd = accumulated.lastIndexOf("}");
-    if (jsonStart === -1 || jsonEnd === -1) {
+    // Strip markdown code fences the AI sometimes adds despite instructions
+    const stripped = accumulated.replace(/```json\s*/gi, "").replace(/```\s*/g, "").trim();
+
+    // Find JSON boundaries
+    const jsonStart = stripped.indexOf("{");
+    const jsonEnd = stripped.lastIndexOf("}");
+    if (jsonStart === -1 || jsonEnd === -1 || jsonEnd <= jsonStart) {
       showError("Unexpected response. Please try again.");
       return;
     }
 
-    const jsonStr = accumulated.slice(jsonStart, jsonEnd + 1);
+    // Fix trailing commas — a common AI JSON mistake
+    const jsonStr = stripped.slice(jsonStart, jsonEnd + 1).replace(/,(\s*[}\]])/g, "$1");
+
     let data;
     try {
       data = JSON.parse(jsonStr);
     } catch {
-      messages.pop(); // Remove failed query to avoid poisoning history Context
+      messages.pop(); // Remove failed query to avoid poisoning history
       showError("Could not parse response. Please try again.");
       return;
     }
