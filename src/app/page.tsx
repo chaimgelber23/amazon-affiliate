@@ -29,7 +29,7 @@ export default function HomePage() {
                         Describe what you need in plain English. Our AI reads through the keyword-stuffed titles, fake reviews, and sponsored noise — and gives you the one product that actually wins.
                     </p>
                     <p className="text-base text-indigo-500 font-bold mb-10 max-w-xl mx-auto">
-                        ✦ Not happy with the results? Keep refining your search until it's perfect.
+                        Not happy with the results? Keep refining your search until it's perfect.
                     </p>
 
                     <SearchBox />
