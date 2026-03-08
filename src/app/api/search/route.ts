@@ -4,6 +4,17 @@ import { NextRequest } from "next/server";
 
 export const maxDuration = 30;
 
+// Allow Chrome extension and other origins to call this API
+const CORS = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+};
+
+export async function OPTIONS() {
+    return new Response(null, { status: 204, headers: CORS });
+}
+
 // Simple in-memory rate limiter (per warm serverless instance)
 // Limits each IP to 10 searches per minute
 const ipRequests = new Map<string, number[]>();
@@ -30,7 +41,7 @@ export async function POST(req: NextRequest) {
     if (isRateLimited(ip)) {
         return Response.json(
             { error: "Too many searches. Please wait a minute and try again." },
-            { status: 429, headers: { "Retry-After": "60" } }
+            { status: 429, headers: { ...CORS, "Retry-After": "60" } }
         );
     }
 
@@ -74,13 +85,13 @@ JSON SCHEMA:
             messages: chatMessages,
         });
 
-        return result.toTextStreamResponse();
+        return result.toTextStreamResponse({ headers: CORS });
     } catch (error: unknown) {
         console.error("Search error:", error);
         const msg = error instanceof Error ? error.message : "";
         if (msg.includes("API key")) {
-            return Response.json({ error: "Google AI API key not configured." }, { status: 500 });
+            return Response.json({ error: "Google AI API key not configured." }, { status: 500, headers: CORS });
         }
-        return Response.json({ error: "Search failed. Please try again." }, { status: 500 });
+        return Response.json({ error: "Search failed. Please try again." }, { status: 500, headers: CORS });
     }
 }

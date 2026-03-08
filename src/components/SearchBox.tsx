@@ -88,11 +88,13 @@ export function SearchBox() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [expandedCard, setExpandedCard] = useState<number | null>(null);
+    const [showAll, setShowAll] = useState(false);
 
     const doSearch = async (q: string, isRefinement = false) => {
         if (!q.trim()) return;
         setError(null);
         setExpandedCard(null);
+        setShowAll(false);
 
         // Check session cache for non-refinement searches
         if (!isRefinement) {
@@ -248,7 +250,7 @@ export function SearchBox() {
                     </div>
 
                     <div className="space-y-6">
-                        {results.products.map((product) => (
+                        {results.products.slice(0, showAll ? undefined : 5).map((product) => (
                             <article
                                 key={product.rank}
                                 className="product-card p-6 sm:p-8 cursor-pointer relative overflow-hidden"
@@ -353,6 +355,17 @@ export function SearchBox() {
                             </article>
                         ))}
                     </div>
+
+                    {!showAll && results.products.length > 5 && (
+                        <div className="mt-8 flex justify-center pb-8">
+                            <button
+                                onClick={() => setShowAll(true)}
+                                className="btn-secondary px-8 py-3.5 shadow-sm bg-white hover:bg-slate-50 border border-slate-200"
+                            >
+                                Show {results.products.length - 5} more results
+                            </button>
+                        </div>
+                    )}
                 </div>
             )}
         </div>

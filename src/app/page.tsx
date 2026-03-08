@@ -20,9 +20,9 @@ export default function HomePage() {
                         AI-Powered Shopping Intelligence
                     </div>
 
-                    <h1 className="section-heading mb-8">
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-slate-800 tracking-tight leading-tight mb-8">
                         Skip the Amazon junk.<br />
-                        <span className="text-gradient">Find the exact winner.</span>
+                        <span className="text-indigo-600">Find the exact winner.</span>
                     </h1>
 
                     <p className="text-xl text-[var(--color-surface-muted)] mb-14 max-w-2xl mx-auto leading-relaxed font-medium">
