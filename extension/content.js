@@ -1,40 +1,42 @@
 // PureFind AI — content script
-// Injects a "✦ PureFind AI" button next to Amazon's search bar
+// Injects a floating lux "PureFind" button in the bottom corner of Amazon
 
 (function () {
   "use strict";
 
-  const BTN_ID = "purefind-btn";
+  const FAB_ID = "purefind-fab";
 
   function inject() {
-    if (document.getElementById(BTN_ID)) return;
+    if (document.getElementById(FAB_ID)) return;
 
-    const searchForm = document.getElementById("nav-search-bar-form");
-    if (!searchForm) return;
+    // Clean up any old navbar buttons left over from previous versions
+    const oldBtn = document.getElementById("purefind-btn");
+    if (oldBtn) oldBtn.remove();
 
     const btn = document.createElement("button");
-    btn.id = BTN_ID;
+    btn.id = FAB_ID;
     btn.type = "button";
-    btn.textContent = "✦ PureFind AI";
-    btn.title = "Search with PureFind AI";
+    btn.title = "PureFind AI Assistant";
 
-    // Insert right after the search form
-    searchForm.parentNode.insertBefore(btn, searchForm.nextSibling);
+    // Luxurious minimalist diamond spark SVG
+    btn.innerHTML = `
+      <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M14 2L16.5 11.5L26 14L16.5 16.5L14 26L11.5 16.5L2 14L11.5 11.5L14 2Z" fill="url(#pf-grad)"/>
+        <defs>
+          <linearGradient id="pf-grad" x1="2" y1="2" x2="26" y2="26" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#334155"/>
+            <stop offset="1" stop-color="#0F172A"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    `;
+
+    document.body.appendChild(btn);
 
     btn.addEventListener("click", () => {
-      // Open extension popup via chrome.runtime message isn't possible from content,
-      // so we open the popup URL directly as a small window
-      // The popup is already available via the toolbar icon — clicking this button
-      // just opens the popup.html as a standalone window (works for unpacked extensions)
       chrome.runtime.sendMessage({ action: "openPopup" });
     });
   }
 
-  // Try immediately, then observe for dynamic DOM changes
   inject();
-
-  const observer = new MutationObserver(() => {
-    if (!document.getElementById(BTN_ID)) inject();
-  });
-  observer.observe(document.body, { childList: true, subtree: true });
 })();
