@@ -25,13 +25,23 @@ function isAmazonUrl(text) {
   return /amazon\.com/i.test(text) && extractAsinFromText(text) !== null;
 }
 
-function buildAmazonUrl(asin, title) {
-  const cleanAsin = asin ? String(asin).trim() : "";
+function buildAmazonUrl(rawAsin, title) {
+  const cleanAsin = rawAsin ? String(rawAsin).trim() : "";
   if (!cleanAsin || cleanAsin === "SEARCH") {
     const q = encodeURIComponent(title ?? "");
     return `https://www.amazon.com/s?k=${q}&tag=${TAG}`;
   }
-  return `https://www.amazon.com/dp/${cleanAsin}?tag=${TAG}&linkCode=ll1`;
+
+  // Clean it up if the AI returned a giant URL instead of the 10-char ASIN
+  let asin = cleanAsin;
+  const match = cleanAsin.match(/(?:dp|product|gp\/product|d)\/([A-Z0-9]{10})/i);
+  if (match) {
+    asin = match[1].toUpperCase();
+  } else {
+    asin = cleanAsin.split("?")[0].replace(/[^A-Z0-9]/gi, "");
+  }
+
+  return `https://www.amazon.com/dp/${asin}?tag=${TAG}&linkCode=ll1`;
 }
 
 function escHtml(s) {

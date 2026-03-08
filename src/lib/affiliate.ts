@@ -12,8 +12,18 @@ export const siteConfig: SiteConfig = {
  * Build an Amazon affiliate URL for a product ASIN.
  * Uses your Amazon Associates tag from env.
  */
-export function buildAffiliateUrl(asin: string): string {
+export function buildAffiliateUrl(rawAsin: string): string {
     const tag = process.env.NEXT_PUBLIC_AMAZON_TAG || "purefind-20";
+    // If the AI accidentally returns a full URL instead of just the ASIN, extract it
+    let asin = rawAsin;
+    const match = rawAsin.match(/(?:dp|product|gp\/product|d)\/([A-Z0-9]{10})/i);
+    if (match) {
+        asin = match[1].toUpperCase();
+    } else {
+        // Strip any trailing slashes or weird query params if they just passed a dirty ASIN
+        asin = rawAsin.split("?")[0].replace(/[^A-Z0-9]/gi, "");
+    }
+
     return `https://www.amazon.com/dp/${asin}?tag=${tag}&linkCode=ogi&th=1&psc=1`;
 }
 
