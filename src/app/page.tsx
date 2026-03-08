@@ -29,7 +29,7 @@ export default function HomePage() {
                         Describe what you need in plain English. Our AI reads through the keyword-stuffed titles, fake reviews, and sponsored noise — and gives you the one product that actually wins.
                     </p>
                     <p className="text-base text-indigo-500 font-bold mb-10 max-w-xl mx-auto">
-                        Results not right? The search bar stays up — just type again. Like texting a shopping expert until you get exactly what you want.
+                        Search within your results to keep narrowing down — until it's exactly right.
                     </p>
 
                     <SearchBox />
@@ -43,7 +43,7 @@ export default function HomePage() {
                         {[
                             "0 Sponsored Results",
                             "No Keyword Spam",
-                            "Search Again Right From the Results",
+                            "Search Within Your Results",
                             "Instant AI Decisions",
                         ].map((text) => (
                             <span key={text} className="flex items-center gap-2">
@@ -106,9 +106,9 @@ export default function HomePage() {
                         <div className="card p-10 relative overflow-hidden group border-indigo-100">
                             <div className="absolute -left-4 -top-4 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-colors duration-500" />
                             <div className="text-2xl mb-3">🔄</div>
-                            <h3 className="text-xl font-bold mb-3">The Search Bar Never Goes Away</h3>
+                            <h3 className="text-xl font-bold mb-3">Search Within Your Results</h3>
                             <p className="text-[var(--color-surface-muted)] text-sm leading-relaxed">
-                                See your results and want to narrow it down? Just type again right there. "Make it under $50." "Waterproof version." No page reload, no scrolling back up.
+                                Got results but want to go deeper? Search again right there — "under $50," "waterproof," "for kids." Keep narrowing until it's perfect.
                             </p>
                         </div>
 
