@@ -6,6 +6,7 @@ const searchBtn = document.getElementById("search-btn");
 const searchContainer = document.getElementById("search-container");
 const resultsEl = document.getElementById("results");
 const clearBtn = document.getElementById("clear-btn");
+const closeWidgetBtn = document.getElementById("close-widget-btn");
 
 let messages = []; // Track conversation history for multi-turn search
 
@@ -21,7 +22,8 @@ chrome.storage.local.get(["lastQuery", "messages", "resultsHtml", "isFollowUp"],
   // Restore rendered HTML results
   if (data.resultsHtml) {
     resultsEl.innerHTML = data.resultsHtml;
-    bindBuyButtons(); // Re-bind the click listeners to the restored HTML
+    bindBuyButtons();
+    bindChips();
   }
 
   // Restore follow-up UI state
@@ -58,6 +60,11 @@ clearBtn.addEventListener("click", () => {
     </div>`;
 
   queryEl.focus();
+});
+
+closeWidgetBtn.addEventListener("click", () => {
+  // Tell the parent window (content.js on Amazon) to close the floating widget
+  window.parent.postMessage({ action: "closePureFindWidget" }, "*");
 });
 
 function extractAsinFromText(text) {
@@ -111,6 +118,19 @@ function renderResults(data) {
     html += `<div class="summary">${escHtml(data.summary)}</div>`;
   }
 
+  // Refinement chips
+  html += `
+    <div class="refine-chips">
+      <div class="refine-label">Narrow it down:</div>
+      <div class="chip-row">
+        <button class="chip" data-q="under $25">Under $25</button>
+        <button class="chip" data-q="under $50">Under $50</button>
+        <button class="chip" data-q="best rated only">Best rated</button>
+        <button class="chip" data-q="best value for money">Best value</button>
+        <button class="chip" data-q="show me different alternatives">Alternatives</button>
+      </div>
+    </div>`;
+
   for (const p of data.products) {
     const isSearch = !p.asin || p.asin === "SEARCH";
     const url = buildAmazonUrl(p.asin, p.title);
@@ -150,6 +170,7 @@ function renderResults(data) {
   chrome.storage.local.set({ resultsHtml: html });
 
   bindBuyButtons();
+  bindChips();
 }
 
 function bindBuyButtons() {
@@ -161,6 +182,15 @@ function bindBuyButtons() {
       if (targetUrl) {
         chrome.tabs.create({ url: targetUrl });
       }
+    });
+  });
+}
+
+function bindChips() {
+  resultsEl.querySelectorAll(".chip").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      queryEl.value = chip.dataset.q;
+      runSearch();
     });
   });
 }
