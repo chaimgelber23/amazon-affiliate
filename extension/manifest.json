@@ -15,7 +15,6 @@
     "https://purefind.vercel.app/*"
   ],
   "action": {
-    "default_popup": "popup.html",
     "default_title": "PureFind AI Search",
     "default_icon": {
       "16": "icons/icon16.png",
@@ -23,6 +22,18 @@
       "128": "icons/icon128.png"
     }
   },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "popup.html",
+        "popup.js",
+        "icons/*"
+      ],
+      "matches": [
+        "https://www.amazon.com/*"
+      ]
+    }
+  ],
   "content_scripts": [
     {
       "matches": [

@@ -3,18 +3,56 @@ const TAG = "purefind-20";
 
 const queryEl = document.getElementById("query");
 const searchBtn = document.getElementById("search-btn");
+const refineQueryEl = document.getElementById("refine-query");
+const refineBtn = document.getElementById("refine-btn");
+const newSearchBtn = document.getElementById("new-search-btn");
+const initialSearchContainer = document.getElementById("initial-search-container");
+const refineSearchContainer = document.getElementById("refine-search-container");
 const resultsEl = document.getElementById("results");
 
-// Restore last query
-chrome.storage.local.get("lastQuery", ({ lastQuery }) => {
-  if (lastQuery) queryEl.value = lastQuery;
+let messageHistory = [];
+
+// Restore last state including conversation history
+chrome.storage.local.get(["lastQuery", "messageHistory"], (data) => {
+  if (data.lastQuery) {
+    queryEl.value = data.lastQuery;
+  }
+  if (data.messageHistory && data.messageHistory.length > 0) {
+    messageHistory = data.messageHistory;
+    // We don't auto-run, just restore state if needed. But usually, 
+    // we want a fresh start unless we are persisting the whole results view (which we aren't doing yet fully).
+    // For now, if there's history, we might just clear it to avoid confusion on reopen,
+    // or keep it if the user wants to continue. Let's start fresh on popup open for simplicity,
+    // or keep it if they just closed and reopened.
+  }
 });
 
 queryEl.focus();
 queryEl.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") runSearch();
+  if (e.key === "Enter") runSearch(false);
 });
-searchBtn.addEventListener("click", runSearch);
+searchBtn.addEventListener("click", () => runSearch(false));
+
+refineQueryEl.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") runSearch(true);
+});
+refineBtn.addEventListener("click", () => runSearch(true));
+
+newSearchBtn.addEventListener("click", () => {
+  messageHistory = [];
+  queryEl.value = "";
+  refineQueryEl.value = "";
+  initialSearchContainer.style.display = "block";
+  refineSearchContainer.style.display = "none";
+  resultsEl.innerHTML = `
+    <div class="empty">
+      <div class="empty-icon">✦</div>
+      <div class="empty-title">AI-Powered Product Search</div>
+      <div class="empty-sub">Type anything — "best headphones under $100", "quiet mechanical keyboard", "gift for a chef" — and get honest picks.</div>
+    </div>`;
+  chrome.storage.local.remove(["lastQuery", "messageHistory"]);
+  queryEl.focus();
+});
 
 function extractAsinFromText(text) {
   const match = text.match(/(?:dp|product|gp\/product|d)\/([A-Z0-9]{10})(?:[/?]|$)/i);
@@ -124,18 +162,33 @@ function showError(msg) {
   resultsEl.innerHTML = `<div class="error-msg">${escHtml(msg)}</div>`;
 }
 
-async function runSearch() {
-  let q = queryEl.value.trim();
+async function runSearch(isRefine = false) {
+  const activeInput = isRefine ? refineQueryEl : queryEl;
+  let q = activeInput.value.trim();
   if (!q) return;
+
   // If user pasted an Amazon link, rewrite query
-  if (isAmazonUrl(q)) {
+  if (isAmazonUrl(q) && !isRefine) {
     const asin = extractAsinFromText(q);
     q = `I'm looking at Amazon product ASIN ${asin}. Show me this exact product first, then find me similar alternatives that are better — better reviews, better price, or better overall value for the same use case.`;
   }
 
-  chrome.storage.local.set({ lastQuery: q });
-  searchBtn.disabled = true;
+  // Update history
+  messageHistory.push({ role: "user", content: q });
+  chrome.storage.local.set({ lastQuery: q, messageHistory });
+
+  if (isRefine) {
+    refineBtn.disabled = true;
+    refineQueryEl.value = ""; // clear input after sending
+  } else {
+    searchBtn.disabled = true;
+  }
+
   showLoading();
+
+  // Switch UI to Refine state
+  initialSearchContainer.style.display = "none";
+  refineSearchContainer.style.display = "block";
 
   let accumulated = "";
 
@@ -143,7 +196,7 @@ async function runSearch() {
     const res = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: [{ role: "user", content: q }] }),
+      body: JSON.stringify({ messages: messageHistory }),
     });
 
     if (!res.ok) {
@@ -179,11 +232,21 @@ async function runSearch() {
       return;
     }
 
+    // Add assistant response to history
+    messageHistory.push({ role: "assistant", content: jsonStr });
+    chrome.storage.local.set({ messageHistory });
+
     renderResults(data);
   } catch (err) {
     if (err.name === "AbortError") return;
     showError("Connection error. Check your internet and try again.");
+    // Pop the failed user message so they can try again
+    messageHistory.pop();
   } finally {
-    searchBtn.disabled = false;
+    if (isRefine) {
+      refineBtn.disabled = false;
+    } else {
+      searchBtn.disabled = false;
+    }
   }
 }

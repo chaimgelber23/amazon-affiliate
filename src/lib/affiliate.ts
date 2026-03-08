@@ -24,10 +24,7 @@ export function buildAffiliateUrl(rawAsin: string): string {
         asin = rawAsin.split("?")[0].replace(/[^A-Z0-9]/gi, "");
     }
 
-    // Instead of hitting the direct /dp/ route which Amazon frequently blocks 
-    // when clicked from external sites or extensions, we use their native search redirector.
-    // This looks fully organic to Amazon and guarantees the product page renders.
-    return `https://www.amazon.com/s?k=${asin}&tag=${tag}`;
+    return `https://www.amazon.com/dp/${asin}/?tag=${tag}`;
 }
 
 /**
