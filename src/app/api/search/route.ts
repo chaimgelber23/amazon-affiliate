@@ -62,7 +62,7 @@ RULES:
 - Return ONLY valid JSON — no markdown, no code fences, no extra text.
 - Recommend 6-8 products ranked by genuine quality.
 - Be honest about cons. Every product has them.
-- Use REAL Amazon ASINs when confident. If unsure, use "SEARCH".
+- ALWAYS use "SEARCH" for the asin field. Never guess or invent an ASIN — they change constantly and wrong ASINs break product links.
 - Price estimates should reflect typical Amazon pricing.
 - The "whyThisPick" field: 1-2 sentences explaining why this beats the alternatives.
 
@@ -73,7 +73,7 @@ JSON SCHEMA:
     {
       "rank": 1,
       "title": "Full Product Name",
-      "asin": "B0XXXXXXXX",
+      "asin": "SEARCH",
       "whyThisPick": "Why this is the best option",
       "pros": ["pro 1", "pro 2", "pro 3"],
       "cons": ["con 1", "con 2"],
