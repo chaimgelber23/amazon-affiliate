@@ -9,9 +9,29 @@ const clearBtn = document.getElementById("clear-btn");
 
 let messages = []; // Track conversation history for multi-turn search
 
-// Restore last query
-chrome.storage.local.get("lastQuery", ({ lastQuery }) => {
-  if (lastQuery) queryEl.value = lastQuery;
+// Restore last session state
+chrome.storage.local.get(["lastQuery", "messages", "resultsHtml", "isFollowUp"], (data) => {
+  if (data.lastQuery) queryEl.value = data.lastQuery;
+
+  // Restore conversation history
+  if (data.messages && Array.isArray(data.messages)) {
+    messages = data.messages;
+  }
+
+  // Restore rendered HTML results
+  if (data.resultsHtml) {
+    resultsEl.innerHTML = data.resultsHtml;
+    bindBuyButtons(); // Re-bind the click listeners to the restored HTML
+  }
+
+  // Restore follow-up UI state
+  if (data.isFollowUp) {
+    searchContainer.classList.add("follow-up");
+    searchBtn.textContent = "Ask AI";
+    clearBtn.style.display = "block";
+    queryEl.placeholder = "Ask a follow up... (e.g. which is best for the money?)";
+    queryEl.value = ""; // Don't show the previous query text in follow-up mode
+  }
 });
 
 queryEl.focus();
@@ -27,7 +47,8 @@ clearBtn.addEventListener("click", () => {
   searchContainer.classList.remove("follow-up");
   searchBtn.textContent = "Search";
   clearBtn.style.display = "none";
-  chrome.storage.local.remove("lastQuery");
+  clearBtn.style.display = "none";
+  chrome.storage.local.remove(["lastQuery", "messages", "resultsHtml", "isFollowUp"]);
 
   resultsEl.innerHTML = `
     <div class="empty">
@@ -64,8 +85,10 @@ function buildAmazonUrl(rawAsin, title) {
     asin = cleanAsin.split("?")[0].replace(/[^A-Z0-9]/gi, "");
   }
 
-  // Remove linkCode parameters that trigger adblockers on blank windows
-  return `https://www.amazon.com/dp/${asin}?tag=${TAG}`;
+  // Instead of hitting the direct /dp/ ASIN route (which Amazon frequently blocks with a blank page
+  // when launched via chrome.tabs from an extension), use the organic search path. 
+  // Amazon perfectly resolves an ASIN search to the exact product while bypassing the bot-shield.
+  return `https://www.amazon.com/s?k=${asin}&tag=${TAG}`;
 }
 
 function escHtml(s) {
@@ -123,7 +146,13 @@ function renderResults(data) {
 
   resultsEl.innerHTML = html;
 
-  // Bind click events to open tabs correctly (prevents blank pages in extensions)
+  // Save the rendered UI state to local storage so it survives popup closures
+  chrome.storage.local.set({ resultsHtml: html });
+
+  bindBuyButtons();
+}
+
+function bindBuyButtons() {
   const buttons = resultsEl.querySelectorAll(".buy-btn");
   buttons.forEach((btn) => {
     btn.addEventListener("click", (e) => {
@@ -218,6 +247,12 @@ async function runSearch() {
     searchContainer.classList.add("follow-up");
     searchBtn.textContent = "Ask AI";
     clearBtn.style.display = "block";
+
+    // Persist the active conversation memory and UI state
+    chrome.storage.local.set({
+      messages: messages,
+      isFollowUp: true
+    });
 
     renderResults(data);
   } catch (err) {
