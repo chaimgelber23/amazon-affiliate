@@ -21,12 +21,15 @@ export default function HomePage() {
                     </div>
 
                     <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-slate-800 tracking-tight leading-tight mb-8">
-                        Skip the Amazon junk.<br />
-                        <span className="text-indigo-600">Find the exact winner.</span>
+                        Sellers spam titles with keywords.<br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-violet-500">We cut straight to the winner.</span>
                     </h1>
 
-                    <p className="text-xl text-[var(--color-surface-muted)] mb-14 max-w-2xl mx-auto leading-relaxed font-medium">
-                        Tell us what you need in plain English. We scan thousands of real reviews to find the genuinely best product — no sponsored filler.
+                    <p className="text-xl text-[var(--color-surface-muted)] mb-4 max-w-2xl mx-auto leading-relaxed font-medium">
+                        Describe what you need in plain English. Our AI reads through the keyword-stuffed titles, fake reviews, and sponsored noise — and gives you the one product that actually wins.
+                    </p>
+                    <p className="text-base text-indigo-500 font-bold mb-10 max-w-xl mx-auto">
+                        ✦ Not happy with the results? Keep refining your search until it's perfect.
                     </p>
 
                     <SearchBox />
@@ -39,8 +42,8 @@ export default function HomePage() {
                     <div className="flex flex-wrap justify-center gap-y-4 gap-x-8 lg:gap-x-16 text-sm text-[var(--color-surface-muted)] font-bold tracking-wide uppercase">
                         {[
                             "0 Sponsored Results",
-                            "Real Review Analysis",
-                            "Direct Amazon Pricing",
+                            "No Keyword Spam",
+                            "Refine as Many Times as You Want",
                             "Instant AI Decisions",
                         ].map((text) => (
                             <span key={text} className="flex items-center gap-2">
@@ -99,12 +102,13 @@ export default function HomePage() {
                             </p>
                         </div>
 
-                        {/* Small Card Right */}
-                        <div className="card p-10 relative overflow-hidden group">
-                            <div className="absolute -left-4 -top-4 w-32 h-32 bg-pink-500/10 rounded-full blur-2xl group-hover:bg-pink-500/20 transition-colors duration-500" />
-                            <h3 className="text-xl font-bold mb-3">Real Review Checking</h3>
+                        {/* Small Card Right — Multi-search */}
+                        <div className="card p-10 relative overflow-hidden group border-indigo-100">
+                            <div className="absolute -left-4 -top-4 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-colors duration-500" />
+                            <div className="text-2xl mb-3">🔄</div>
+                            <h3 className="text-xl font-bold mb-3">Refine Until It&apos;s Perfect</h3>
                             <p className="text-[var(--color-surface-muted)] text-sm leading-relaxed">
-                                We analyze the content of reviews, not just the star rating, to immediately flag cheap imitation products.
+                                Not quite right? Search again with more detail — "waterproof, under $50, for a 10-year-old." Results update instantly, no page reload.
                             </p>
                         </div>
 
