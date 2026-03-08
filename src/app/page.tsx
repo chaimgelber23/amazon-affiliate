@@ -29,7 +29,7 @@ export default function HomePage() {
                         Describe what you need in plain English. Our AI reads through the keyword-stuffed titles, fake reviews, and sponsored noise — and gives you the one product that actually wins.
                     </p>
                     <p className="text-base text-indigo-500 font-bold mb-10 max-w-xl mx-auto">
-                        Not happy with the results? Keep refining your search until it's perfect.
+                        Not happy with the results? Just search again — narrower, broader, or totally different. No limit.
                     </p>
 
                     <SearchBox />
@@ -43,7 +43,7 @@ export default function HomePage() {
                         {[
                             "0 Sponsored Results",
                             "No Keyword Spam",
-                            "Refine as Many Times as You Want",
+                            "Search Again as Many Times as You Want",
                             "Instant AI Decisions",
                         ].map((text) => (
                             <span key={text} className="flex items-center gap-2">
@@ -106,9 +106,9 @@ export default function HomePage() {
                         <div className="card p-10 relative overflow-hidden group border-indigo-100">
                             <div className="absolute -left-4 -top-4 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-colors duration-500" />
                             <div className="text-2xl mb-3">🔄</div>
-                            <h3 className="text-xl font-bold mb-3">Refine Until It&apos;s Perfect</h3>
+                            <h3 className="text-xl font-bold mb-3">Search Again, Get Better Results</h3>
                             <p className="text-[var(--color-surface-muted)] text-sm leading-relaxed">
-                                Not quite right? Search again with more detail — "waterproof, under $50, for a 10-year-old." Results update instantly, no page reload.
+                                Not quite right? Search again — add more detail, change your budget, or try a different angle. Results update instantly, no page reload.
                             </p>
                         </div>
 
