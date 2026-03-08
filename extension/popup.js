@@ -26,11 +26,12 @@ function isAmazonUrl(text) {
 }
 
 function buildAmazonUrl(asin, title) {
-  if (!asin || asin === "SEARCH") {
+  const cleanAsin = asin ? String(asin).trim() : "";
+  if (!cleanAsin || cleanAsin === "SEARCH") {
     const q = encodeURIComponent(title ?? "");
     return `https://www.amazon.com/s?k=${q}&tag=${TAG}`;
   }
-  return `https://www.amazon.com/dp/${asin}?tag=${TAG}&linkCode=ll1`;
+  return `https://www.amazon.com/dp/${cleanAsin}?tag=${TAG}&linkCode=ll1`;
 }
 
 function escHtml(s) {
@@ -80,13 +81,25 @@ function renderResults(data) {
           ${pros ? `<ul class="card-list pros"><div class="card-list-label">Pros</div>${pros}</ul>` : ""}
           ${cons ? `<ul class="card-list cons"><div class="card-list-label">Cons</div>${cons}</ul>` : ""}
         </div>` : ""}
-        <a href="${escHtml(url)}" target="_blank" rel="noopener" class="buy-btn ${isSearch ? "search-amazon" : ""}">
+        <a href="${escHtml(url)}" data-url="${escHtml(url)}" class="buy-btn ${isSearch ? "search-amazon" : ""}">
           ${isSearch ? "🔍 Search Amazon →" : "Buy on Amazon →"}
         </a>
       </div>`;
   }
 
   resultsEl.innerHTML = html;
+
+  // Bind click events to open tabs correctly (prevents blank pages in extensions)
+  const buttons = resultsEl.querySelectorAll(".buy-btn");
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const targetUrl = btn.getAttribute("data-url");
+      if (targetUrl) {
+        chrome.tabs.create({ url: targetUrl });
+      }
+    });
+  });
 }
 
 function showLoading() {

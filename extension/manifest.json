@@ -2,8 +2,11 @@
   "manifest_version": 3,
   "name": "PureFind — AI Product Search",
   "version": "1.0.0",
-  "description": "Stop guessing on Amazon. PureFind's AI instantly finds the best product for what you need — with honest pros, cons, and affiliate links.",
-  "permissions": ["storage", "action"],
+  "description": "PureFind's AI instantly finds the best product for your needs with honest pros, cons, and links.",
+  "permissions": [
+    "storage",
+    "action"
+  ],
   "background": {
     "service_worker": "background.js"
   },
@@ -22,9 +25,15 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://www.amazon.com/*"],
-      "js": ["content.js"],
-      "css": ["content.css"],
+      "matches": [
+        "https://www.amazon.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ],
       "run_at": "document_end"
     }
   ],

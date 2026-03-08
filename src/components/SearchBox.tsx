@@ -183,10 +183,13 @@ export function SearchBox() {
         doSearch(query, !!results);
     };
 
-    const amazonHref = (p: Product) =>
-        p.asin === "SEARCH"
-            ? `https://www.amazon.com/s?k=${encodeURIComponent(p.title)}&tag=${process.env.NEXT_PUBLIC_AMAZON_TAG ?? "purefind-20"}`
-            : buildAffiliateUrl(p.asin);
+    const amazonHref = (p: Product) => {
+        const cleanAsin = typeof p.asin === "string" ? p.asin.trim() : "";
+        if (!cleanAsin || cleanAsin === "SEARCH") {
+            return `https://www.amazon.com/s?k=${encodeURIComponent(p.title)}&tag=${process.env.NEXT_PUBLIC_AMAZON_TAG ?? "purefind-20"}`;
+        }
+        return buildAffiliateUrl(cleanAsin);
+    };
 
     return (
         <div className="w-full max-w-3xl mx-auto relative z-20">

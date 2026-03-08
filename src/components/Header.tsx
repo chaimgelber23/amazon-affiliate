@@ -18,20 +18,9 @@ export function Header() {
                 <div className="px-5 sm:px-8 h-16 flex items-center justify-between">
 
                     {/* Logo */}
-                    <Link href="/" className="flex items-center group gap-2">
-                        {/* Icon mark: indigo diamond spark */}
-                        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" className="flex-shrink-0 transition-transform duration-300 group-hover:rotate-12">
-                            <rect width="28" height="28" rx="8" fill="url(#logoGrad)" />
-                            <path d="M14 6l2.5 5.5L22 14l-5.5 2.5L14 22l-2.5-5.5L6 14l5.5-2.5L14 6z" fill="white" fillOpacity="0.95"/>
-                            <defs>
-                                <linearGradient id="logoGrad" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
-                                    <stop stopColor="#6366F1"/>
-                                    <stop offset="1" stopColor="#A855F7"/>
-                                </linearGradient>
-                            </defs>
-                        </svg>
-                        <span className="font-display text-[21px] font-black tracking-[-0.02em] text-slate-900 group-hover:opacity-80 transition-opacity duration-200">
-                            Pure<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-violet-500">Find</span>
+                    <Link href="/" className="flex items-center group gap-1.5">
+                        <span className="font-sans text-xl font-bold tracking-tight text-slate-800 group-hover:opacity-70 transition-opacity duration-200">
+                            PureFind.
                         </span>
                     </Link>
 

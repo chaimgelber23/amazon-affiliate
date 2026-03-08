@@ -18,9 +18,9 @@ export function Footer() {
 
                     {/* Brand */}
                     <div className="md:col-span-2">
-                        <Link href="/" className="inline-flex items-center mb-5 group pt-1 gap-0.5">
-                            <span className="font-sans text-2xl font-black text-slate-900 tracking-tight">
-                                PureFind
+                        <Link href="/" className="inline-flex items-center mb-5 group pt-1 gap-1.5">
+                            <span className="font-sans text-xl font-bold tracking-tight text-slate-800">
+                                PureFind.
                             </span>
                         </Link>
                         <p className="text-sm font-medium text-[var(--color-surface-dim)] leading-relaxed max-w-sm">

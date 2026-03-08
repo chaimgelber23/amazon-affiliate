@@ -20,16 +20,13 @@ export default function HomePage() {
                         AI-Powered Shopping Intelligence
                     </div>
 
-                    <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-slate-800 tracking-tight leading-tight mb-8">
-                        Sellers spam titles with keywords.<br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-violet-500">We cut straight to the winner.</span>
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-slate-800 tracking-tight leading-tight mb-6">
+                        Find the perfect product.<br />
+                        <span className="text-slate-400">Skip the sponsored junk.</span>
                     </h1>
 
-                    <p className="text-xl text-[var(--color-surface-muted)] mb-4 max-w-2xl mx-auto leading-relaxed font-medium">
-                        Describe what you need in plain English. Our AI reads through the keyword-stuffed titles, fake reviews, and sponsored noise — and gives you the one product that actually wins.
-                    </p>
-                    <p className="text-base text-indigo-500 font-bold mb-10 max-w-xl mx-auto">
-                        Search within your results to keep narrowing down — until it's exactly right.
+                    <p className="text-xl text-[var(--color-surface-muted)] mb-12 max-w-xl mx-auto leading-relaxed font-medium">
+                        Tell us what you're looking for. Our AI instantly sifts through Amazon's noise to find exactly what you need.
                     </p>
 
                     <SearchBox />
