@@ -3,7 +3,11 @@ const TAG = "purefind-20";
 
 const queryEl = document.getElementById("query");
 const searchBtn = document.getElementById("search-btn");
+const searchContainer = document.getElementById("search-container");
 const resultsEl = document.getElementById("results");
+const clearBtn = document.getElementById("clear-btn");
+
+let messages = []; // Track conversation history for multi-turn search
 
 // Restore last query
 chrome.storage.local.get("lastQuery", ({ lastQuery }) => {
@@ -15,6 +19,25 @@ queryEl.addEventListener("keydown", (e) => {
   if (e.key === "Enter") runSearch();
 });
 searchBtn.addEventListener("click", runSearch);
+
+clearBtn.addEventListener("click", () => {
+  messages = [];
+  queryEl.value = "";
+  queryEl.placeholder = "What are you looking for?";
+  searchContainer.classList.remove("follow-up");
+  searchBtn.textContent = "Search";
+  clearBtn.style.display = "none";
+  chrome.storage.local.remove("lastQuery");
+
+  resultsEl.innerHTML = `
+    <div class="empty">
+      <div class="empty-icon">✦</div>
+      <div class="empty-title">AI-Powered Product Search</div>
+      <div class="empty-sub">Type anything — "best headphones under $100", "quiet mechanical keyboard", "gift for a chef" — and get honest picks.</div>
+    </div>`;
+
+  queryEl.focus();
+});
 
 function extractAsinFromText(text) {
   const match = text.match(/(?:dp|product|gp\/product|d)\/([A-Z0-9]{10})(?:[/?]|$)/i);
@@ -138,16 +161,20 @@ async function runSearch() {
   searchBtn.disabled = true;
   showLoading();
 
+  // Add the new user query to the active conversation history
+  messages.push({ role: "user", content: q });
+
   let accumulated = "";
 
   try {
     const res = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: [{ role: "user", content: q }] }),
+      body: JSON.stringify({ messages }), // Send the full conversation history
     });
 
     if (!res.ok) {
+      messages.pop(); // Remove the failed query so they can try again
       const err = await res.json().catch(() => ({}));
       showError(err.error ?? `Error ${res.status}. Please try again.`);
       return;
@@ -176,12 +203,25 @@ async function runSearch() {
     try {
       data = JSON.parse(jsonStr);
     } catch {
+      messages.pop(); // Remove failed query to avoid poisoning history Context
       showError("Could not parse response. Please try again.");
       return;
     }
 
+    // Save the AI's response to the memory so it knows what products it recommended for future questions
+    const aiContext = `SUMMARY: ${data.summary}\nPRODUCTS SHOWN: ${data.products.map(p => p.title).join(" | ")}`;
+    messages.push({ role: "assistant", content: aiContext });
+
+    // Change input to show it is now a follow-up
+    queryEl.value = "";
+    queryEl.placeholder = "Ask a follow up... (e.g. which is best for the money?)";
+    searchContainer.classList.add("follow-up");
+    searchBtn.textContent = "Ask AI";
+    clearBtn.style.display = "block";
+
     renderResults(data);
   } catch (err) {
+    if (messages.length > 0 && messages[messages.length - 1].role === "user") messages.pop();
     if (err.name === "AbortError") return;
     showError("Connection error. Check your internet and try again.");
   } finally {
