@@ -5,7 +5,9 @@
   "description": "PureFind's AI instantly finds the best product for your needs with honest pros, cons, and links.",
   "permissions": [
     "storage",
-    "action"
+    "action",
+    "tabs",
+    "windows"
   ],
   "background": {
     "service_worker": "background.js"
