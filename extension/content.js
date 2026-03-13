@@ -44,9 +44,42 @@
     container.appendChild(btn);
     document.body.appendChild(container);
 
-    // Toggle logic
+    // --- Drag logic ---
+    let isDragging = false;
+    let wasDragged = false;
+    let dragStartX, dragStartY, startLeft, startTop;
+
+    btn.addEventListener("mousedown", (e) => {
+      isDragging = true;
+      wasDragged = false;
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+      const rect = container.getBoundingClientRect();
+      startLeft = rect.left;
+      startTop = rect.top;
+      // Switch from right-positioned to left-positioned for dragging
+      container.style.right = "auto";
+      container.style.left = startLeft + "px";
+      container.style.top = startTop + "px";
+      e.preventDefault();
+    });
+
+    document.addEventListener("mousemove", (e) => {
+      if (!isDragging) return;
+      const dx = e.clientX - dragStartX;
+      const dy = e.clientY - dragStartY;
+      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) wasDragged = true;
+      container.style.left = startLeft + dx + "px";
+      container.style.top = startTop + dy + "px";
+    });
+
+    document.addEventListener("mouseup", () => {
+      isDragging = false;
+    });
+
+    // Toggle logic — only toggle if the user clicked without dragging
     btn.addEventListener("click", () => {
-      container.classList.toggle("open");
+      if (!wasDragged) container.classList.toggle("open");
     });
   }
 

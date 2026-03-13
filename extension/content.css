@@ -50,9 +50,10 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  cursor: pointer;
+  cursor: grab;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   letter-spacing: 0.5px;
+  user-select: none;
 }
 
 #purefind-widget-fab:hover {
@@ -62,6 +63,7 @@
 }
 
 #purefind-widget-fab:active {
+  cursor: grabbing;
   transform: translateY(0) scale(0.95);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
 }
