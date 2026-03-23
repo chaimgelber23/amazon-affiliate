@@ -6,23 +6,23 @@
   --font-mono: "JetBrains Mono", "Fira Code", monospace;
 
   /* Premium Pro Max Light Theme Palette */
-  --color-bg: #F8FAFC; /* slate-50 - ultra crisp off-white */
-  --color-bg-mesh-1: rgba(199, 210, 254, 0.4); /* soft indigo glow */
-  --color-bg-mesh-2: rgba(253, 230, 138, 0.3); /* soft amber glow */
-  --color-bg-mesh-3: rgba(244, 231, 243, 0.3); /* soft pink/fuchsia glow */
-  
-  --color-bg-card: rgba(255, 255, 255, 0.75); /* Frosted glass base */
+  --color-bg: #F8FAFC;
+  --color-bg-mesh-1: rgba(199, 210, 254, 0.35);
+  --color-bg-mesh-2: rgba(253, 230, 138, 0.25);
+  --color-bg-mesh-3: rgba(244, 231, 243, 0.25);
+
+  --color-bg-card: rgba(255, 255, 255, 0.8);
   --color-bg-card-solid: #FFFFFF;
-  --color-bg-elevated: #F1F5F9; /* slate-100 */
-  --color-bg-hover: #E2E8F0; /* slate-200 */
+  --color-bg-elevated: #F1F5F9;
+  --color-bg-hover: #E2E8F0;
 
-  --color-surface: #0F172A; /* slate-900 - nearly black for stark contrast */
-  --color-surface-muted: #475569; /* slate-600 */
-  --color-surface-dim: #94A3B8; /* slate-400 */
+  --color-surface: #0F172A;
+  --color-surface-muted: #475569;
+  --color-surface-dim: #94A3B8;
 
-  /* Premium Indigo/Violet Accent */
-  --color-accent: #6366F1; /* indigo-500 */
-  --color-accent-hover: #4F46E5; /* indigo-600 */
+  /* Indigo Accent */
+  --color-accent: #6366F1;
+  --color-accent-hover: #4F46E5;
   --color-accent-gradient: linear-gradient(135deg, #6366F1 0%, #A855F7 100%);
   --color-accent-muted: rgba(99, 102, 241, 0.08);
 
@@ -31,15 +31,13 @@
   --color-warning: #F59E0B;
   --color-danger: #EF4444;
 
-  /* Keep Amazon brand color but make it pop */
   --color-amazon: #FF9900;
   --color-amazon-hover: #F59300;
   --color-amazon-gradient: linear-gradient(135deg, #FF9900 0%, #FFB03A 100%);
 
-  /* Ultra subtle borders */
-  --color-border: rgba(15, 23, 42, 0.06); /* Nearly invisible slate line */
+  --color-border: rgba(15, 23, 42, 0.06);
   --color-border-strong: rgba(15, 23, 42, 0.12);
-  --color-border-glass: rgba(255, 255, 255, 0.6); /* Inner highlight for glass */
+  --color-border-glass: rgba(255, 255, 255, 0.6);
 
   --color-badge-best: #6366F1;
   --color-badge-popular: #EC4899;
@@ -56,8 +54,7 @@ html {
 
 body {
   background-color: var(--color-bg);
-  /* Mesh Gradient Background base */
-  background-image: 
+  background-image:
     radial-gradient(at 0% 0%, var(--color-bg-mesh-1) 0px, transparent 50%),
     radial-gradient(at 100% 0%, var(--color-bg-mesh-2) 0px, transparent 50%),
     radial-gradient(at 100% 100%, var(--color-bg-mesh-3) 0px, transparent 50%),
@@ -130,6 +127,11 @@ body {
   100% { transform: translateY(0px); }
 }
 
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
 .animate-fade-in-up {
   animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -147,7 +149,6 @@ body {
 .stagger-3 { animation-delay: 0.3s; }
 .stagger-4 { animation-delay: 0.4s; }
 
-/* The Apple-like skeleton loading effect */
 .shimmer-bg {
   background: linear-gradient(
     90deg,
@@ -160,10 +161,9 @@ body {
 }
 
 /* ============================================
-   UTILITY CLASSES (Pro Max Style)
+   UTILITY CLASSES
    ============================================ */
 
-/* Stunning premium glass effect */
 .glass {
   background: var(--color-bg-card);
   backdrop-filter: blur(24px) saturate(180%);
@@ -171,45 +171,43 @@ body {
   border: 1px solid var(--color-border);
   border-top: 1px solid var(--color-border-glass);
   border-left: 1px solid var(--color-border-glass);
-  box-shadow: 
+  box-shadow:
     0 4px 24px -2px rgba(15, 23, 42, 0.03),
     0 1px 2px -1px rgba(15, 23, 42, 0.02);
 }
 
-/* Standard Bento Grid Card */
 .card {
   background: var(--color-bg-card-solid);
   border: 1px solid var(--color-border);
-  border-radius: 24px; /* Larger radius for modern app feel */
-  box-shadow: 0 2px 12px -2px rgba(15, 23, 42, 0.04);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 20px;
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .card:hover {
   border-color: var(--color-border-strong);
-  box-shadow: 
-    0 20px 40px -8px rgba(15, 23, 42, 0.08),
+  box-shadow:
+    0 12px 32px -8px rgba(15, 23, 42, 0.08),
     0 1px 3px -1px rgba(15, 23, 42, 0.04);
   transform: translateY(-2px);
 }
 
-/* Luxury product card — soft layered depths */
 .product-card {
   background: var(--color-bg-card-solid);
   border: 1px solid var(--color-border);
-  border-radius: 24px;
-  box-shadow: 
-    0 4px 6px -1px rgba(15, 23, 42, 0.02),
-    0 2px 4px -2px rgba(15, 23, 42, 0.02);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 20px;
+  box-shadow:
+    0 1px 3px 0 rgba(15, 23, 42, 0.02),
+    0 1px 2px -1px rgba(15, 23, 42, 0.02);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .product-card:hover {
   border-color: var(--color-border-strong);
-  box-shadow: 
-    0 32px 64px -12px rgba(15, 23, 42, 0.1),
+  box-shadow:
+    0 20px 48px -12px rgba(15, 23, 42, 0.1),
     0 2px 8px -2px rgba(15, 23, 42, 0.04);
-  transform: translateY(-4px) scale(1.005);
+  transform: translateY(-3px);
 }
 
 /* ============================================
@@ -222,23 +220,27 @@ body {
   font-weight: 800;
   padding: 12px 24px;
   border-radius: 12px;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   text-decoration: none;
   font-size: 14px;
-  box-shadow: 
+  box-shadow:
     0 4px 12px -2px rgba(255, 153, 0, 0.3),
     inset 0 1px 0 rgba(255,255,255,0.4);
 }
 
 .btn-amazon:hover {
-  transform: translateY(-2px);
-  box-shadow: 
-    0 12px 24px -4px rgba(255, 153, 0, 0.4),
+  transform: translateY(-1px);
+  box-shadow:
+    0 8px 20px -4px rgba(255, 153, 0, 0.4),
     inset 0 1px 0 rgba(255,255,255,0.4);
+}
+
+.btn-amazon:active {
+  transform: translateY(0);
 }
 
 .btn-primary {
@@ -247,23 +249,27 @@ body {
   font-weight: 700;
   padding: 12px 28px;
   border-radius: 14px;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   text-decoration: none;
   font-size: 15px;
-  box-shadow: 
-    0 8px 16px -4px rgba(99, 102, 241, 0.3),
+  box-shadow:
+    0 6px 16px -4px rgba(99, 102, 241, 0.3),
     inset 0 1px 0 rgba(255,255,255,0.2);
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 
-    0 16px 32px -6px rgba(99, 102, 241, 0.4),
+  transform: translateY(-1px);
+  box-shadow:
+    0 12px 28px -6px rgba(99, 102, 241, 0.4),
     inset 0 1px 0 rgba(255,255,255,0.2);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
 }
 
 .btn-secondary {
@@ -305,7 +311,6 @@ body {
   background-image: var(--color-accent-gradient);
 }
 
-/* Gradient mesh orb utility for placing behind objects */
 .mesh-orb {
   position: absolute;
   border-radius: 50%;
@@ -313,4 +318,31 @@ body {
   z-index: -1;
   opacity: 0.6;
   pointer-events: none;
+}
+
+/* ============================================
+   DEAL CARD REFINEMENTS
+   ============================================ */
+
+/* Smooth image zoom on deal cards */
+.deal-card-img {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.group:hover .deal-card-img {
+  transform: scale(1.05);
+}
+
+/* Verified badge animation */
+.verified-pulse {
+  animation: pulse-subtle 2s ease-in-out infinite;
+}
+
+/* FAQ details arrow rotation */
+details summary::-webkit-details-marker {
+  display: none;
+}
+
+details[open] summary .faq-icon {
+  transform: rotate(45deg);
 }

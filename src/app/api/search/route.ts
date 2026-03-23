@@ -1,8 +1,10 @@
-import { streamText } from "ai";
+import { generateText } from "ai";
 import { google } from "@ai-sdk/google";
 import { NextRequest } from "next/server";
+import { enrichProducts } from "@/lib/amazon-lookup";
+import { logSearch, logError } from "@/lib/analytics";
 
-export const maxDuration = 30;
+export const maxDuration = 60;
 
 // Allow Chrome extension and other origins to call this API
 const CORS = {
@@ -36,6 +38,23 @@ function isRateLimited(ip: string): boolean {
     return false;
 }
 
+interface AIProduct {
+    rank: number;
+    title: string;
+    asin: string;
+    whyThisPick: string;
+    pros: string[];
+    cons: string[];
+    priceEstimate: string;
+    rating: number;
+    category: string;
+}
+
+interface AIResponse {
+    summary: string;
+    products: AIProduct[];
+}
+
 export async function POST(req: NextRequest) {
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
     if (isRateLimited(ip)) {
@@ -45,15 +64,22 @@ export async function POST(req: NextRequest) {
         );
     }
 
+    const startTime = Date.now();
+    let userQuery = "";
+
     try {
         const { messages } = await req.json();
 
         const chatMessages = Array.isArray(messages) && messages.length > 0 ? messages : null;
         if (!chatMessages) {
-            return Response.json({ error: "Please enter a valid search query." }, { status: 400 });
+            return Response.json({ error: "Please enter a valid search query." }, { status: 400, headers: CORS });
         }
 
-        const result = streamText({
+        // Extract the user's query for analytics
+        userQuery = chatMessages[chatMessages.length - 1]?.content ?? "";
+
+        // Generate AI recommendations (buffered, not streamed)
+        const result = await generateText({
             model: google("gemini-2.5-flash-lite"),
             system: `You are PureFind's product recommendation engine. Cut through Amazon's noise and find genuinely great products.
 
@@ -65,6 +91,7 @@ RULES:
 - ALWAYS use "SEARCH" for the asin field. Never guess or invent an ASIN — they change constantly and wrong ASINs break product links.
 - Price estimates should reflect typical Amazon pricing.
 - The "whyThisPick" field: 1-2 sentences explaining why this beats the alternatives.
+- For product titles, use the EXACT full product name as it appears on Amazon (brand + model + key specs). This is critical for matching.
 
 JSON SCHEMA:
 {
@@ -86,10 +113,67 @@ JSON SCHEMA:
             messages: chatMessages,
         });
 
-        return result.toTextStreamResponse({ headers: CORS });
+        // Parse AI response
+        const cleaned = result.text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+        let aiData: AIResponse;
+        try {
+            aiData = JSON.parse(cleaned);
+        } catch {
+            // If AI returned invalid JSON, return it raw and let client handle
+            return new Response(cleaned, { headers: { ...CORS, "Content-Type": "text/plain" } });
+        }
+
+        // Enrich with real Amazon data (ASINs, prices, images, ratings)
+        const tag = process.env.NEXT_PUBLIC_AMAZON_TAG ?? "purefind-20";
+        const productsForEnrichment = aiData.products.map((p) => ({
+            ...p,
+            title: p.title,
+            asin: p.asin,
+        })) as Array<{ title: string; asin?: string;[key: string]: unknown }>;
+        const enriched = await enrichProducts(productsForEnrichment, tag, 3);
+
+        // Build the enriched response
+        const response = {
+            summary: aiData.summary,
+            products: enriched.map((p) => ({
+                rank: p.rank as number,
+                title: (p.amazonData?.title as string) || (p.title as string),
+                asin: p.amazonData?.asin || (p.asin as string),
+                whyThisPick: p.whyThisPick as string,
+                pros: p.pros as string[],
+                cons: p.cons as string[],
+                priceEstimate: p.amazonData?.price || (p.priceEstimate as string),
+                rating: p.amazonData?.rating || (p.rating as number),
+                category: p.category as string,
+                imageUrl: p.amazonData?.imageUrl,
+                reviewCount: p.amazonData?.reviewCount,
+                verified: !!p.amazonData,
+            })),
+            enriched: enriched.some((p) => p.amazonData),
+        };
+
+        // Log search analytics (fire-and-forget)
+        logSearch({
+            query: userQuery,
+            ip,
+            resultCount: response.products.length,
+            enrichedCount: response.products.filter((p) => p.verified).length,
+            durationMs: Date.now() - startTime,
+        });
+
+        return Response.json(response, { headers: CORS });
     } catch (error: unknown) {
         console.error("Search error:", error);
         const msg = error instanceof Error ? error.message : "";
+
+        // Log the error (fire-and-forget)
+        logError({
+            route: "/api/search",
+            error: msg || "Unknown search error",
+            ip,
+            extra: { query: userQuery },
+        });
+
         if (msg.includes("API key")) {
             return Response.json({ error: "Google AI API key not configured." }, { status: 500, headers: CORS });
         }

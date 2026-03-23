@@ -1,3 +1,4 @@
+// @ts-nocheck — route is temporarily disabled; re-enable type checking when reactivated
 import { createClient } from '@supabase/supabase-js';
 import { ALL_SOURCES } from '@/lib/deal-sources';
 import {
@@ -17,6 +18,9 @@ function getSupabase() {
 }
 
 export async function POST(req: Request) {
+    // Temporarily disabled to save Vercel CPU
+    return Response.json({ disabled: true }, { status: 503 });
+
     // Verify secret to prevent unauthorized triggers
     const secret = req.headers.get('x-cron-secret');
     if (secret !== process.env.CRON_SECRET) {
@@ -37,8 +41,9 @@ export async function POST(req: Request) {
     );
 
     for (const result of results) {
-        if (result.status === 'rejected') continue;
-        const { sourceId, rawDeals } = result.value;
+        if (result.status !== 'fulfilled') continue;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { sourceId, rawDeals } = (result as any).value;
 
         for (const raw of rawDeals) {
             // Check if deal is being marked as dead

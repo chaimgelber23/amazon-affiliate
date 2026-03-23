@@ -3,9 +3,17 @@ import { ShieldCheck, Search, Eye, Heart, Zap, TrendingUp } from "lucide-react";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-    title: "About PureFind — How We Find the Best Products",
+    title: "About PureFind — How We Find the Best Amazon Products",
     description:
-        "PureFind uses AI to cut through Amazon's SEO noise and find the products actually worth buying. Learn how it works.",
+        "PureFind uses AI to cut through Amazon's SEO noise and sponsored placements. Learn how we find genuinely great products with real data — no paid recommendations.",
+    alternates: {
+        canonical: "/about",
+    },
+    openGraph: {
+        title: "About PureFind — Honest AI Product Recommendations",
+        description:
+            "No paid placements. No fake reviews. Learn how PureFind's AI finds the best products on Amazon.",
+    },
 };
 
 export default function AboutPage() {

@@ -3,9 +3,84 @@
 import Link from "next/link";
 import { SearchBox } from "@/components/SearchBox";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://purefind.com";
+
+function HomeJsonLd() {
+    const schema = {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        name: "PureFind",
+        url: siteUrl,
+        applicationCategory: "ShoppingApplication",
+        description:
+            "AI-powered product finder that cuts through Amazon's sponsored results to recommend genuinely great products with real prices and ratings.",
+        offers: {
+            "@type": "Offer",
+            price: "0",
+            priceCurrency: "USD",
+        },
+        featureList: [
+            "AI-powered product recommendations",
+            "No sponsored results",
+            "Real Amazon prices and ratings",
+            "Honest pros and cons for every product",
+            "Live Amazon deal tracking",
+        ],
+    };
+
+    return (
+        <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+    );
+}
+
+function FaqJsonLd() {
+    const faq = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: [
+            {
+                "@type": "Question",
+                name: "How does PureFind find the best products?",
+                acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "PureFind uses AI to analyze thousands of Amazon products based on real reviews, ratings, and specifications — not sponsored placements. We verify every recommendation with live Amazon data including real prices and review counts.",
+                },
+            },
+            {
+                "@type": "Question",
+                name: "Does PureFind cost anything?",
+                acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "PureFind is completely free to use. We earn a small affiliate commission (1-4.5%) when you purchase through our links, at no extra cost to you. You get the same Amazon price and Prime shipping.",
+                },
+            },
+            {
+                "@type": "Question",
+                name: "Are PureFind's recommendations unbiased?",
+                acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Yes. No seller pays for placement on PureFind. Our AI recommends products based on genuine quality, reviews, and value — not advertising spend. We also show honest pros and cons for every product.",
+                },
+            },
+        ],
+    };
+
+    return (
+        <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(faq) }}
+        />
+    );
+}
+
 export default function HomePage() {
     return (
         <div className="relative min-h-screen overflow-hidden">
+            <HomeJsonLd />
+            <FaqJsonLd />
 
             {/* Global Mesh Orb Behind Hero */}
             <div className="mesh-orb w-[600px] h-[600px] bg-indigo-500/20 top-[-200px] left-1/2 -translate-x-1/2 animate-float" />
@@ -26,7 +101,7 @@ export default function HomePage() {
                     </h1>
 
                     <p className="text-xl text-[var(--color-surface-muted)] mb-12 max-w-xl mx-auto leading-relaxed font-medium">
-                        Tell us what you're looking for. Our AI instantly sifts through Amazon's noise to find exactly what you need.
+                        Tell us what you need. Our AI searches Amazon, verifies real prices and ratings, and shows you what&apos;s genuinely worth buying.
                     </p>
 
                     <SearchBox />
@@ -39,8 +114,8 @@ export default function HomePage() {
                     <div className="flex flex-wrap justify-center gap-y-4 gap-x-8 lg:gap-x-16 text-sm text-[var(--color-surface-muted)] font-bold tracking-wide uppercase">
                         {[
                             "0 Sponsored Results",
-                            "No Keyword Spam",
-                            "Search Within Your Results",
+                            "Real Amazon Prices",
+                            "Verified Ratings",
                             "Instant AI Decisions",
                         ].map((text) => (
                             <span key={text} className="flex items-center gap-2">
@@ -71,10 +146,10 @@ export default function HomePage() {
                         {/* Big Card 1 */}
                         <div className="card md:col-span-2 p-10 flex flex-col justify-center relative overflow-hidden group">
                             <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-indigo-500/10 to-transparent rounded-bl-full transition-transform duration-700 group-hover:scale-110" />
-                            <span className="text-6xl mb-6">🎯</span>
-                            <h3 className="text-2xl font-bold mb-4">You ask. We perfectly translate.</h3>
+                            <span className="text-5xl mb-5">🎯</span>
+                            <h3 className="text-2xl font-bold mb-4">You ask. We find the real deal.</h3>
                             <p className="text-[var(--color-surface-muted)] leading-relaxed max-w-md text-lg">
-                                Just type "I need an ergonomic chair for back pain under $300." Our AI knows exactly which specs to hunt for, avoiding overpriced brands.
+                                Just type &quot;I need an ergonomic chair for back pain under $300.&quot; Our AI searches Amazon, verifies prices and reviews, then shows you what&apos;s actually worth buying.
                             </p>
                         </div>
 
@@ -93,9 +168,9 @@ export default function HomePage() {
                         {/* Small Card Left */}
                         <div className="card p-10 relative overflow-hidden group">
                             <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-colors duration-500" />
-                            <h3 className="text-xl font-bold mb-3">Same Low Price</h3>
+                            <h3 className="text-xl font-bold mb-3">Real Prices & Ratings</h3>
                             <p className="text-[var(--color-surface-muted)] text-sm leading-relaxed">
-                                Click our link and buy on Amazon. You get the exact same price and Prime shipping. We earn a small affiliate fee.
+                                Every recommendation is verified against live Amazon data. See real prices, real star ratings, and real review counts — not estimates.
                             </p>
                         </div>
 
@@ -103,9 +178,9 @@ export default function HomePage() {
                         <div className="card p-10 relative overflow-hidden group border-indigo-100">
                             <div className="absolute -left-4 -top-4 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-colors duration-500" />
                             <div className="text-2xl mb-3">🔄</div>
-                            <h3 className="text-xl font-bold mb-3">Search Within Your Results</h3>
+                            <h3 className="text-xl font-bold mb-3">Refine Until Perfect</h3>
                             <p className="text-[var(--color-surface-muted)] text-sm leading-relaxed">
-                                Got results but want to go deeper? Search again right there — "under $50," "waterproof," "for kids." Keep narrowing until it's perfect.
+                                Got results but want to go deeper? Search again right there — &quot;under $50,&quot; &quot;waterproof,&quot; &quot;for kids.&quot; Keep narrowing until it&apos;s perfect.
                             </p>
                         </div>
 
@@ -120,7 +195,7 @@ export default function HomePage() {
                         Live Monitor
                     </p>
                     <h2 className="text-3xl font-black text-[var(--color-surface)] mb-6">
-                        Today's Hottest Lightning Deals
+                        Today&apos;s Hottest Amazon Deals
                     </h2>
                     <p className="text-[var(--color-surface-muted)] mb-10 leading-relaxed text-lg">
                         We actively track massive price drops across Amazon to find deals that legitimately matter.
@@ -128,6 +203,41 @@ export default function HomePage() {
                     <Link href="/deals" className="btn-primary shadow-xl shadow-indigo-500/20 !px-10 py-4 text-base">
                         View Live Deals
                     </Link>
+                </div>
+            </section>
+
+            {/* ── FAQ SECTION (SEO Content) ── */}
+            <section className="py-20 px-4 sm:px-8 relative z-10">
+                <div className="max-w-3xl mx-auto">
+                    <h2 className="text-2xl sm:text-3xl font-black text-center text-[var(--color-surface)] mb-12">
+                        Frequently Asked Questions
+                    </h2>
+                    <div className="space-y-6">
+                        {[
+                            {
+                                q: "How does PureFind find the best products?",
+                                a: "PureFind uses AI to analyze thousands of Amazon products based on real reviews, ratings, and specifications — not sponsored placements. We verify every recommendation with live Amazon data including real prices and review counts.",
+                            },
+                            {
+                                q: "Does PureFind cost anything?",
+                                a: "PureFind is completely free to use. We earn a small affiliate commission (1-4.5%) when you purchase through our links, at no extra cost to you. You get the same Amazon price and Prime shipping.",
+                            },
+                            {
+                                q: "Are PureFind's recommendations unbiased?",
+                                a: "Yes. No seller pays for placement on PureFind. Our AI recommends products based on genuine quality, reviews, and value — not advertising spend. We show honest pros and cons for every product.",
+                            },
+                        ].map(({ q, a }) => (
+                            <details key={q} className="card p-6 group">
+                                <summary className="font-bold text-[var(--color-surface)] cursor-pointer list-none flex items-center justify-between">
+                                    {q}
+                                    <span className="text-[var(--color-surface-dim)] text-xl transition-transform group-open:rotate-45 ml-4 flex-shrink-0">+</span>
+                                </summary>
+                                <p className="mt-4 text-sm text-[var(--color-surface-muted)] leading-relaxed">
+                                    {a}
+                                </p>
+                            </details>
+                        ))}
+                    </div>
                 </div>
             </section>
 
@@ -139,7 +249,7 @@ export default function HomePage() {
                         Stop endlessly scrolling.
                     </h2>
                     <p className="text-slate-300 text-xl font-medium mb-12">
-                        Get the perfect recommendation in under 5 seconds. Start searching right now.
+                        Get the perfect recommendation in under 10 seconds. Start searching right now.
                     </p>
                     <button
                         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}

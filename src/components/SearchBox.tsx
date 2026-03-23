@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { buildAffiliateUrl } from "@/lib/affiliate";
+import { buildAffiliateUrl, buildAffiliateSearchUrl } from "@/lib/affiliate";
 
 interface Product {
     rank: number;
@@ -13,11 +13,15 @@ interface Product {
     priceEstimate: string;
     rating: number;
     category: string;
+    imageUrl?: string;
+    reviewCount?: number;
+    verified?: boolean;
 }
 
 interface SearchResult {
     summary: string;
     products: Product[];
+    enriched?: boolean;
 }
 
 function extractAsinFromText(text: string): string | null {
@@ -36,24 +40,32 @@ const EXAMPLES = [
     "Best air fryer for a family of 4",
 ];
 
-function ProductImage({ asin, title }: { asin: string; title: string }) {
+function ProductImage({ product }: { product: Product }) {
     const [errored, setErrored] = useState(false);
 
-    if (asin === "SEARCH" || errored) {
+    // Use real Amazon image if available from enrichment
+    if (product.imageUrl && !errored) {
         return (
-            <div className="w-28 h-28 sm:w-36 sm:h-36 flex-shrink-0 rounded-2xl bg-[var(--color-bg-elevated)]" />
+            <img
+                src={product.imageUrl}
+                alt={product.title}
+                width={144}
+                height={144}
+                className="w-28 h-28 sm:w-36 sm:h-36 flex-shrink-0 rounded-2xl object-contain bg-white border border-[var(--color-border)] p-2 shadow-sm"
+                onError={() => setErrored(true)}
+                loading="lazy"
+            />
         );
     }
 
     return (
-        <img
-            src={`/api/image?asin=${asin}`}
-            alt={title}
-            width={144}
-            height={144}
-            className="w-28 h-28 sm:w-36 sm:h-36 flex-shrink-0 rounded-2xl object-contain bg-white border border-[var(--color-border)] p-2 shadow-sm"
-            onError={() => setErrored(true)}
-        />
+        <div className="w-28 h-28 sm:w-36 sm:h-36 flex-shrink-0 rounded-2xl bg-[var(--color-bg-elevated)] border border-[var(--color-border)] flex items-center justify-center">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[var(--color-surface-dim)]">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <path d="m21 15-5-5L5 21" />
+            </svg>
+        </div>
     );
 }
 
@@ -72,6 +84,28 @@ function SkeletonCard() {
                 </div>
             </div>
         </div>
+    );
+}
+
+function StarRating({ rating, reviewCount }: { rating: number; reviewCount?: number }) {
+    const full = Math.floor(rating);
+    const half = rating - full >= 0.3;
+    return (
+        <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--color-surface-dim)]">
+            <span className="inline-flex gap-px">
+                {Array.from({ length: 5 }).map((_, i) => (
+                    <span key={i} className={i < full ? "text-amber-400" : i === full && half ? "text-amber-300" : "text-slate-200"}>
+                        ★
+                    </span>
+                ))}
+            </span>
+            <span>{rating}/5</span>
+            {reviewCount && (
+                <span className="text-xs text-[var(--color-surface-dim)]">
+                    ({reviewCount.toLocaleString()})
+                </span>
+            )}
+        </span>
     );
 }
 
@@ -148,25 +182,13 @@ export function SearchBox() {
                 body: JSON.stringify({ messages: newMessages }),
             });
 
-            if (!res.ok || !res.body) {
+            if (!res.ok) {
                 const errData = await res.json().catch(() => ({}));
                 setError((errData as { error?: string }).error || "Search failed. Please try again.");
                 return;
             }
 
-            // Read the stream and accumulate text
-            const reader = res.body.getReader();
-            const decoder = new TextDecoder();
-            let text = "";
-
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-                text += decoder.decode(value, { stream: true });
-            }
-
-            const cleaned = text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
-            const data: SearchResult = JSON.parse(cleaned);
+            const data: SearchResult = await res.json();
 
             setResults(data);
             setMessages([...newMessages, { role: "assistant", content: JSON.stringify(data) }]);
@@ -186,7 +208,7 @@ export function SearchBox() {
     const amazonHref = (p: Product) => {
         const cleanAsin = typeof p.asin === "string" ? p.asin.trim() : "";
         if (!cleanAsin || cleanAsin === "SEARCH") {
-            return `https://www.amazon.com/s?k=${encodeURIComponent(p.title)}&tag=${process.env.NEXT_PUBLIC_AMAZON_TAG ?? "purefind-20"}`;
+            return buildAffiliateSearchUrl(p.title);
         }
         return buildAffiliateUrl(cleanAsin);
     };
@@ -218,7 +240,7 @@ export function SearchBox() {
                     />
                     {detectedAsin && (
                         <span className="mx-3 px-3 py-1.5 bg-indigo-50 border border-indigo-200 text-indigo-600 text-xs font-bold rounded-full whitespace-nowrap flex items-center gap-1.5 flex-shrink-0">
-                            🔗 Amazon link
+                            Amazon link detected
                         </span>
                     )}
                     <button
@@ -226,7 +248,7 @@ export function SearchBox() {
                         disabled={loading || !query.trim()}
                         className="btn-primary mx-3 py-4 px-8 text-base disabled:opacity-50 whitespace-nowrap shadow-md"
                     >
-                        {loading ? "Searching..." : detectedAsin ? "Compare" : results ? "Search Within" : "Find Specs"}
+                        {loading ? "Searching..." : detectedAsin ? "Compare" : results ? "Search Within" : "Find Products"}
                     </button>
                 </div>
                 {results && !loading && (
@@ -261,6 +283,11 @@ export function SearchBox() {
             {/* ── LOADING SKELETONS ── */}
             {loading && (
                 <div className="mt-12 space-y-6 animate-fade-in">
+                    <div className="text-center mb-2">
+                        <p className="text-sm text-[var(--color-surface-muted)] font-medium">
+                            Finding the best products and verifying on Amazon...
+                        </p>
+                    </div>
                     {Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)}
                 </div>
             )}
@@ -275,10 +302,16 @@ export function SearchBox() {
             {/* ── RESULTS ── */}
             {results && !loading && (
                 <div className="mt-12 animate-fade-in-up">
-                    <div className="mb-10 text-left pl-2 text-center sm:text-left">
+                    <div className="mb-10 text-center sm:text-left pl-2">
                         <p className="text-xl font-bold text-[var(--color-surface)] leading-relaxed">{results.summary}</p>
                         <p className="text-sm font-medium text-[var(--color-surface-dim)] mt-3">
-                            {results.products.length} AI-verified recommendations · Prices are estimates
+                            {results.products.length} recommendations
+                            {results.enriched && (
+                                <span className="inline-flex items-center gap-1.5 ml-2 px-2.5 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold rounded-full">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                                    Verified on Amazon
+                                </span>
+                            )}
                         </p>
                     </div>
 
@@ -295,15 +328,20 @@ export function SearchBox() {
 
                                 <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 relative z-10">
                                     {/* Image */}
-                                    <ProductImage asin={product.asin} title={product.title} />
+                                    <ProductImage product={product} />
 
                                     {/* Body */}
                                     <div className="flex-1 min-w-0">
                                         {/* Rank + Title */}
-                                        <div className="flex items-center gap-3 mb-2">
+                                        <div className="flex flex-wrap items-center gap-2 mb-2">
                                             {product.rank === 1 && (
                                                 <span className="px-3 py-1 bg-[var(--color-accent-muted)] text-[var(--color-accent)] text-xs font-black uppercase tracking-widest rounded-md">
                                                     Top Pick
+                                                </span>
+                                            )}
+                                            {product.verified && (
+                                                <span className="px-2.5 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-bold uppercase tracking-wider rounded-md border border-emerald-200">
+                                                    Verified
                                                 </span>
                                             )}
                                         </div>
@@ -312,13 +350,13 @@ export function SearchBox() {
                                         </h3>
 
                                         {/* Price + meta */}
-                                        <div className="flex flex-wrap items-baseline gap-4 mt-3">
+                                        <div className="flex flex-wrap items-center gap-4 mt-3">
                                             <span className="text-2xl sm:text-3xl font-black text-[var(--color-surface)]">
                                                 {product.priceEstimate}
                                             </span>
-                                            <span className="text-sm font-semibold text-[var(--color-surface-dim)] flex items-center gap-1.5">
-                                                <span className="text-amber-400 text-base">★</span> {product.rating}/5
-                                                <span className="mx-1">·</span> {product.category}
+                                            <StarRating rating={product.rating} reviewCount={product.reviewCount} />
+                                            <span className="text-xs font-semibold text-[var(--color-surface-dim)] px-2.5 py-1 bg-[var(--color-bg-elevated)] rounded-full">
+                                                {product.category}
                                             </span>
                                         </div>
 
@@ -348,7 +386,7 @@ export function SearchBox() {
                                                 className="w-full sm:w-auto btn-amazon text-sm py-3 px-8"
                                                 onClick={(e) => e.stopPropagation()}
                                             >
-                                                Check Amazon Price
+                                                {product.verified ? "View on Amazon" : "Search on Amazon"}
                                             </a>
                                         </div>
 

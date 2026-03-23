@@ -117,7 +117,7 @@ export function DealCard({ deal, isNew }: DealCardProps) {
                     <a
                         href={deal.amazon_url}
                         target="_blank"
-                        rel="noopener noreferrer"
+                        rel="noopener noreferrer nofollow sponsored"
                         className="btn-amazon flex items-center justify-center w-full text-xs py-2.5 cursor-pointer"
                     >
                         Get Deal on Amazon
