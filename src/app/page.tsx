@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { SearchBox } from "@/components/SearchBox";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://purefind.com";
@@ -185,24 +184,6 @@ export default function HomePage() {
                         </div>
 
                     </div>
-                </div>
-            </section>
-
-            {/* ── LIVE DEALS TEASER ── */}
-            <section className="py-28 px-4 sm:px-8 relative z-10">
-                <div className="max-w-xl mx-auto text-center card p-12 sm:p-16 border-2 border-[var(--color-accent-muted)] bg-gradient-to-b from-white to-[var(--color-bg-elevated)]">
-                    <p className="text-xs font-black uppercase tracking-[0.2em] text-[var(--color-accent)] mb-6 animate-pulse">
-                        Live Monitor
-                    </p>
-                    <h2 className="text-3xl font-black text-[var(--color-surface)] mb-6">
-                        Today&apos;s Hottest Amazon Deals
-                    </h2>
-                    <p className="text-[var(--color-surface-muted)] mb-10 leading-relaxed text-lg">
-                        We actively track massive price drops across Amazon to find deals that legitimately matter.
-                    </p>
-                    <Link href="/deals" className="btn-primary shadow-xl shadow-indigo-500/20 !px-10 py-4 text-base">
-                        View Live Deals
-                    </Link>
                 </div>
             </section>
 

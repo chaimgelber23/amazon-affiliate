@@ -34,7 +34,7 @@ export function Footer() {
                             Navigate
                         </h4>
                         <ul className="space-y-4">
-                            {[{ label: "Home", href: "/" }, { label: "Live Deals", href: "/deals" }, { label: "About", href: "/about" }].map((link) => (
+                            {[{ label: "Home", href: "/" }, { label: "About", href: "/about" }].map((link) => (
                                 <li key={link.href}>
                                     <Link
                                         href={link.href}

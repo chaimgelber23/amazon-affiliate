@@ -35,18 +35,6 @@ export function Header() {
                                 {link.label}
                             </Link>
                         ))}
-
-                        {/* Live Deals — special CTA */}
-                        <Link
-                            href="/deals"
-                            className="flex items-center gap-2 text-[15px] font-semibold text-[var(--color-surface-muted)] hover:text-[var(--color-surface)] transition-colors duration-200"
-                        >
-                            <span className="relative flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                            </span>
-                            Live Deals
-                        </Link>
                     </nav>
 
                     {/* Mobile toggle */}
@@ -73,17 +61,6 @@ export function Header() {
                                 {link.label}
                             </Link>
                         ))}
-                        <Link
-                            href="/deals"
-                            className="flex items-center gap-2 text-[15px] font-bold text-[var(--color-surface-muted)] hover:text-[var(--color-surface)] min-h-[44px] transition-colors"
-                            onClick={() => setMobileOpen(false)}
-                        >
-                            <span className="relative flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                            </span>
-                            Live Deals
-                        </Link>
                     </nav>
                 )}
             </header>

@@ -53,19 +53,3 @@ export interface SiteConfig {
     url: string;
 }
 
-export interface ExternalDeal {
-    asin: string;
-    title: string;
-    amazon_url: string;       // affiliate URL with tag=purefind-20
-    source: string;           // first site that posted it
-    sources: string[];        // all sites that posted it
-    status: 'live' | 'expired';
-    price?: string;
-    image_url?: string;
-    description?: string;
-    original_deal_url?: string;
-    posted_at: string;
-    last_seen_at: string;
-    expired_at?: string;
-    created_at: string;
-}

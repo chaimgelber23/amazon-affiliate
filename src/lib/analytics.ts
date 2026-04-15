@@ -28,7 +28,7 @@ export function logSearch(data: {
 
     // Fire and forget — don't await, don't block the response
     client
-        .from("search_logs")
+        .from("pf_search_logs")
         .insert({
             query: data.query.slice(0, 500),
             ip_hash: hashIp(data.ip),
@@ -56,7 +56,7 @@ export function logError(data: {
     if (!client) return;
 
     client
-        .from("error_logs")
+        .from("pf_error_logs")
         .insert({
             route: data.route,
             error: data.error.slice(0, 2000),

@@ -67,8 +67,7 @@ export const metadata: Metadata = {
         "unbiased amazon reviews",
         "no sponsored results",
         "AI product recommendations",
-        "amazon deals",
-        "best amazon deals today",
+        "best amazon buys",
         "product comparison tool",
     ],
 };

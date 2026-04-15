@@ -4,7 +4,7 @@ import { NextRequest } from "next/server";
 import { enrichProducts } from "@/lib/amazon-lookup";
 import { logSearch, logError } from "@/lib/analytics";
 
-export const maxDuration = 60;
+export const maxDuration = 25;
 
 // Allow Chrome extension and other origins to call this API
 const CORS = {
