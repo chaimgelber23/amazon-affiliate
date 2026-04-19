@@ -14,6 +14,7 @@
         "@ai-sdk/react": "^3.0.118",
         "@supabase/supabase-js": "^2.49.0",
         "ai": "^6.0.116",
+        "amazon-paapi": "^1.1.0",
         "cheerio": "^1.2.0",
         "lucide-react": "^0.469.0",
         "next": "^15.1.0",

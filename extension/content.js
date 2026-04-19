@@ -1,5 +1,32 @@
 // PureFind AI — content script
-// Injects a floating lux "PureFind" widget into Amazon
+// =====================================================================
+// DOM access contract (privacy-critical — keep in sync with /privacy):
+//
+//   RUNS ON: https://www.amazon.com/s* ONLY (manifest-enforced).
+//
+//   READS (from Amazon search pages only):
+//     - document.body (to appendChild the widget container)
+//     - document.getElementById("purefind-widget-container" / legacy IDs)
+//       for dedupe and cleanup
+//
+//   DOES NOT READ:
+//     - form fields, search input values, URL query params
+//     - page content, product titles, prices, or any rendered data
+//     - cookies, localStorage, or any site-set data
+//
+//   WRITES:
+//     - Appends one <div id="purefind-widget-container"> to <body>,
+//       containing an <iframe src=popup.html> (isolated context) and
+//       a floating <button> to toggle the widget open/closed.
+//
+//   POSTMESSAGE:
+//     - Listens for {action: "closePureFindWidget"} from the widget iframe
+//       to close. No other messages are read or forwarded.
+//
+// Everything that searches Amazon / calls our API lives inside the
+// iframe (popup.js), which runs in its own extension context — it never
+// sees the host page's DOM.
+// =====================================================================
 
 (function () {
   "use strict";

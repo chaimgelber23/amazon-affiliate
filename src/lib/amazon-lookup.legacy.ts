@@ -1,3 +1,31 @@
+// ============================================================================
+// DEPRECATED — Amazon HTML scraper (Associates Operating Agreement §5 violation)
+// ============================================================================
+// This module scraped amazon.com/s and extracted product details via cheerio.
+// That behavior is a direct violation of the Amazon Associates Operating
+// Agreement §5 ("you will not use any data mining, robots, screen scraping,
+// or similar data gathering and extraction tools"). A single complaint = ban.
+//
+// It has been REPLACED by `src/lib/amazon-paapi.ts`, which uses the official
+// Product Advertising API 5.0 and respects Amazon's ToS.
+//
+// This file is kept (renamed) so the migration is reversible during the cut-over
+// window. It throws at import time unless `AMAZON_ALLOW_SCRAPE === "1"` is set,
+// which should NEVER be set in production. If you need emergency scraping you
+// must explicitly opt in, and you accept the ban risk.
+//
+// TODO(post-migration): delete this file after PA-API runs clean for 30 days.
+// ============================================================================
+
+export const DEPRECATED = true;
+
+if (process.env.AMAZON_ALLOW_SCRAPE !== "1") {
+    throw new Error(
+        "amazon-lookup.legacy.ts is deprecated - use amazon-paapi.ts. " +
+        "Set AMAZON_ALLOW_SCRAPE=1 only in a break-glass emergency (and accept Associates ban risk).",
+    );
+}
+
 import * as cheerio from "cheerio";
 
 export interface AmazonProduct {
