@@ -1,6 +1,22 @@
 const API_URL = "https://purefind.vercel.app/api/search";
 const TAG = "purefind-20";
 
+// Self-referral guard — Amazon Associates Operating Agreement §6 prohibits
+// affiliate links whose referrer is an Amazon property. When this popup is
+// running inside the widget iframe on amazon.com, we must strip the tag from
+// outbound URLs so the click isn't counted as a self-referral.
+function isEmbeddedOnAmazon() {
+  try {
+    // In top-level popup (toolbar), window.parent === window
+    if (window.parent === window) return false;
+    // In the iframe widget, document.referrer is the host page
+    return /^https?:\/\/(www\.)?amazon\.[a-z.]+/i.test(document.referrer || "");
+  } catch {
+    return false;
+  }
+}
+const EMBEDDED_ON_AMAZON = isEmbeddedOnAmazon();
+
 const queryEl = document.getElementById("query");
 const searchBtn = document.getElementById("search-btn");
 const refineQueryEl = document.getElementById("refine-query");
@@ -80,10 +96,14 @@ function isAmazonUrl(text) {
 }
 
 function buildAmazonUrl(rawAsin, title) {
+  // Self-referral guard: no affiliate tag when embedded on amazon.com.
+  const tagSuffix = EMBEDDED_ON_AMAZON ? "" : `?tag=${TAG}`;
+  const tagSuffixAmp = EMBEDDED_ON_AMAZON ? "" : `&tag=${TAG}`;
+
   const cleanAsin = rawAsin ? String(rawAsin).trim() : "";
   if (!cleanAsin || cleanAsin === "SEARCH") {
     const q = encodeURIComponent(title ?? "");
-    return `https://www.amazon.com/s?k=${q}&tag=${TAG}`;
+    return `https://www.amazon.com/s?k=${q}${tagSuffixAmp}`;
   }
 
   // Clean it up if the AI returned a giant URL instead of the 10-char ASIN
@@ -95,7 +115,7 @@ function buildAmazonUrl(rawAsin, title) {
     asin = cleanAsin.split("?")[0].replace(/[^A-Z0-9]/gi, "");
   }
 
-  return `https://www.amazon.com/dp/${asin}?tag=${TAG}`;
+  return `https://www.amazon.com/dp/${asin}${tagSuffix}`;
 }
 
 function escHtml(s) {

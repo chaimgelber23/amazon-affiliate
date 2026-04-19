@@ -1,7 +1,7 @@
 import { generateText } from "ai";
 import { google } from "@ai-sdk/google";
 import { NextRequest } from "next/server";
-import { enrichProducts } from "@/lib/amazon-lookup";
+import { enrichProducts } from "@/lib/amazon-paapi";
 import { logSearch, logError } from "@/lib/analytics";
 
 export const maxDuration = 25;
@@ -123,14 +123,31 @@ JSON SCHEMA:
             return new Response(cleaned, { headers: { ...CORS, "Content-Type": "text/plain" } });
         }
 
-        // Enrich with real Amazon data (ASINs, prices, images, ratings)
-        const tag = process.env.NEXT_PUBLIC_AMAZON_TAG ?? "purefind-20";
+        // Enrich with real Amazon data via PA-API 5.0 (ASINs, prices, images, ratings).
+        // The partner tag is sourced inside amazon-paapi.ts from AMAZON_PAAPI_PARTNER_TAG
+        // (falling back to NEXT_PUBLIC_AMAZON_TAG).
         const productsForEnrichment = aiData.products.map((p) => ({
             ...p,
             title: p.title,
             asin: p.asin,
         })) as Array<{ title: string; asin?: string;[key: string]: unknown }>;
-        const enriched = await enrichProducts(productsForEnrichment, tag, 3);
+
+        let enriched: Awaited<ReturnType<typeof enrichProducts>>;
+        try {
+            enriched = await enrichProducts(productsForEnrichment);
+        } catch (paapiErr) {
+            const msg = paapiErr instanceof Error ? paapiErr.message : "PA-API call failed";
+            logError({
+                route: "/api/search",
+                error: `PA-API failure: ${msg}`,
+                ip,
+                extra: { query: userQuery },
+            });
+            return Response.json(
+                { error: "Product verification unavailable — please try again shortly." },
+                { status: 503, headers: { ...CORS, "Retry-After": "30" } },
+            );
+        }
 
         // Build the enriched response
         const response = {

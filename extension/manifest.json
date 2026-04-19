@@ -1,22 +1,20 @@
 {
   "manifest_version": 3,
   "name": "PureFind — AI Product Search",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "PureFind's AI instantly finds the best product for your needs with honest pros, cons, and links.",
   "permissions": [
-    "storage",
-    "action",
-    "tabs",
-    "windows"
+    "storage"
   ],
   "background": {
     "service_worker": "background.js"
   },
   "host_permissions": [
-    "https://www.amazon.com/*",
+    "https://www.amazon.com/s*",
     "https://purefind.vercel.app/*"
   ],
   "action": {
+    "default_popup": "popup.html",
     "default_title": "PureFind AI Search",
     "default_icon": {
       "16": "icons/icon16.png",
@@ -32,14 +30,14 @@
         "icons/*"
       ],
       "matches": [
-        "https://www.amazon.com/*"
+        "https://www.amazon.com/s*"
       ]
     }
   ],
   "content_scripts": [
     {
       "matches": [
-        "https://www.amazon.com/*"
+        "https://www.amazon.com/s*"
       ],
       "js": [
         "content.js"
