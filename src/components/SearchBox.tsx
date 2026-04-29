@@ -33,17 +33,33 @@ function isAmazonUrl(text: string): boolean {
     return /amazon\.com/i.test(text) && extractAsinFromText(text) !== null;
 }
 
-const EXAMPLES = [
-    "Best noise cancelling headphones under $200",
-    "Quiet mechanical keyboard for office",
-    "Standing desk for small spaces",
-    "Best air fryer for a family of 4",
+interface PopularQuery {
+    label: string;
+    sub: string;
+    q: string;
+}
+
+const POPULAR: PopularQuery[] = [
+    {
+        label: "Standing desk under $300",
+        sub: "Home office",
+        q: "Standing desk under $300, deep enough for a 27-inch monitor",
+    },
+    {
+        label: "Quiet mechanical keyboard",
+        sub: "Keyboards",
+        q: "Quiet mechanical keyboard for office use",
+    },
+    {
+        label: "Air fryer for family of 4",
+        sub: "Kitchen",
+        q: "Best air fryer for a family of 4",
+    },
 ];
 
 function ProductImage({ product }: { product: Product }) {
     const [errored, setErrored] = useState(false);
 
-    // Use real Amazon image if available from enrichment
     if (product.imageUrl && !errored) {
         return (
             <img
@@ -94,14 +110,14 @@ function StarRating({ rating, reviewCount }: { rating: number; reviewCount?: num
         <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--color-surface-dim)]">
             <span className="inline-flex gap-px">
                 {Array.from({ length: 5 }).map((_, i) => (
-                    <span key={i} className={i < full ? "text-amber-400" : i === full && half ? "text-amber-300" : "text-slate-200"}>
+                    <span key={i} className={i < full ? "text-amber-400" : i === full && half ? "text-amber-300" : "text-slate-200"} aria-hidden="true">
                         ★
                     </span>
                 ))}
             </span>
-            <span>{rating}/5</span>
+            <span className="font-mono tnum">{rating.toFixed(1)}</span>
             {reviewCount && (
-                <span className="text-xs text-[var(--color-surface-dim)]">
+                <span className="text-xs font-mono tnum text-[var(--color-surface-dim)]">
                     ({reviewCount.toLocaleString()})
                 </span>
             )}
@@ -145,7 +161,6 @@ export function SearchBox() {
 
     const doSearch = async (q: string, isRefinement = false) => {
         if (!q.trim()) return;
-        // If user pasted an Amazon link, rewrite query to ask for that product + alternatives
         const asin = extractAsinFromText(q);
         if (asin && isAmazonUrl(q)) {
             q = `I'm looking at Amazon product ASIN ${asin}. Show me this exact product first, then find me similar alternatives that are better — better reviews, better price, or better overall value for the same use case.`;
@@ -155,7 +170,6 @@ export function SearchBox() {
         setExpandedCard(null);
         setShowAll(false);
 
-        // Check session cache for non-refinement searches
         if (!isRefinement) {
             const cached = getCached(q);
             if (cached) {
@@ -219,36 +233,36 @@ export function SearchBox() {
             {/* ── SEARCH BAR ── */}
             <form onSubmit={handleSubmit} className="relative group">
                 {results && !loading && (
-                    <p className="text-[11px] font-bold uppercase tracking-widest text-[var(--color-accent)] mb-3">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-accent)] mb-3">
                         Refine your results
                     </p>
                 )}
 
-                {/* The glowing border effect on focus */}
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-[var(--color-accent)] to-purple-500 rounded-[28px] opacity-0 group-focus-within:opacity-100 blur transition duration-500 group-focus-within:duration-200" />
 
-                <div className="relative flex items-center bg-white/90 backdrop-blur-3xl border border-[var(--color-border-strong)] rounded-[26px] overflow-hidden transition-all shadow-xl shadow-slate-200/50">
+                <div className="relative flex items-center bg-white/95 backdrop-blur-3xl border border-[var(--color-border-strong)] rounded-[26px] overflow-hidden transition-all shadow-xl shadow-slate-200/50">
                     <input
-                        className="w-full bg-transparent text-[var(--color-surface)] placeholder-[var(--color-surface-dim)] px-8 py-6 focus:outline-none text-xl font-semibold"
+                        className="w-full bg-transparent text-[var(--color-surface)] placeholder-[var(--color-surface-dim)] px-7 py-5 sm:px-8 sm:py-6 focus:outline-none text-lg sm:text-xl font-semibold"
                         placeholder={results
                             ? "Narrow it down — e.g. \"under $100\" or \"wireless\""
-                            : "What are you looking for? Or paste an Amazon link."}
+                            : "standing desk under $300"}
                         value={query}
                         onChange={(e) => handleQueryChange(e.target.value)}
                         disabled={loading}
                         autoComplete="off"
+                        aria-label="Search for an Amazon product"
                     />
                     {detectedAsin && (
-                        <span className="mx-3 px-3 py-1.5 bg-indigo-50 border border-indigo-200 text-indigo-600 text-xs font-bold rounded-full whitespace-nowrap flex items-center gap-1.5 flex-shrink-0">
+                        <span className="mx-3 px-3 py-1.5 bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold rounded-full whitespace-nowrap flex items-center gap-1.5 flex-shrink-0">
                             Amazon link detected
                         </span>
                     )}
                     <button
                         type="submit"
                         disabled={loading || !query.trim()}
-                        className="btn-primary mx-3 py-4 px-8 text-base disabled:opacity-50 whitespace-nowrap shadow-md"
+                        className="btn-primary mx-3 py-3.5 px-6 sm:px-8 text-sm sm:text-base disabled:opacity-50 whitespace-nowrap shadow-md"
                     >
-                        {loading ? "Searching..." : detectedAsin ? "Compare" : results ? "Search Within" : "Find Products"}
+                        {loading ? "Searching…" : detectedAsin ? "Compare" : results ? "Search within" : "Find products"}
                     </button>
                 </div>
                 {results && !loading && (
@@ -265,18 +279,31 @@ export function SearchBox() {
                 )}
             </form>
 
-            {/* ── EXAMPLES ── */}
+            {/* ── POPULAR SEARCHES (3-card strip, empty state) ── */}
             {!results && !loading && (
-                <div className="mt-8 flex flex-wrap justify-center gap-x-4 gap-y-3">
-                    {EXAMPLES.map((ex, i) => (
-                        <button
-                            key={ex}
-                            onClick={() => { setQuery(ex); doSearch(ex); }}
-                            className={`px-4 py-2 rounded-full glass text-xs font-medium text-[var(--color-surface-muted)] hover:text-[var(--color-accent)] hover:bg-white transition-all animate-fade-in-up stagger-${(i % 4) + 1}`}
-                        >
-                            {ex}
-                        </button>
-                    ))}
+                <div className="mt-8 sm:mt-10">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-surface-dim)] mb-4 text-center sm:text-left">
+                        Popular searches
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        {POPULAR.map((p, i) => (
+                            <button
+                                key={p.label}
+                                onClick={() => { setQuery(p.label); doSearch(p.q); }}
+                                className={`group text-left card p-5 hover:border-[var(--color-accent)] hover:bg-white transition-all animate-fade-in-up stagger-${(i % 4) + 1}`}
+                            >
+                                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--color-accent)] mb-2">
+                                    {p.sub}
+                                </p>
+                                <p className="font-display text-[15px] font-bold text-[var(--color-surface)] leading-snug flex items-start justify-between gap-3">
+                                    <span>{p.label}</span>
+                                    <span className="text-[var(--color-surface-dim)] group-hover:text-[var(--color-accent)] group-hover:translate-x-0.5 transition-all flex-shrink-0">
+                                        →
+                                    </span>
+                                </p>
+                            </button>
+                        ))}
+                    </div>
                 </div>
             )}
 
@@ -285,7 +312,7 @@ export function SearchBox() {
                 <div className="mt-12 space-y-6 animate-fade-in">
                     <div className="text-center mb-2">
                         <p className="text-sm text-[var(--color-surface-muted)] font-medium">
-                            Finding the best products and verifying on Amazon...
+                            Picking products and verifying live on Amazon…
                         </p>
                     </div>
                     {Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)}
@@ -303,11 +330,12 @@ export function SearchBox() {
             {results && !loading && (
                 <div className="mt-12 animate-fade-in-up">
                     <div className="mb-10 text-center sm:text-left pl-2">
-                        <p className="text-xl font-bold text-[var(--color-surface)] leading-relaxed">{results.summary}</p>
-                        <p className="text-sm font-medium text-[var(--color-surface-dim)] mt-3">
-                            {results.products.length} recommendations
+                        <p className="font-display text-xl font-bold text-[var(--color-surface)] leading-relaxed">{results.summary}</p>
+                        <p className="text-sm font-medium text-[var(--color-surface-dim)] mt-3 flex items-center gap-2 justify-center sm:justify-start flex-wrap">
+                            <span className="font-mono tnum">{results.products.length}</span>
+                            <span>recommendations</span>
                             {results.enriched && (
-                                <span className="inline-flex items-center gap-1.5 ml-2 px-2.5 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold rounded-full">
+                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold rounded-full">
                                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                                     Verified on Amazon
                                 </span>
@@ -321,100 +349,97 @@ export function SearchBox() {
                                 key={product.rank}
                                 className="product-card p-6 sm:p-8 cursor-pointer relative overflow-hidden"
                             >
-                                {/* Subtle rank watermark */}
-                                <div className="absolute -top-10 -right-4 text-[120px] font-black text-slate-100/50 select-none pointer-events-none z-0">
+                                <div className="absolute -top-10 -right-4 font-display text-[120px] font-black text-slate-100/50 select-none pointer-events-none z-0 tnum">
                                     #{product.rank}
                                 </div>
 
                                 <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 relative z-10">
-                                    {/* Image */}
                                     <ProductImage product={product} />
 
-                                    {/* Body */}
                                     <div className="flex-1 min-w-0">
-                                        {/* Rank + Title */}
                                         <div className="flex flex-wrap items-center gap-2 mb-2">
                                             {product.rank === 1 && (
-                                                <span className="px-3 py-1 bg-[var(--color-accent-muted)] text-[var(--color-accent)] text-xs font-black uppercase tracking-widest rounded-md">
-                                                    Top Pick
+                                                <span className="px-3 py-1 bg-[var(--color-accent-muted)] text-[var(--color-accent)] text-[10px] font-black uppercase tracking-[0.18em] rounded-md">
+                                                    Top pick
                                                 </span>
                                             )}
                                             {product.verified && (
-                                                <span className="px-2.5 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-bold uppercase tracking-wider rounded-md border border-emerald-200">
+                                                <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase tracking-[0.15em] rounded-md border border-emerald-200">
                                                     Verified
                                                 </span>
                                             )}
                                         </div>
-                                        <h3 className="font-bold text-[var(--color-surface)] text-lg sm:text-xl leading-snug">
+                                        <h3 className="font-display font-bold text-[var(--color-surface)] text-lg sm:text-xl leading-snug tracking-tight">
                                             {product.title}
                                         </h3>
 
-                                        {/* Price + meta */}
-                                        <div className="flex flex-wrap items-center gap-4 mt-3">
-                                            <span className="text-2xl sm:text-3xl font-black text-[var(--color-surface)]">
+                                        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-3">
+                                            <span className="font-mono tnum text-2xl sm:text-[28px] font-bold text-[var(--color-surface)] tracking-tight">
                                                 {product.priceEstimate}
                                             </span>
                                             <StarRating rating={product.rating} reviewCount={product.reviewCount} />
-                                            <span className="text-xs font-semibold text-[var(--color-surface-dim)] px-2.5 py-1 bg-[var(--color-bg-elevated)] rounded-full">
+                                            <span className="text-[11px] font-semibold text-[var(--color-surface-dim)] px-2.5 py-1 bg-[var(--color-bg-elevated)] rounded-full uppercase tracking-wider">
                                                 {product.category}
                                             </span>
                                         </div>
 
-                                        {/* Why we picked it */}
                                         <div className="mt-6 pt-5 border-t border-[var(--color-border)]">
-                                            <p className="text-[11px] font-black uppercase tracking-[0.15em] text-[var(--color-accent)] mb-2">
-                                                Why we picked it
+                                            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[var(--color-accent)] mb-2">
+                                                Why this one
                                             </p>
-                                            <p className="text-base text-[var(--color-surface-muted)] leading-relaxed font-medium">
+                                            <p className="text-[15px] text-[var(--color-surface-muted)] leading-relaxed">
                                                 {product.whyThisPick}
                                             </p>
                                         </div>
 
-                                        {/* Footer row */}
-                                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
+                                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 mt-7">
                                             <button
                                                 onClick={(e) => { e.stopPropagation(); setExpandedCard(expandedCard === product.rank ? null : product.rank); }}
-                                                className="w-full sm:w-auto btn-secondary text-sm py-3"
+                                                className="btn-secondary text-sm py-3"
                                             >
-                                                {expandedCard === product.rank ? "Hide deep dive" : "Show pros & cons"}
+                                                {expandedCard === product.rank ? "Hide pros / cons" : "Show pros / cons"}
                                             </button>
 
-                                            <a
-                                                href={amazonHref(product)}
-                                                target="_blank"
-                                                rel="noopener noreferrer nofollow sponsored"
-                                                className="w-full sm:w-auto btn-amazon text-sm py-3 px-8"
-                                                onClick={(e) => e.stopPropagation()}
-                                            >
-                                                {product.verified ? "View on Amazon" : "Search on Amazon"}
-                                            </a>
+                                            <div className="flex flex-col items-stretch sm:items-end gap-1.5">
+                                                <a
+                                                    href={amazonHref(product)}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer nofollow sponsored"
+                                                    className="btn-amazon text-sm py-3 px-7"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                >
+                                                    {product.verified ? "View on Amazon" : "Search on Amazon"}
+                                                </a>
+                                                <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--color-surface-dim)] text-center sm:text-right">
+                                                    Affiliate link
+                                                </span>
+                                            </div>
                                         </div>
 
-                                        {/* Pros / Cons */}
                                         {expandedCard === product.rank && (
-                                            <div className="mt-6 pt-6 border-t border-[var(--color-border)] grid grid-cols-1 sm:grid-cols-2 gap-8 animate-fade-in">
-                                                <div className="bg-emerald-50/50 p-5 rounded-2xl border border-emerald-100/50">
-                                                    <p className="text-xs font-black uppercase tracking-widest text-[var(--color-success)] mb-3 flex items-center gap-2">
-                                                        <span>✓</span> Advantages
+                                            <div className="mt-6 pt-6 border-t border-[var(--color-border)] grid grid-cols-1 sm:grid-cols-2 gap-5 animate-fade-in">
+                                                <div className="bg-emerald-50/60 p-5 rounded-2xl border border-emerald-100">
+                                                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-700 mb-3">
+                                                        Pros
                                                     </p>
                                                     <ul className="space-y-2.5">
                                                         {product.pros.map((pro, i) => (
-                                                            <li key={i} className="text-sm font-medium text-[var(--color-surface-muted)] flex items-start gap-2">
-                                                                <span className="text-emerald-500 mt-0.5">•</span>
-                                                                {pro}
+                                                            <li key={i} className="text-sm text-[var(--color-surface-muted)] flex items-start gap-2 leading-relaxed">
+                                                                <span className="text-emerald-500 mt-1.5 w-1 h-1 rounded-full bg-emerald-500 flex-shrink-0" aria-hidden="true" />
+                                                                <span>{pro}</span>
                                                             </li>
                                                         ))}
                                                     </ul>
                                                 </div>
-                                                <div className="bg-red-50/50 p-5 rounded-2xl border border-red-100/50">
-                                                    <p className="text-xs font-black uppercase tracking-widest text-[var(--color-danger)] mb-3 flex items-center gap-2">
-                                                        <span>✕</span> Drawbacks
+                                                <div className="bg-red-50/50 p-5 rounded-2xl border border-red-100">
+                                                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-red-700 mb-3">
+                                                        Cons
                                                     </p>
                                                     <ul className="space-y-2.5">
                                                         {product.cons.map((con, i) => (
-                                                            <li key={i} className="text-sm font-medium text-[var(--color-surface-muted)] flex items-start gap-2">
-                                                                <span className="text-red-400 mt-0.5">•</span>
-                                                                {con}
+                                                            <li key={i} className="text-sm text-[var(--color-surface-muted)] flex items-start gap-2 leading-relaxed">
+                                                                <span className="text-red-400 mt-1.5 w-1 h-1 rounded-full bg-red-400 flex-shrink-0" aria-hidden="true" />
+                                                                <span>{con}</span>
                                                             </li>
                                                         ))}
                                                     </ul>
@@ -433,7 +458,7 @@ export function SearchBox() {
                                 onClick={() => setShowAll(true)}
                                 className="btn-secondary px-8 py-3.5 shadow-sm bg-white hover:bg-slate-50 border border-slate-200"
                             >
-                                Show {results.products.length - 5} more results
+                                Show {results.products.length - 5} more
                             </button>
                         </div>
                     )}

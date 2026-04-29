@@ -1,8 +1,19 @@
 "use client";
 
+import Link from "next/link";
 import { SearchBox } from "@/components/SearchBox";
+import { RotatingText } from "@/components/RotatingText";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://purefind.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://purefind.vercel.app";
+
+const ROTATING_QUERIES = [
+    "standing desk",
+    "coffee grinder",
+    "running shoe",
+    "mechanical keyboard",
+    "kitchen knife",
+    "Christmas gift",
+];
 
 function HomeJsonLd() {
     const schema = {
@@ -12,7 +23,7 @@ function HomeJsonLd() {
         url: siteUrl,
         applicationCategory: "ShoppingApplication",
         description:
-            "AI-powered product finder that cuts through Amazon's sponsored results to recommend genuinely great products with real prices and ratings.",
+            "AI product finder for Amazon. Plain-English search, real prices and ratings, honest pros and cons, no sponsored placements.",
         offers: {
             "@type": "Offer",
             price: "0",
@@ -23,7 +34,6 @@ function HomeJsonLd() {
             "No sponsored results",
             "Real Amazon prices and ratings",
             "Honest pros and cons for every product",
-            "Live Amazon deal tracking",
         ],
     };
 
@@ -45,7 +55,7 @@ function FaqJsonLd() {
                 name: "How does PureFind find the best products?",
                 acceptedAnswer: {
                     "@type": "Answer",
-                    text: "PureFind uses AI to analyze thousands of Amazon products based on real reviews, ratings, and specifications — not sponsored placements. We verify every recommendation with live Amazon data including real prices and review counts.",
+                    text: "Google Gemini picks 6-8 candidates that match your spec. The Amazon Product API verifies live prices, ratings, and review counts. You see the same Amazon listing — just without the sponsored noise on top.",
                 },
             },
             {
@@ -53,7 +63,7 @@ function FaqJsonLd() {
                 name: "Does PureFind cost anything?",
                 acceptedAnswer: {
                     "@type": "Answer",
-                    text: "PureFind is completely free to use. We earn a small affiliate commission (1-4.5%) when you purchase through our links, at no extra cost to you. You get the same Amazon price and Prime shipping.",
+                    text: "Free. PureFind earns a small commission when you buy through our Amazon links — at no extra cost to you. Same price, same Prime shipping, same Amazon checkout.",
                 },
             },
             {
@@ -61,7 +71,7 @@ function FaqJsonLd() {
                 name: "Are PureFind's recommendations unbiased?",
                 acceptedAnswer: {
                     "@type": "Answer",
-                    text: "Yes. No seller pays for placement on PureFind. Our AI recommends products based on genuine quality, reviews, and value — not advertising spend. We also show honest pros and cons for every product.",
+                    text: "No seller pays for placement here. There is no deals page, no top-10 listicle, no influencer budget. Recommendations come from Gemini ranking real reviews and specs against your query, full stop.",
                 },
             },
         ],
@@ -81,105 +91,162 @@ export default function HomePage() {
             <HomeJsonLd />
             <FaqJsonLd />
 
-            {/* Global Mesh Orb Behind Hero */}
+            {/* Background mesh orbs */}
             <div className="mesh-orb w-[600px] h-[600px] bg-indigo-500/20 top-[-200px] left-1/2 -translate-x-1/2 animate-float" />
             <div className="mesh-orb w-[400px] h-[400px] bg-amber-400/20 top-[100px] right-[-100px] stagger-2 animate-float" />
 
             {/* ── HERO ── */}
-            <section className="relative pt-28 pb-24 px-4 sm:px-8 text-center animate-fade-in-up">
+            <section className="relative pt-20 pb-20 px-4 sm:px-8 text-center animate-fade-in-up">
                 <div className="max-w-4xl mx-auto relative z-10">
 
-                    <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full glass text-xs font-bold uppercase tracking-[0.15em] text-[var(--color-accent)] mb-10 shadow-sm">
-                        <span className="w-2 h-2 rounded-full bg-[var(--color-accent)] animate-pulse" />
-                        AI-Powered Shopping Intelligence
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-accent)] mb-10 shadow-sm">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)] animate-pulse" />
+                        Unsponsored Amazon search · Beta
                     </div>
 
-                    <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-slate-800 tracking-tight leading-tight mb-6">
-                        Find the perfect product.<br />
-                        <span className="text-slate-400">Skip the sponsored junk.</span>
+                    <h1 className="font-display text-4xl sm:text-5xl md:text-[64px] font-black text-slate-900 tracking-tight leading-[1.05] mb-7">
+                        Find a good{" "}
+                        <RotatingText
+                            words={ROTATING_QUERIES}
+                            className="text-[var(--color-accent)]"
+                        />
+                        .
+                        <br />
+                        <span className="text-slate-400 font-bold">Skip the listicle spam.</span>
                     </h1>
 
-                    <p className="text-xl text-[var(--color-surface-muted)] mb-12 max-w-xl mx-auto leading-relaxed font-medium">
-                        Tell us what you need. Our AI searches Amazon, verifies real prices and ratings, and shows you what&apos;s genuinely worth buying.
+                    <p className="text-lg sm:text-xl text-[var(--color-surface-muted)] mb-9 max-w-2xl mx-auto leading-relaxed">
+                        Tell PureFind what you need in plain English. Gemini picks the products. The Amazon Product API verifies the prices. You click through and buy. That&apos;s the whole site.
+                    </p>
+
+                    {/* Inline affiliate disclosure (FTC-conspicuous, above the action) */}
+                    <p className="text-[12px] text-[var(--color-surface-dim)] mb-6 max-w-xl mx-auto font-medium leading-relaxed">
+                        Affiliate disclosure: PureFind earns a small commission on Amazon purchases made through our links. Same price for you.{" "}
+                        <Link
+                            href="/privacy#amazon-affiliate-links"
+                            className="text-[var(--color-accent)] hover:underline font-semibold"
+                        >
+                            How it works
+                        </Link>
                     </p>
 
                     <SearchBox />
                 </div>
             </section>
 
-            {/* ── TRUST BAR ── */}
-            <section className="py-8 bg-white/40 backdrop-blur-md border-y border-[var(--color-border)] relative z-10">
-                <div className="max-w-5xl mx-auto px-4 sm:px-8">
-                    <div className="flex flex-wrap justify-center gap-y-4 gap-x-8 lg:gap-x-16 text-sm text-[var(--color-surface-muted)] font-bold tracking-wide uppercase">
-                        {[
-                            "0 Sponsored Results",
-                            "Real Amazon Prices",
-                            "Verified Ratings",
-                            "Instant AI Decisions",
-                        ].map((text) => (
-                            <span key={text} className="flex items-center gap-2">
-                                <span className="text-[var(--color-success)] text-lg">✓</span> {text}
-                            </span>
-                        ))}
+            {/* ── TRUST STRIP — mechanic-aligned, no fake "as seen in" ── */}
+            <section className="py-14 sm:py-20 px-4 sm:px-8 relative z-10">
+                <div className="max-w-6xl mx-auto">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+                        <div className="card p-7">
+                            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--color-accent)] mb-3">
+                                The model
+                            </p>
+                            <h3 className="font-display text-lg font-bold text-[var(--color-surface)] mb-2">
+                                Powered by Google Gemini
+                            </h3>
+                            <p className="text-sm text-[var(--color-surface-muted)] leading-relaxed">
+                                Gemini reads your spec, ranks 6-8 products against real reviews and specs, writes the &ldquo;why this one&rdquo; rationale.
+                            </p>
+                        </div>
+
+                        <div className="card p-7">
+                            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-600 mb-3">
+                                The data
+                            </p>
+                            <h3 className="font-display text-lg font-bold text-[var(--color-surface)] mb-2">
+                                Real Amazon prices
+                            </h3>
+                            <p className="text-sm text-[var(--color-surface-muted)] leading-relaxed">
+                                Every recommendation is verified live against the Amazon Product API. No cached lists. No estimates.
+                            </p>
+                        </div>
+
+                        <div className="card p-7">
+                            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-amber-600 mb-3">
+                                The disclosure
+                            </p>
+                            <h3 className="font-display text-lg font-bold text-[var(--color-surface)] mb-2">
+                                FTC affiliate-disclosed
+                            </h3>
+                            <p className="text-sm text-[var(--color-surface-muted)] leading-relaxed">
+                                Amazon pays PureFind a small commission per purchase.{" "}
+                                <Link href="/privacy#amazon-affiliate-links" className="text-[var(--color-accent)] hover:underline font-semibold">
+                                    Full disclosure
+                                </Link>
+                                .
+                            </p>
+                        </div>
+
+                        <div className="card p-7">
+                            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-pink-600 mb-3">
+                                The anti-pattern
+                            </p>
+                            <h3 className="font-display text-lg font-bold text-[var(--color-surface)] mb-2">
+                                No deals page. No listicles.
+                            </h3>
+                            <p className="text-sm text-[var(--color-surface-muted)] leading-relaxed">
+                                One search box, one set of results, one click to Amazon. We don&apos;t farm deals or seed reviews.
+                            </p>
+                        </div>
+
                     </div>
                 </div>
             </section>
 
-            {/* ── BENTO GRID: WHY PUREFIND & HOW IT WORKS ── */}
-            <section className="py-32 px-4 sm:px-8 relative z-10">
+            {/* ── HOW IT WORKS ── */}
+            <section className="py-20 sm:py-28 px-4 sm:px-8 relative z-10">
                 <div className="mesh-orb w-[500px] h-[500px] bg-pink-500/10 top-[20%] left-[-200px] animate-float stagger-3" />
 
-                <div className="max-w-6xl mx-auto">
-                    <div className="text-center mb-20 animate-fade-in-up stagger-1">
-                        <h2 className="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-[var(--color-surface)] to-[var(--color-surface-muted)] mb-6">
-                            Smarter shopping in seconds.
-                        </h2>
-                        <p className="text-lg text-[var(--color-surface-dim)] max-w-2xl mx-auto">
-                            We reverse-engineered how you shop to save you hours of reading fake reviews.
+                <div className="max-w-5xl mx-auto">
+                    <div className="text-center mb-16 animate-fade-in-up stagger-1">
+                        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-accent)] mb-4">
+                            How it works
                         </p>
+                        <h2 className="font-display text-3xl sm:text-5xl font-black text-[var(--color-surface)] tracking-tight leading-[1.05] max-w-2xl mx-auto">
+                            Three steps. Under ten seconds.
+                        </h2>
                     </div>
 
-                    {/* The Bento Grid Container */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-min animate-fade-in-up stagger-2">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in-up stagger-2">
 
-                        {/* Big Card 1 */}
-                        <div className="card md:col-span-2 p-10 flex flex-col justify-center relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-indigo-500/10 to-transparent rounded-bl-full transition-transform duration-700 group-hover:scale-110" />
-                            <span className="text-5xl mb-5">🎯</span>
-                            <h3 className="text-2xl font-bold mb-4">You ask. We find the real deal.</h3>
-                            <p className="text-[var(--color-surface-muted)] leading-relaxed max-w-md text-lg">
-                                Just type &quot;I need an ergonomic chair for back pain under $300.&quot; Our AI searches Amazon, verifies prices and reviews, then shows you what&apos;s actually worth buying.
+                        <div className="card p-8 relative">
+                            <p className="font-mono text-sm font-bold text-[var(--color-surface-dim)] mb-5 tnum">
+                                01 / Type
+                            </p>
+                            <h3 className="font-display text-xl font-bold mb-3 text-[var(--color-surface)]">
+                                Tell us what you need
+                            </h3>
+                            <p className="text-sm text-[var(--color-surface-muted)] leading-relaxed mb-5">
+                                Plain English. Specs. Constraints. Budget.
+                            </p>
+                            <p className="font-mono text-xs text-[var(--color-surface-dim)] bg-[var(--color-bg-elevated)] rounded-lg px-3 py-2.5 leading-relaxed">
+                                &ldquo;standing desk under $300, deep enough for a 27&Prime; monitor&rdquo;
                             </p>
                         </div>
 
-                        {/* Tall Card */}
-                        <div className="card md:row-span-2 p-10 flex flex-col items-center text-center justify-center relative overflow-hidden group">
-                            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-amber-500/5 rotate-180 transition-opacity duration-700 group-hover:opacity-100 opacity-50" />
-                            <div className="w-20 h-20 bg-white shadow-xl rounded-2xl flex items-center justify-center mb-8 rotate-3 transform transition-transform group-hover:rotate-6">
-                                <span className="text-4xl">🤖</span>
-                            </div>
-                            <h3 className="text-2xl font-bold mb-4">No Paid Placements</h3>
-                            <p className="text-[var(--color-surface-muted)] leading-relaxed">
-                                Amazon search results are roughly 40% sponsored ads. PureFind strips all that away so the genuinely best product wins.
+                        <div className="card p-8 relative">
+                            <p className="font-mono text-sm font-bold text-[var(--color-surface-dim)] mb-5 tnum">
+                                02 / Pick
+                            </p>
+                            <h3 className="font-display text-xl font-bold mb-3 text-[var(--color-surface)]">
+                                Gemini finds 6–8 candidates
+                            </h3>
+                            <p className="text-sm text-[var(--color-surface-muted)] leading-relaxed">
+                                Cross-references reviews, specs, ratings. Writes one-line rationale and short pros / cons for each.
                             </p>
                         </div>
 
-                        {/* Small Card Left */}
-                        <div className="card p-10 relative overflow-hidden group">
-                            <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-colors duration-500" />
-                            <h3 className="text-xl font-bold mb-3">Real Prices & Ratings</h3>
-                            <p className="text-[var(--color-surface-muted)] text-sm leading-relaxed">
-                                Every recommendation is verified against live Amazon data. See real prices, real star ratings, and real review counts — not estimates.
+                        <div className="card p-8 relative">
+                            <p className="font-mono text-sm font-bold text-[var(--color-surface-dim)] mb-5 tnum">
+                                03 / Verify
                             </p>
-                        </div>
-
-                        {/* Small Card Right — Multi-search */}
-                        <div className="card p-10 relative overflow-hidden group border-indigo-100">
-                            <div className="absolute -left-4 -top-4 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-colors duration-500" />
-                            <div className="text-2xl mb-3">🔄</div>
-                            <h3 className="text-xl font-bold mb-3">Refine Until Perfect</h3>
-                            <p className="text-[var(--color-surface-muted)] text-sm leading-relaxed">
-                                Got results but want to go deeper? Search again right there — &quot;under $50,&quot; &quot;waterproof,&quot; &quot;for kids.&quot; Keep narrowing until it&apos;s perfect.
+                            <h3 className="font-display text-xl font-bold mb-3 text-[var(--color-surface)]">
+                                We verify on Amazon
+                            </h3>
+                            <p className="text-sm text-[var(--color-surface-muted)] leading-relaxed">
+                                Live prices, live ratings, live review counts via the Amazon Product API. Click through to buy on Amazon directly.
                             </p>
                         </div>
 
@@ -187,29 +254,33 @@ export default function HomePage() {
                 </div>
             </section>
 
-            {/* ── FAQ SECTION (SEO Content) ── */}
+            {/* ── FAQ ── */}
             <section className="py-20 px-4 sm:px-8 relative z-10">
                 <div className="max-w-3xl mx-auto">
-                    <h2 className="text-2xl sm:text-3xl font-black text-center text-[var(--color-surface)] mb-12">
-                        Frequently Asked Questions
+                    <h2 className="font-display text-3xl sm:text-4xl font-black text-center text-[var(--color-surface)] mb-12 tracking-tight">
+                        Frequently asked questions
                     </h2>
-                    <div className="space-y-6">
+                    <div className="space-y-4">
                         {[
                             {
                                 q: "How does PureFind find the best products?",
-                                a: "PureFind uses AI to analyze thousands of Amazon products based on real reviews, ratings, and specifications — not sponsored placements. We verify every recommendation with live Amazon data including real prices and review counts.",
+                                a: "Google Gemini picks 6-8 candidates that match your spec. The Amazon Product API verifies live prices, ratings, and review counts. You see the same Amazon listing — just without the sponsored noise on top.",
                             },
                             {
                                 q: "Does PureFind cost anything?",
-                                a: "PureFind is completely free to use. We earn a small affiliate commission (1-4.5%) when you purchase through our links, at no extra cost to you. You get the same Amazon price and Prime shipping.",
+                                a: "Free. PureFind earns a small commission when you buy through our Amazon links — at no extra cost to you. Same price, same Prime shipping, same Amazon checkout.",
                             },
                             {
                                 q: "Are PureFind's recommendations unbiased?",
-                                a: "Yes. No seller pays for placement on PureFind. Our AI recommends products based on genuine quality, reviews, and value — not advertising spend. We show honest pros and cons for every product.",
+                                a: "No seller pays for placement here. There is no deals page, no top-10 listicle, no influencer budget. Recommendations come from Gemini ranking real reviews and specs against your query, full stop.",
+                            },
+                            {
+                                q: "How does the affiliate commission work?",
+                                a: "Amazon's Associates program pays a small percentage on qualifying purchases originating from our links — typical category rates run roughly 1-10%. The price you see on Amazon is the price you pay; the commission comes out of Amazon's margin, not yours.",
                             },
                         ].map(({ q, a }) => (
                             <details key={q} className="card p-6 group">
-                                <summary className="font-bold text-[var(--color-surface)] cursor-pointer list-none flex items-center justify-between">
+                                <summary className="font-display text-base font-bold text-[var(--color-surface)] cursor-pointer list-none flex items-center justify-between">
                                     {q}
                                     <span className="text-[var(--color-surface-dim)] text-xl transition-transform group-open:rotate-45 ml-4 flex-shrink-0">+</span>
                                 </summary>
@@ -223,20 +294,21 @@ export default function HomePage() {
             </section>
 
             {/* ── BOTTOM CTA ── */}
-            <section className="py-32 px-4 sm:px-8 bg-[var(--color-surface)] text-white text-center relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-accent)] to-transparent opacity-20" />
-                <div className="max-w-xl mx-auto relative z-10">
-                    <h2 className="text-4xl sm:text-5xl font-black mb-6 tracking-tight">
-                        Stop endlessly scrolling.
+            <section className="py-24 sm:py-32 px-4 sm:px-8 bg-[var(--color-surface)] text-white text-center relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-accent)] to-transparent opacity-15" />
+                <div className="max-w-2xl mx-auto relative z-10">
+                    <h2 className="font-display text-3xl sm:text-5xl font-black mb-5 tracking-tight leading-[1.05]">
+                        One search box.<br />
+                        <span className="text-slate-400">No doomscroll.</span>
                     </h2>
-                    <p className="text-slate-300 text-xl font-medium mb-12">
-                        Get the perfect recommendation in under 10 seconds. Start searching right now.
+                    <p className="text-slate-300 text-lg font-medium mb-10 max-w-md mx-auto">
+                        Type what you need. Get what&apos;s actually worth buying.
                     </p>
                     <button
                         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                        className="btn-amazon text-lg !px-12 py-5 shadow-2xl shadow-orange-500/20"
+                        className="btn-amazon text-base px-10 py-4 shadow-2xl shadow-orange-500/20"
                     >
-                        Search for a Product
+                        Search a product
                     </button>
                 </div>
             </section>
