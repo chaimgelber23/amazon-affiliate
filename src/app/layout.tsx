@@ -16,11 +16,11 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
     title: {
-        default: "PureFind — Cut through the Amazon word dumping.",
+        default: "PureFind — Save hours of Amazon research.",
         template: "%s | PureFind",
     },
     description:
-        "Amazon listings are 80-word titles stuffed with keywords to rank. PureFind reads through the word salad and hands you the one to buy. Under 10 seconds.",
+        "PureFind filters the seller word salad and hands you the perfect product. Search any Amazon category, refine inside the results, install on Chrome.",
     metadataBase: new URL(siteUrl),
     manifest: "/manifest.json",
     appleWebApp: {
@@ -32,16 +32,16 @@ export const metadata: Metadata = {
         type: "website",
         locale: "en_US",
         siteName: "PureFind",
-        title: "PureFind — Cut through the Amazon word dumping.",
+        title: "PureFind — Save hours of Amazon research.",
         description:
-            "Amazon listings are 80-word titles stuffed with keywords to rank. PureFind hands you the one to buy. Under 10 seconds.",
+            "PureFind filters the seller word salad and hands you the perfect product. Free Chrome extension included.",
         url: siteUrl,
     },
     twitter: {
         card: "summary_large_image",
-        title: "PureFind — Cut through the Amazon word dumping.",
+        title: "PureFind — Save hours of Amazon research.",
         description:
-            "Amazon listings are 80-word titles stuffed with keywords. PureFind hands you the one to buy. Under 10 seconds.",
+            "PureFind filters the seller word salad and hands you the perfect product.",
     },
     robots: {
         index: true,
@@ -117,7 +117,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
                 <link
-                    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;600;700&display=swap"
+                    href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@500;600;700&display=swap"
                     rel="stylesheet"
                 />
                 <JsonLd />
