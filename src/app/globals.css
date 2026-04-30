@@ -2,7 +2,7 @@
 
 @theme {
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
-  --font-display: "Inter Tight", "Inter", system-ui, sans-serif;
+  --font-display: "Instrument Serif", "Times New Roman", Georgia, serif;
   --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
 
   /* Premium Pro Max Light Theme Palette */
@@ -298,15 +298,23 @@ body {
 .section-heading {
   font-family: var(--font-display);
   font-size: clamp(2.5rem, 6vw, 4.5rem);
-  font-weight: 800;
-  letter-spacing: -0.035em;
-  line-height: 1.05;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
   color: var(--color-surface);
 }
 
 .font-display {
   font-family: var(--font-display);
-  letter-spacing: -0.03em;
+  letter-spacing: -0.015em;
+  font-weight: 400;
+}
+
+.font-display-italic {
+  font-family: var(--font-display);
+  font-style: italic;
+  letter-spacing: -0.015em;
+  font-weight: 400;
 }
 
 .font-mono {

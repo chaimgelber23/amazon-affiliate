@@ -16,11 +16,11 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
     title: {
-        default: "PureFind — Find a good product. Skip the search.",
+        default: "PureFind — Cut through the Amazon word dumping.",
         template: "%s | PureFind",
     },
     description:
-        "Amazon search is sponsored ads on top of listicle spam. PureFind cuts to the actual pick. Type what you want, click through to Amazon.",
+        "Amazon listings are 80-word titles stuffed with keywords to rank. PureFind reads through the word salad and hands you the one to buy. Under 10 seconds.",
     metadataBase: new URL(siteUrl),
     manifest: "/manifest.json",
     appleWebApp: {
@@ -32,16 +32,16 @@ export const metadata: Metadata = {
         type: "website",
         locale: "en_US",
         siteName: "PureFind",
-        title: "PureFind — Find a good product. Skip the search.",
+        title: "PureFind — Cut through the Amazon word dumping.",
         description:
-            "Amazon search is sponsored ads on top of listicle spam. PureFind cuts to the actual pick.",
+            "Amazon listings are 80-word titles stuffed with keywords to rank. PureFind hands you the one to buy. Under 10 seconds.",
         url: siteUrl,
     },
     twitter: {
         card: "summary_large_image",
-        title: "PureFind — Find a good product. Skip the search.",
+        title: "PureFind — Cut through the Amazon word dumping.",
         description:
-            "Amazon search is sponsored ads on top of listicle spam. PureFind cuts to the actual pick.",
+            "Amazon listings are 80-word titles stuffed with keywords. PureFind hands you the one to buy. Under 10 seconds.",
     },
     robots: {
         index: true,
@@ -81,7 +81,7 @@ function JsonLd() {
                 url: siteUrl,
                 name: "PureFind",
                 description:
-                    "Find good products on Amazon without sponsored ads, listicle farms, or top-10 filler.",
+                    "Cut through the keyword-stuffed Amazon listings. Tell PureFind what you want, get the one to buy.",
                 potentialAction: {
                     "@type": "SearchAction",
                     target: {
@@ -117,7 +117,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
                 <link
-                    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap"
+                    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;600;700&display=swap"
                     rel="stylesheet"
                 />
                 <JsonLd />
