@@ -16,11 +16,11 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
     title: {
-        default: "PureFind — AI Product Finder for Amazon (No Sponsored Junk)",
+        default: "PureFind — Find a good product. Skip the search.",
         template: "%s | PureFind",
     },
     description:
-        "Tell PureFind what you need in plain English. AI picks 6-8 Amazon products, verifies real prices and ratings, and shows you what's actually worth buying. No deals page, no listicles.",
+        "Amazon search is sponsored ads on top of listicle spam. PureFind cuts to the actual pick. Type what you want, click through to Amazon.",
     metadataBase: new URL(siteUrl),
     manifest: "/manifest.json",
     appleWebApp: {
@@ -32,16 +32,16 @@ export const metadata: Metadata = {
         type: "website",
         locale: "en_US",
         siteName: "PureFind",
-        title: "PureFind — AI Product Finder for Amazon",
+        title: "PureFind — Find a good product. Skip the search.",
         description:
-            "Plain-English product search. Real Amazon prices, real ratings, honest pros and cons. No sponsored placements, no deals page, no listicles.",
+            "Amazon search is sponsored ads on top of listicle spam. PureFind cuts to the actual pick.",
         url: siteUrl,
     },
     twitter: {
         card: "summary_large_image",
-        title: "PureFind — AI Product Finder for Amazon",
+        title: "PureFind — Find a good product. Skip the search.",
         description:
-            "Plain-English product search. Real Amazon prices, honest pros and cons, no sponsored junk.",
+            "Amazon search is sponsored ads on top of listicle spam. PureFind cuts to the actual pick.",
     },
     robots: {
         index: true,
@@ -63,7 +63,6 @@ export const metadata: Metadata = {
     },
     keywords: [
         "amazon product finder",
-        "ai amazon search",
         "best products amazon",
         "no sponsored results",
         "honest amazon recommendations",
@@ -82,7 +81,7 @@ function JsonLd() {
                 url: siteUrl,
                 name: "PureFind",
                 description:
-                    "AI product finder for Amazon. Real prices, honest pros and cons, zero sponsored placements.",
+                    "Find good products on Amazon without sponsored ads, listicle farms, or top-10 filler.",
                 potentialAction: {
                     "@type": "SearchAction",
                     target: {

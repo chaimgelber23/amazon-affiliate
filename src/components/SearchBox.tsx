@@ -312,7 +312,7 @@ export function SearchBox() {
                 <div className="mt-12 space-y-6 animate-fade-in">
                     <div className="text-center mb-2">
                         <p className="text-sm text-[var(--color-surface-muted)] font-medium">
-                            Picking products and verifying live on Amazon…
+                            Finding the right products…
                         </p>
                     </div>
                     {Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)}
