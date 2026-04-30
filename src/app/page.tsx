@@ -58,60 +58,69 @@ function WindowControls() {
 
 function SamplePickCard() {
     return (
-        <div className="product-card p-6 sm:p-7 relative overflow-hidden bg-white">
-            <div className="absolute -top-10 -right-4 font-display text-[120px] font-extrabold text-slate-100/60 select-none pointer-events-none z-0 tnum">
-                #1
-            </div>
+        <div className="relative">
+            {/* Stack hint — 2 ghost cards behind the main one */}
+            <div className="absolute inset-x-6 -bottom-3 h-16 bg-white border border-[var(--color-border)] rounded-2xl shadow-sm opacity-50 z-0" aria-hidden="true" />
+            <div className="absolute inset-x-3 -bottom-1.5 h-16 bg-white border border-[var(--color-border)] rounded-2xl shadow-sm opacity-75 z-0" aria-hidden="true" />
 
-            <div className="flex flex-col sm:flex-row gap-5 sm:gap-6 relative z-10">
-                <div className="w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 border border-[var(--color-border)] flex items-center justify-center">
-                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" className="text-slate-400">
-                        <path d="M3 9h18M3 9v10a1 1 0 001 1h16a1 1 0 001-1V9M3 9l2-5h14l2 5" />
-                        <path d="M9 13h6" />
-                    </svg>
+            <div className="product-card p-6 sm:p-7 relative overflow-hidden bg-white z-10">
+                <div className="absolute -top-10 -right-4 font-display text-[120px] font-extrabold text-slate-100/60 select-none pointer-events-none tnum">
+                    #1
                 </div>
 
-                <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2 mb-2">
-                        <span className="px-2.5 py-1 bg-[var(--color-accent-muted)] text-[var(--color-accent)] text-[10px] font-black uppercase tracking-[0.18em] rounded-md">
-                            Top pick
-                        </span>
-                        <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase tracking-[0.15em] rounded-md border border-emerald-200">
-                            Verified
-                        </span>
+                <div className="flex flex-col sm:flex-row gap-5 sm:gap-6 relative z-10">
+                    <div className="w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 border border-[var(--color-border)] flex items-center justify-center">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" className="text-slate-400">
+                            <path d="M3 9h18M3 9v10a1 1 0 001 1h16a1 1 0 001-1V9M3 9l2-5h14l2 5" />
+                            <path d="M9 13h6" />
+                        </svg>
                     </div>
 
-                    <h3 className="font-display text-xl sm:text-2xl font-bold text-[var(--color-surface)] leading-tight tracking-tight">
-                        Electric standing desk, 60×30
-                    </h3>
-
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3">
-                        <span className="font-mono tnum text-2xl font-bold text-[var(--color-surface)] tracking-tight">
-                            $249
-                        </span>
-                        <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--color-surface-dim)]">
-                            <span aria-hidden="true" className="text-amber-400 text-base">★★★★★</span>
-                            <span className="font-mono tnum">4.6</span>
-                            <span className="text-xs font-mono tnum">(12,440)</span>
-                        </span>
-                    </div>
-
-                    <div className="mt-4 pt-4 border-t border-[var(--color-border)]">
-                        <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[var(--color-accent)] mb-2">
-                            Why this one
-                        </p>
-                        <p className="text-[14px] text-[var(--color-surface-muted)] leading-relaxed">
-                            Dual motors, 220-lb capacity, 7-year warranty. Cheaper desks in this size use single motors that wear out fast.
-                        </p>
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mt-5">
-                        <div className="text-[10px] font-mono uppercase tracking-[0.15em] text-[var(--color-surface-dim)]">
-                            Example pick
+                    <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-2 mb-2">
+                            <span className="px-2.5 py-1 bg-[var(--color-accent-muted)] text-[var(--color-accent)] text-[10px] font-black uppercase tracking-[0.18em] rounded-md">
+                                Top pick
+                            </span>
+                            <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase tracking-[0.15em] rounded-md border border-emerald-200">
+                                Verified
+                            </span>
+                            <span className="font-mono tnum text-[10px] uppercase tracking-[0.15em] text-[var(--color-surface-dim)]">
+                                01 of 08
+                            </span>
                         </div>
-                        <span className="btn-amazon text-sm py-2.5 px-6 cursor-default opacity-95">
-                            View on Amazon
-                        </span>
+
+                        <h3 className="font-display text-xl sm:text-2xl font-bold text-[var(--color-surface)] leading-tight tracking-tight">
+                            Electric standing desk, 60×30
+                        </h3>
+
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3">
+                            <span className="font-mono tnum text-2xl font-bold text-[var(--color-surface)] tracking-tight">
+                                $249
+                            </span>
+                            <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--color-surface-dim)]">
+                                <span aria-hidden="true" className="text-amber-400 text-base">★★★★★</span>
+                                <span className="font-mono tnum">4.6</span>
+                                <span className="text-xs font-mono tnum">(12,440)</span>
+                            </span>
+                        </div>
+
+                        <div className="mt-4 pt-4 border-t border-[var(--color-border)]">
+                            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[var(--color-accent)] mb-2">
+                                Why this one
+                            </p>
+                            <p className="text-[14px] text-[var(--color-surface-muted)] leading-relaxed">
+                                Dual motors, 220-lb capacity, 7-year warranty. Cheaper desks in this size use single motors that wear out fast.
+                            </p>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mt-5">
+                            <div className="text-[10px] font-mono uppercase tracking-[0.15em] text-[var(--color-surface-dim)]">
+                                + 7 more picks
+                            </div>
+                            <span className="btn-amazon text-sm py-2.5 px-6 cursor-default opacity-95">
+                                View on Amazon
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -180,38 +189,40 @@ export default function HomePage() {
                         <h2 className="font-display text-3xl sm:text-5xl md:text-6xl font-extrabold text-[var(--color-surface)] tracking-[-0.04em] leading-[1.0] max-w-3xl mx-auto">
                             We do the search.
                             <br />
-                            <span className="text-slate-400">You get the pick.</span>
+                            <span className="text-slate-400">You get the shortlist.</span>
                         </h2>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 items-center">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-center">
 
                         <div className="space-y-6 max-w-md">
                             <p className="text-lg text-[var(--color-surface-muted)] leading-relaxed">
-                                You type a need. PureFind reads through every Amazon listing in that category — the specs, the review counts, the price spread — and hands you one card.
+                                You type a need. PureFind reads through every Amazon listing in that category — specs, review counts, price spread — and hands you{" "}
+                                <span className="font-semibold text-[var(--color-surface)]">six to eight picks, ranked</span>. The top spec for the price. The premium pick. The budget pick. One line on each saying why.
                             </p>
                             <p className="text-lg text-[var(--color-surface-muted)] leading-relaxed">
-                                The product. The price. One reason it&apos;s the right pick. You click through and buy on Amazon. The whole job is under ten seconds.
+                                Need narrower? <span className="font-semibold text-[var(--color-surface)]">Search inside your results</span>. &ldquo;Under $200.&rdquo; &ldquo;Walnut.&rdquo; &ldquo;For a small office.&rdquo; Keep refining until the shortlist is exactly what you wanted.
                             </p>
-                            <div className="pt-4 grid grid-cols-3 gap-4">
+
+                            <div className="pt-4 flex flex-wrap gap-x-7 gap-y-3">
                                 <div>
-                                    <p className="font-display font-bold text-2xl text-[var(--color-surface)] tnum tracking-tight">No</p>
-                                    <p className="text-xs font-medium text-[var(--color-surface-dim)] uppercase tracking-wider mt-1">Signups</p>
+                                    <p className="font-display font-extrabold text-2xl text-[var(--color-surface)] tnum tracking-tight">6–8</p>
+                                    <p className="text-[11px] font-semibold text-[var(--color-surface-dim)] uppercase tracking-wider mt-1">Picks per search</p>
                                 </div>
                                 <div>
-                                    <p className="font-display font-bold text-2xl text-[var(--color-surface)] tnum tracking-tight">No</p>
-                                    <p className="text-xs font-medium text-[var(--color-surface-dim)] uppercase tracking-wider mt-1">Accounts</p>
+                                    <p className="font-display font-extrabold text-2xl text-[var(--color-surface)] tnum tracking-tight">∞</p>
+                                    <p className="text-[11px] font-semibold text-[var(--color-surface-dim)] uppercase tracking-wider mt-1">Refines inside</p>
                                 </div>
                                 <div>
-                                    <p className="font-display font-bold text-2xl text-[var(--color-surface)] tnum tracking-tight">$0</p>
-                                    <p className="text-xs font-medium text-[var(--color-surface-dim)] uppercase tracking-wider mt-1">To use</p>
+                                    <p className="font-display font-extrabold text-2xl text-[var(--color-surface)] tnum tracking-tight">$0</p>
+                                    <p className="text-[11px] font-semibold text-[var(--color-surface-dim)] uppercase tracking-wider mt-1">No signup</p>
                                 </div>
                             </div>
                         </div>
 
                         <div>
                             <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-surface-dim)] mb-4 text-center md:text-left">
-                                The card you get back
+                                Top of the shortlist
                             </p>
                             <SamplePickCard />
                         </div>

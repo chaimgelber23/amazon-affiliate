@@ -33,30 +33,6 @@ function isAmazonUrl(text: string): boolean {
     return /amazon\.com/i.test(text) && extractAsinFromText(text) !== null;
 }
 
-interface PopularQuery {
-    label: string;
-    sub: string;
-    q: string;
-}
-
-const POPULAR: PopularQuery[] = [
-    {
-        label: "Standing desk under $300",
-        sub: "Home office",
-        q: "Standing desk under $300, deep enough for a 27-inch monitor",
-    },
-    {
-        label: "Quiet mechanical keyboard",
-        sub: "Keyboards",
-        q: "Quiet mechanical keyboard for office use",
-    },
-    {
-        label: "Air fryer for family of 4",
-        sub: "Kitchen",
-        q: "Best air fryer for a family of 4",
-    },
-];
-
 function ProductImage({ product }: { product: Product }) {
     const [errored, setErrored] = useState(false);
 
@@ -278,34 +254,6 @@ export function SearchBox() {
                     </p>
                 )}
             </form>
-
-            {/* ── POPULAR SEARCHES (3-card strip, empty state) ── */}
-            {!results && !loading && (
-                <div className="mt-8 sm:mt-10">
-                    <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-surface-dim)] mb-4 text-center sm:text-left">
-                        Popular searches
-                    </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        {POPULAR.map((p, i) => (
-                            <button
-                                key={p.label}
-                                onClick={() => { setQuery(p.label); doSearch(p.q); }}
-                                className={`group text-left card p-5 hover:border-[var(--color-accent)] hover:bg-white transition-all animate-fade-in-up stagger-${(i % 4) + 1}`}
-                            >
-                                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--color-accent)] mb-2">
-                                    {p.sub}
-                                </p>
-                                <p className="font-display text-[15px] font-bold text-[var(--color-surface)] leading-snug flex items-start justify-between gap-3">
-                                    <span>{p.label}</span>
-                                    <span className="text-[var(--color-surface-dim)] group-hover:text-[var(--color-accent)] group-hover:translate-x-0.5 transition-all flex-shrink-0">
-                                        →
-                                    </span>
-                                </p>
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            )}
 
             {/* ── LOADING SKELETONS ── */}
             {loading && (
