@@ -23,7 +23,7 @@ export function Header() {
                         : "bg-transparent border-b border-transparent"
                 }`}
             >
-                <div className="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
+                <div className="px-5 sm:px-8 lg:px-12 h-16 flex items-center justify-between">
 
                     <Link href="/" className="font-display text-[19px] font-bold tracking-tight text-slate-900 hover:opacity-70 transition-opacity">
                         PureFind
