@@ -47,10 +47,17 @@ export default function AboutPage() {
                             for a small apartment.&quot; Anything.
                         </p>
                         <p>
-                            <strong className="text-white">AI analyzes.</strong> Our AI reviews
-                            thousands of products across Amazon, looking at real review patterns,
-                            return rates, expert recommendations, and price history — not just
-                            which seller paid the most for placement.
+                            <strong className="text-white">AI shortlists.</strong> Our AI builds
+                            a shortlist of products in your category and ranks them by what it
+                            knows about typical specs, common complaints, and reasonable price
+                            bands. We then verify each pick against live Amazon data (title,
+                            price, image, rating, review count) through Amazon&apos;s official
+                            Product Advertising API before showing it to you.
+                        </p>
+                        <p className="text-xs text-[var(--color-surface-dim)] italic">
+                            What the AI is not: a price tracker, a review aggregator, or a
+                            return-rate database. It&apos;s a shortlist generator, verified
+                            against live PA-API data at search time.
                         </p>
                         <p>
                             <strong className="text-white">You buy on Amazon.</strong> Click the link

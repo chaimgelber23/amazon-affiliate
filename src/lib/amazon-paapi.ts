@@ -61,7 +61,11 @@ export interface SearchOptions {
 
 const DEFAULT_HOST = "webservices.amazon.com";
 const DEFAULT_REGION = "us-east-1";
-const CACHE_TTL_HOURS = 24;
+// Amazon PA-API license caps cached *price* data at 1 hour. Since our cached
+// payload contains DisplayAmount price strings, we honor the price ceiling for
+// the whole cache. Non-price-bearing lookups would be allowed up to 24h, but
+// the simpler/safer rule is "1 hour for everything we cache."
+const CACHE_TTL_HOURS = 1;
 
 function getCreds() {
     const accessKey = process.env.AMAZON_PAAPI_ACCESS_KEY;

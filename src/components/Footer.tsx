@@ -61,7 +61,7 @@ export function Footer() {
 
                 <div className="mt-16 pt-8 border-t border-[var(--color-border)] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-[var(--color-surface-dim)]">
                     <p>&copy; {new Date().getFullYear()} PureFind. All rights reserved.</p>
-                    <p className="flex items-center gap-1">Built with <span className="text-pink-500">♥</span> in NYC</p>
+                    <p>Built in NYC</p>
                 </div>
             </div>
         </footer>

@@ -4,10 +4,10 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://purefind.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://purefind.vercel.app";
 
 export const viewport: Viewport = {
-    themeColor: "#1e293b",
+    themeColor: "#0F172A",
     width: "device-width",
     initialScale: 1,
     maximumScale: 5,
@@ -16,11 +16,11 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
     title: {
-        default: "PureFind — AI-Powered Best Products on Amazon (No Sponsored Results)",
+        default: "PureFind — Save hours of Amazon research.",
         template: "%s | PureFind",
     },
     description:
-        "Skip sponsored junk. PureFind uses AI to find the genuinely best products on Amazon — real prices, real ratings, zero paid placements. Search any product and get honest recommendations in seconds.",
+        "PureFind filters the seller word salad and hands you the perfect product. Search any Amazon category, refine inside the results, install on Chrome.",
     metadataBase: new URL(siteUrl),
     manifest: "/manifest.json",
     appleWebApp: {
@@ -32,16 +32,16 @@ export const metadata: Metadata = {
         type: "website",
         locale: "en_US",
         siteName: "PureFind",
-        title: "PureFind — Find the Best Products on Amazon Without the Noise",
+        title: "PureFind — Save hours of Amazon research.",
         description:
-            "AI-powered product recommendations that cut through Amazon's sponsored results. Real prices, real ratings, honest pros and cons.",
+            "PureFind filters the seller word salad and hands you the perfect product. Free Chrome extension included.",
         url: siteUrl,
     },
     twitter: {
         card: "summary_large_image",
-        title: "PureFind — AI Product Finder for Amazon",
+        title: "PureFind — Save hours of Amazon research.",
         description:
-            "Skip the sponsored noise. Get AI-powered honest product recommendations with real Amazon prices and ratings.",
+            "PureFind filters the seller word salad and hands you the perfect product.",
     },
     robots: {
         index: true,
@@ -62,17 +62,15 @@ export const metadata: Metadata = {
         apple: "/icons/icon-192.png",
     },
     keywords: [
-        "best products amazon",
         "amazon product finder",
-        "unbiased amazon reviews",
+        "best products amazon",
         "no sponsored results",
-        "AI product recommendations",
-        "best amazon buys",
-        "product comparison tool",
+        "honest amazon recommendations",
+        "amazon product comparison",
+        "find products amazon",
     ],
 };
 
-// JSON-LD structured data for the site
 function JsonLd() {
     const schema = {
         "@context": "https://schema.org",
@@ -83,7 +81,7 @@ function JsonLd() {
                 url: siteUrl,
                 name: "PureFind",
                 description:
-                    "AI-powered product recommendations that cut through Amazon's sponsored results.",
+                    "Cut through the keyword-stuffed Amazon listings. Tell PureFind what you want, get the one to buy.",
                 potentialAction: {
                     "@type": "SearchAction",
                     target: {
@@ -119,7 +117,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
                 <link
-                    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Syne:wght@700;800&display=swap"
+                    href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@500;600;700&display=swap"
                     rel="stylesheet"
                 />
                 <JsonLd />
