@@ -3,16 +3,16 @@ import { ShieldCheck, Search, Eye, Heart, Zap, TrendingUp } from "lucide-react";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-    title: "About PureFind — How We Find the Best Amazon Products",
+    title: "About PureFind — Save time on Amazon research",
     description:
-        "PureFind uses AI to cut through Amazon's SEO noise and sponsored placements. Learn how we find genuinely great products with real data — no paid recommendations.",
+        "PureFind is a small AI tool that gives you a curated shortlist of Amazon products so you spend less time digging through listings. We earn an Amazon affiliate commission when you buy through our links — same price for you.",
     alternates: {
         canonical: "/about",
     },
     openGraph: {
-        title: "About PureFind — Honest AI Product Recommendations",
+        title: "About PureFind — Save time on Amazon research",
         description:
-            "No paid placements. No fake reviews. Learn how PureFind's AI finds the best products on Amazon.",
+            "A small AI tool that turns 'standing desk under $300' into a six-pick shortlist with a one-line take on each.",
     },
 };
 
@@ -22,18 +22,19 @@ export default function AboutPage() {
             <div className="max-w-3xl mx-auto">
                 {/* Header */}
                 <div className="text-center mb-16">
-                    <span className="text-xs font-mono font-bold text-[var(--color-accent)] tracking-widest uppercase">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-rose)] inline-flex items-center gap-2">
+                        <span className="w-5 h-px bg-[var(--color-rose)]" aria-hidden="true" />
                         About
-                    </span>
-                    <h1 className="section-heading mt-2" style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
-                        Amazon is broken.
-                        <br />
-                        <span className="text-[var(--color-accent)]">We&apos;re fixing it.</span>
+                    </p>
+                    <h1
+                        className="font-display font-medium text-[var(--color-ink)] tracking-[-0.035em] leading-[1.0] mt-5"
+                        style={{ fontSize: "clamp(2.25rem, 5vw, 3.75rem)", fontVariationSettings: '"SOFT" 50, "WONK" 0, "opsz" 144' }}
+                    >
+                        Let us help you save{" "}
+                        <span className="italic text-[var(--color-plum)]">time on research</span>.
                     </h1>
-                    <p className="mt-6 text-base text-[var(--color-surface-muted)] max-w-xl mx-auto leading-relaxed">
-                        Amazon sellers pour thousands of dollars into SEO-gaming their product
-                        listings. Keyword-stuffed titles. Incentivized reviews. Sponsored placements
-                        that look organic. The result? You can&apos;t tell what&apos;s actually good anymore.
+                    <p className="mt-7 text-base sm:text-lg text-[var(--color-ink-muted)] max-w-xl mx-auto leading-relaxed">
+                        Amazon has plenty of good products. Finding which ones is the hard part. PureFind reads through the listings in your category and hands you a six-pick shortlist with a one-line take on each — so you spend a minute deciding instead of an afternoon.
                     </p>
                 </div>
 
