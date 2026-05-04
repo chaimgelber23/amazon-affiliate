@@ -100,9 +100,12 @@ function StarRating({ rating, reviewCount }: { rating?: number; reviewCount?: nu
 
 function EditorialCard({ pick, featured = false }: { pick: TrendingPick; featured?: boolean }) {
     const { product } = pick;
+    const isLiveProduct = !!product;
+
+    // Pre-PA-API state: card is a CATEGORY example, not a product pick. Title and CTA reflect that.
     const href = product?.url ?? buildAffiliateSearchUrl(pick.query);
-    const title = product?.title ?? `Top picks for ${pick.query}`;
-    const ctaLabel = product ? "Open on Amazon" : "Browse the shortlist";
+    const title = product?.title ?? `Sample shortlist · ${pick.query}`;
+    const ctaLabel = product ? "Open on Amazon" : "Try this category";
 
     return (
         <article className={`group relative flex flex-col bg-[var(--color-bg-card-solid)] border border-[var(--color-border)] rounded-3xl overflow-hidden hover:border-[var(--color-border-strong)] hover:shadow-[0_24px_48px_-16px_rgba(91,33,182,0.12)] hover:-translate-y-1 transition-all duration-500 ${featured ? "lg:col-span-2 lg:row-span-2" : ""}`}>
@@ -130,6 +133,13 @@ function EditorialCard({ pick, featured = false }: { pick: TrendingPick; feature
                     <span className="w-1 h-1 rounded-full bg-[var(--color-rose)]" aria-hidden="true" />
                     {pick.category}
                 </span>
+                {/* Pre-launch / non-live "Example" badge — pinned to top-right.
+                    Only renders when there's no live PA-API product. Compliance #7. */}
+                {!isLiveProduct && (
+                    <span className="absolute top-4 right-4 inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50/95 backdrop-blur-sm border border-amber-200 rounded-full text-[10px] font-bold uppercase tracking-[0.18em] text-amber-800">
+                        Example only
+                    </span>
+                )}
             </div>
 
             {/* Editorial body */}
@@ -149,10 +159,11 @@ function EditorialCard({ pick, featured = false }: { pick: TrendingPick; feature
                     </div>
                 )}
 
-                {/* Editor's take — Wirecutter-style hand-written line */}
+                {/* What to look for — generic category guidance, not a product endorsement.
+                    Frames the line as "what to evaluate" rather than "we picked this". */}
                 <div className="mt-5 pt-5 border-t border-[var(--color-border)]">
                     <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--color-rose)] mb-2">
-                        Editor's take
+                        What to look for
                     </p>
                     <p className={`text-[var(--color-ink-muted)] leading-relaxed ${featured ? "text-base" : "text-sm"}`}>
                         {pick.take}
@@ -199,21 +210,34 @@ export async function TrendingProducts() {
 
             <div className="max-w-7xl mx-auto">
                 {/* Editorial masthead */}
-                <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-14 sm:mb-16">
+                <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-8 sm:mb-10">
                     <div className="max-w-2xl">
                         <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-rose)] mb-4 inline-flex items-center gap-2">
                             <span className="w-6 h-px bg-[var(--color-rose)]" aria-hidden="true" />
-                            Editor's desk
+                            Sample categories · pre-launch
                         </p>
                         <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-medium text-[var(--color-ink)] tracking-[-0.035em] leading-[1.0]">
-                            What we'd buy this week.
+                            Six categories to try.
                         </h2>
                         <p className="mt-5 text-base sm:text-lg text-[var(--color-ink-muted)] leading-relaxed max-w-xl">
-                            Six categories worth a closer look right now — with a one-line take on what to actually pick. Run any of them through the search bar above to drill in further.
+                            These are example categories with a one-line note on what to look for. Run any of them through the search bar above to get a real, AI-generated shortlist with current prices and ratings.
                         </p>
                     </div>
                     <p className="text-xs text-[var(--color-ink-dim)] leading-relaxed max-w-[18rem]">
                         As an Amazon Associate we earn from qualifying purchases. Prices and availability update at Amazon — click to see current.
+                    </p>
+                </div>
+
+                {/* Honest pre-launch banner — explicit "we don't have live product access yet" disclosure.
+                    Compliance #7 (demo content clearly labeled) + #6 (no misleading AI capability claims). */}
+                <div className="mb-12 sm:mb-14 p-4 sm:p-5 bg-amber-50/70 border border-amber-200 rounded-2xl flex items-start gap-3">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-amber-700 flex-shrink-0 mt-0.5">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                    <p className="text-sm text-amber-900 leading-relaxed">
+                        <strong className="font-semibold">Heads-up:</strong> the cards below are <strong>example categories</strong>, not actual product picks. PureFind is awaiting Amazon Associates approval, which unlocks live product data via Amazon's Product Advertising API. The search bar above already produces real shortlists in the meantime.
                     </p>
                 </div>
 
