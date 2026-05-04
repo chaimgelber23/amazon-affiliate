@@ -2,6 +2,7 @@ import Link from "next/link";
 import { SearchBox } from "@/components/SearchBox";
 import { RotatingText } from "@/components/RotatingText";
 import { TrendingProducts } from "@/components/TrendingProducts";
+import { HeroOrganicLoop } from "@/components/HeroOrganicLoop";
 
 // Re-render the home page (and refresh trending PA-API data) every 30 min.
 // Stays well under PA-API's 1-hour price-cache ceiling.
@@ -42,370 +43,201 @@ function HomeJsonLd() {
     );
 }
 
-function MiniPickRow({
-    rank,
-    badge,
-    badgeColor,
-    title,
-    price,
-    rating,
-    reviews,
-}: {
-    rank: number;
-    badge: string;
-    badgeColor: string;
-    title: string;
-    price: string;
-    rating: string;
-    reviews: string;
-}) {
+function BrowserChrome() {
     return (
-        <div className="flex items-center gap-3 px-3 py-2.5 bg-white border border-slate-200/80 rounded-xl shadow-[0_1px_0_rgba(15,23,42,0.02)]">
-            <div className="w-9 h-9 flex-shrink-0 rounded-lg bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200/60 flex items-center justify-center text-slate-400">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path d="M3 9h18M3 9v10a1 1 0 001 1h16a1 1 0 001-1V9M3 9l2-5h14l2 5" />
-                </svg>
-            </div>
-            <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                    <span className="font-mono tnum text-[10px] text-slate-400">#{rank}</span>
-                    <span className={`text-[9px] font-black uppercase tracking-[0.18em] ${badgeColor}`}>
-                        {badge}
-                    </span>
-                </div>
-                <p className="text-[13px] font-semibold text-slate-800 truncate leading-tight">
-                    {title}
-                </p>
-            </div>
-            <div className="flex flex-col items-end flex-shrink-0">
-                <span className="font-mono tnum text-sm font-bold text-slate-900">{price}</span>
-                <span className="text-[10px] text-slate-400 font-medium tnum">
-                    <span className="text-amber-400" aria-hidden="true">★</span> {rating} · {reviews}
-                </span>
-            </div>
-        </div>
-    );
-}
-
-function HeroDemoPanel() {
-    return (
-        <div className="relative">
-            <div className="absolute -inset-4 bg-gradient-to-br from-indigo-500/10 via-transparent to-amber-400/10 rounded-[32px] blur-2xl" aria-hidden="true" />
-
-            <div className="relative bg-white/95 backdrop-blur-xl border border-slate-200/80 rounded-3xl shadow-2xl shadow-slate-900/[0.07] p-5 sm:p-6">
-
-                <div className="flex items-center justify-between mb-5">
-                    <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">
-                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500" aria-hidden="true" />
-                        Example only
-                        <span className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-mono normal-case tracking-normal text-[11px]">
-                            standing desk
-                        </span>
-                    </div>
-                    <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">
-                        not real picks
-                    </span>
-                </div>
-
-                <div className="space-y-2">
-                    <MiniPickRow
-                        rank={1}
-                        badge="Top pick"
-                        badgeColor="text-[var(--color-accent)]"
-                        title="Electric standing desk, 60×30"
-                        price="$249"
-                        rating="4.6"
-                        reviews="12.4k"
-                    />
-                    <MiniPickRow
-                        rank={2}
-                        badge="Premium"
-                        badgeColor="text-amber-700"
-                        title="Walnut height-adjustable, 72×30"
-                        price="$549"
-                        rating="4.8"
-                        reviews="3.2k"
-                    />
-                    <MiniPickRow
-                        rank={3}
-                        badge="Budget"
-                        badgeColor="text-emerald-700"
-                        title="Compact crank-lift desk, 48×24"
-                        price="$129"
-                        rating="4.4"
-                        reviews="8.1k"
-                    />
-                </div>
-
-                <div className="text-center mt-3">
-                    <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider">
-                        + 5 more picks
-                    </span>
-                </div>
-
-                <div className="mt-5 pt-5 border-t border-slate-100">
-                    <div className="flex items-center justify-between gap-2 mb-2.5">
-                        <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[var(--color-accent)] inline-flex items-center gap-1.5">
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
-                                <circle cx="11" cy="11" r="7" />
-                                <line x1="21" y1="21" x2="16.5" y2="16.5" />
-                            </svg>
-                            Search on your search
-                        </p>
-                        <span className="text-[9px] font-mono text-slate-400 uppercase tracking-wider">
-                            Refine inside
-                        </span>
-                    </div>
-                    <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5">
-                        <span className="text-[13px] text-slate-500 flex-1 font-medium">
-                            under $200
-                        </span>
-                        <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-400">
-                            ↵ refine
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-function SamplePickCard() {
-    return (
-        <div className="product-card p-6 sm:p-7 relative overflow-hidden bg-white">
-            <div className="absolute -top-10 -right-4 font-display text-[120px] font-extrabold text-slate-100/60 select-none pointer-events-none tnum">
-                #1
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-5 sm:gap-6 relative z-10">
-                <div className="w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 border border-[var(--color-border)] flex items-center justify-center">
-                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" className="text-slate-400">
-                        <path d="M3 9h18M3 9v10a1 1 0 001 1h16a1 1 0 001-1V9M3 9l2-5h14l2 5" />
-                        <path d="M9 13h6" />
-                    </svg>
-                </div>
-
-                <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2 mb-2">
-                        <span className="px-2.5 py-1 bg-[var(--color-accent-muted)] text-[var(--color-accent)] text-[10px] font-black uppercase tracking-[0.18em] rounded-md">
-                            Top pick
-                        </span>
-                        <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase tracking-[0.15em] rounded-md border border-emerald-200">
-                            Example only
-                        </span>
-                    </div>
-
-                    <h3 className="font-display text-xl sm:text-2xl font-bold text-[var(--color-surface)] leading-tight tracking-tight">
-                        Electric standing desk, 60×30
-                    </h3>
-
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3">
-                        <span className="font-mono tnum text-2xl font-bold text-[var(--color-surface)] tracking-tight">
-                            $249
-                        </span>
-                        <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--color-surface-dim)]">
-                            <span aria-hidden="true" className="text-amber-400 text-base">★★★★★</span>
-                            <span className="font-mono tnum">4.6</span>
-                            <span className="text-xs font-mono tnum">(12,440)</span>
-                        </span>
-                    </div>
-
-                    <div className="mt-4 pt-4 border-t border-[var(--color-border)]">
-                        <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[var(--color-accent)] mb-2">
-                            Why this one
-                        </p>
-                        <p className="text-[14px] text-[var(--color-surface-muted)] leading-relaxed">
-                            Dual motors, 220-lb capacity, 7-year warranty. Cheaper desks in this size use single motors that wear out fast.
-                        </p>
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mt-5">
-                        <div className="text-[10px] font-mono uppercase tracking-[0.15em] text-[var(--color-surface-dim)]">
-                            Example pick
-                        </div>
-                        <span className="btn-amazon text-sm py-2.5 px-6 cursor-default opacity-95">
-                            View on Amazon
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-function WindowControls() {
-    return (
-        <span className="ml-auto inline-flex items-center gap-3 text-white/40">
-            <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
-                <line x1="2" y1="6" x2="10" y2="6" stroke="currentColor" strokeWidth="1" />
-            </svg>
-            <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
-                <rect x="2.5" y="2.5" width="7" height="7" stroke="currentColor" strokeWidth="1" fill="none" />
-            </svg>
-            <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
-                <line x1="2.5" y1="2.5" x2="9.5" y2="9.5" stroke="currentColor" strokeWidth="1" />
-                <line x1="9.5" y1="2.5" x2="2.5" y2="9.5" stroke="currentColor" strokeWidth="1" />
-            </svg>
+        <span className="inline-flex items-center gap-2 text-white/35 ml-auto">
+            <span className="w-2.5 h-2.5 rounded-full bg-white/15" />
+            <span className="w-2.5 h-2.5 rounded-full bg-white/15" />
+            <span className="w-2.5 h-2.5 rounded-full bg-white/15" />
         </span>
     );
 }
 
 export default function HomePage() {
     return (
-        <div className="relative overflow-hidden">
+        <div className="relative">
             <HomeJsonLd />
 
-            <div className="mesh-orb w-[700px] h-[700px] bg-indigo-400/15 top-[-220px] left-1/2 -translate-x-1/2 animate-float" />
-            <div className="mesh-orb w-[400px] h-[400px] bg-amber-300/15 top-[200px] right-[-120px] stagger-2 animate-float" />
+            {/* ── HERO ──
+                Single-column centered, search-bar dominant.
+                Organic loop runs full-bleed behind the content.
+                Above-the-fold compliance disclosure sits directly above the search bar. */}
+            <section className="relative min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 sm:px-8 py-12 lg:py-16 overflow-hidden">
+                {/* The hero's signature visual — fills the full hero, sits behind everything */}
+                <div className="absolute inset-0 -z-10">
+                    <HeroOrganicLoop className="opacity-90" />
+                </div>
 
-            {/* ── HERO — two-column with live demo ── */}
-            <section className="relative min-h-[calc(100vh-4rem)] flex items-center px-4 sm:px-8 lg:px-12 py-10 lg:py-14 animate-fade-in-up">
-                <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-12 lg:gap-16 items-center">
+                <div className="relative z-10 max-w-4xl w-full text-center animate-fade-in-up">
+                    {/* Eyebrow */}
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--color-rose)] mb-6 inline-flex items-center gap-2">
+                        <span className="w-5 h-px bg-[var(--color-rose)]" aria-hidden="true" />
+                        Amazon, decoded
+                        <span className="w-5 h-px bg-[var(--color-rose)]" aria-hidden="true" />
+                    </p>
 
-                    {/* Left: pitch + search */}
-                    <div className="text-center lg:text-left">
-                        <h1 className="font-display text-[44px] sm:text-6xl lg:text-7xl xl:text-[80px] font-extrabold text-slate-900 tracking-[-0.045em] leading-[0.98] mb-6">
-                            Save hours of
-                            <br />
-                            Amazon research.
-                        </h1>
+                    {/* The headline — Fraunces variable serif, organic optical-size */}
+                    <h1
+                        className="font-display text-[44px] sm:text-6xl lg:text-7xl xl:text-[88px] font-medium text-[var(--color-ink)] tracking-[-0.035em] leading-[0.98] mb-6"
+                        style={{ fontVariationSettings: '"SOFT" 50, "WONK" 0, "opsz" 144' }}
+                    >
+                        The shortlist for{" "}
+                        <span className="relative inline-block">
+                            <RotatingText
+                                words={ROTATING_QUERIES}
+                                className="italic font-medium text-[var(--color-plum)]"
+                            />
+                        </span>
+                        ,
+                        <br />
+                        without the noise.
+                    </h1>
 
-                        <p className="text-lg sm:text-xl text-[var(--color-surface-muted)] mb-9 max-w-xl mx-auto lg:mx-0 leading-snug font-medium">
-                            We filter the word salad and hand you{" "}
-                            <span className="font-semibold text-slate-900">six to eight picks</span>. Refine inside the list to narrow.{" "}
-                            <span className="block sm:inline mt-1 sm:mt-0">
-                                Find a good{" "}
-                                <RotatingText words={ROTATING_QUERIES} className="text-[var(--color-accent)] font-semibold" />
-                                .
-                            </span>
-                        </p>
+                    <p className="text-lg sm:text-xl text-[var(--color-ink-muted)] mb-9 max-w-2xl mx-auto leading-snug font-normal">
+                        Type what you want. We read past the keyword-stuffed listings and hand you{" "}
+                        <span className="font-semibold text-[var(--color-ink)]">six to eight picks, ranked</span>. Then narrow the list inside — &ldquo;under $200&rdquo;, &ldquo;walnut&rdquo;, &ldquo;for a small office&rdquo; — until it's exactly what you wanted.
+                    </p>
 
-                        <SearchBox />
+                    {/* Above-the-fold affiliate disclosure — sits right above the search bar.
+                        Required for Amazon Associates compliance per audit point #1. */}
+                    <p className="text-[11px] text-[var(--color-ink-dim)] mb-3 max-w-xl mx-auto leading-relaxed">
+                        As an Amazon Associate we earn from qualifying purchases.
+                    </p>
 
-                        <div className="mt-7 flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-x-5 gap-y-3 text-sm">
-                            <Link
-                                href="/extension"
-                                className="inline-flex items-center gap-2 font-semibold text-slate-900 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 px-5 py-2.5 rounded-full transition-all shadow-[0_1px_0_rgba(15,23,42,0.04)]"
-                            >
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                                    <circle cx="12" cy="12" r="10" />
-                                    <circle cx="12" cy="12" r="3.5" />
-                                    <path d="M12 2a10 10 0 0 1 8.66 5L12 12" />
-                                    <path d="M2.05 13a10 10 0 0 0 5.95 8.5L12 12" />
-                                    <path d="M21.95 13a10 10 0 0 1-9.95 9L12 12" />
-                                </svg>
-                                Or get the Chrome extension
-                            </Link>
-                            <Link
-                                href="/privacy#amazon-affiliate-links"
-                                className="text-[12px] text-[var(--color-surface-dim)] hover:text-[var(--color-surface-muted)] transition-colors"
-                            >
-                                As an Amazon Associate we earn from qualifying purchases
-                                <span className="ml-1 underline">details</span>
-                            </Link>
-                        </div>
+                    <SearchBox />
+
+                    {/* Secondary CTA + tertiary disclosure link */}
+                    <div className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-x-5 gap-y-3 text-sm">
+                        <Link
+                            href="/extension"
+                            className="inline-flex items-center gap-2 font-semibold text-[var(--color-ink)] bg-[var(--color-bg-card-solid)] border border-[var(--color-border-strong)] hover:border-[var(--color-plum)] hover:text-[var(--color-plum)] px-5 py-2.5 rounded-full transition-all shadow-[0_2px_6px_-2px_rgba(91,33,182,0.12)]"
+                        >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                                <circle cx="12" cy="12" r="10" />
+                                <circle cx="12" cy="12" r="3.5" />
+                            </svg>
+                            Or get the Chrome extension
+                        </Link>
+                        <Link
+                            href="/privacy#amazon-affiliate-links"
+                            className="text-[12px] text-[var(--color-ink-dim)] hover:text-[var(--color-ink-muted)] underline-offset-2 hover:underline transition-colors"
+                        >
+                            How affiliate links work
+                        </Link>
                     </div>
-
-                    {/* Right: live-looking demo */}
-                    <div className="lg:pl-4">
-                        <HeroDemoPanel />
-                    </div>
-
                 </div>
             </section>
 
-            {/* ── TRENDING (server-rendered, real affiliate links) ── */}
+            {/* ── WHAT IT DOES ──
+                Sales-clarity section. Single-column editorial — no double demo panels.
+                Three-step explainer, then the differentiator (search-within-search). */}
+            <section className="relative py-24 sm:py-28 px-4 sm:px-8">
+                <div className="max-w-5xl mx-auto">
+                    <div className="text-center mb-16 sm:mb-20">
+                        <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-rose)] mb-4">
+                            How it works
+                        </p>
+                        <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-medium text-[var(--color-ink)] tracking-[-0.035em] leading-[1.0] max-w-3xl mx-auto">
+                            We do the search.{" "}
+                            <span className="text-[var(--color-ink-dim)] italic">You get the shortlist.</span>
+                        </h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 sm:gap-8 lg:gap-12">
+                        <div className="relative">
+                            <span className="font-mono tnum text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-plum)]">
+                                Step one
+                            </span>
+                            <h3 className="font-display text-2xl sm:text-3xl font-medium text-[var(--color-ink)] mt-3 leading-tight tracking-tight">
+                                Type what you want.
+                            </h3>
+                            <p className="text-[var(--color-ink-muted)] leading-relaxed mt-4 text-[15px]">
+                                Plain English. &ldquo;Standing desk under $300.&rdquo; &ldquo;Best espresso for a beginner.&rdquo; &ldquo;Wireless headphones for travel.&rdquo; Mistype it &mdash; we'll figure it out.
+                            </p>
+                        </div>
+                        <div className="relative">
+                            <span className="font-mono tnum text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-rose)]">
+                                Step two
+                            </span>
+                            <h3 className="font-display text-2xl sm:text-3xl font-medium text-[var(--color-ink)] mt-3 leading-tight tracking-tight">
+                                Get six to eight picks.
+                            </h3>
+                            <p className="text-[var(--color-ink-muted)] leading-relaxed mt-4 text-[15px]">
+                                Ranked. Across budget, mid-range, and premium. Each with one line on why it earns its slot &mdash; and one line on what you give up by picking it.
+                            </p>
+                        </div>
+                        <div className="relative">
+                            <span className="font-mono tnum text-[11px] font-bold uppercase tracking-[0.18em] text-amber-700">
+                                Step three
+                            </span>
+                            <h3 className="font-display text-2xl sm:text-3xl font-medium text-[var(--color-ink)] mt-3 leading-tight tracking-tight">
+                                Narrow without restarting.
+                            </h3>
+                            <p className="text-[var(--color-ink-muted)] leading-relaxed mt-4 text-[15px]">
+                                The same search bar refines what you already see. Type &ldquo;under $200&rdquo;, &ldquo;walnut&rdquo;, &ldquo;quieter&rdquo; &mdash; the list collapses around the new constraint instead of starting over.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Key differentiator callout */}
+                    <div className="mt-20 sm:mt-24 text-center">
+                        <div className="inline-flex flex-wrap items-center justify-center gap-2 bg-[var(--color-bg-card-solid)] border border-[var(--color-border-strong)] rounded-full px-5 py-2 shadow-[0_4px_16px_-4px_rgba(91,33,182,0.10)]">
+                            <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--color-plum)]">Search-within-search</span>
+                            <span className="text-[var(--color-ink-dim)]">·</span>
+                            <span className="text-sm font-medium text-[var(--color-ink-muted)]">Refining keeps your shortlist intact. Restart only when you want a new category.</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ── EDITORIAL TRENDING — server-rendered, real PA-API or fallback search-link cards ── */}
             <TrendingProducts />
 
-            {/* ── WHAT IT DOES ── */}
-            <section className="py-24 sm:py-32 px-4 sm:px-8 relative z-10 bg-gradient-to-b from-transparent via-slate-50/60 to-transparent">
-                <div className="max-w-6xl mx-auto">
-
-                    <div className="text-center mb-14 sm:mb-16">
-                        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-accent)] mb-5">
-                            What PureFind does
-                        </p>
-                        <h2 className="font-display text-3xl sm:text-5xl md:text-6xl font-extrabold text-[var(--color-surface)] tracking-[-0.04em] leading-[1.0] max-w-3xl mx-auto">
-                            We do the search.
-                            <br />
-                            <span className="text-slate-400">You get the shortlist.</span>
-                        </h2>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-center">
-
-                        <div className="space-y-6 max-w-md">
-                            <p className="text-lg text-[var(--color-surface-muted)] leading-relaxed">
-                                You type a need. PureFind reads through every Amazon listing in that category — specs, review counts, price spread — and hands you{" "}
-                                <span className="font-semibold text-[var(--color-surface)]">six to eight picks, ranked</span>. The top spec for the price. The premium pick. The budget pick. One line on each saying why.
-                            </p>
-                            <p className="text-lg text-[var(--color-surface-muted)] leading-relaxed">
-                                Need narrower? <span className="font-semibold text-[var(--color-surface)]">Search inside your results</span>. &ldquo;Under $200.&rdquo; &ldquo;Walnut.&rdquo; &ldquo;For a small office.&rdquo; Keep refining until the shortlist is exactly what you wanted.
-                            </p>
-
-                            <div className="pt-4 flex flex-wrap gap-x-7 gap-y-3">
-                                <div>
-                                    <p className="font-display font-extrabold text-2xl text-[var(--color-surface)] tnum tracking-tight">6–8</p>
-                                    <p className="text-[11px] font-semibold text-[var(--color-surface-dim)] uppercase tracking-wider mt-1">Picks per search</p>
-                                </div>
-                                <div>
-                                    <p className="font-display font-extrabold text-2xl text-[var(--color-surface)] tnum tracking-tight">∞</p>
-                                    <p className="text-[11px] font-semibold text-[var(--color-surface-dim)] uppercase tracking-wider mt-1">Refines inside</p>
-                                </div>
-                                <div>
-                                    <p className="font-display font-extrabold text-2xl text-[var(--color-surface)] tnum tracking-tight">$0</p>
-                                    <p className="text-[11px] font-semibold text-[var(--color-surface-dim)] uppercase tracking-wider mt-1">No signup</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-surface-dim)] mb-4 text-center md:text-left">
-                                The top of the shortlist, expanded
-                            </p>
-                            <SamplePickCard />
-                        </div>
-
-                    </div>
-                </div>
-            </section>
-
             {/* ── CHROME EXTENSION CTA ── */}
-            <section className="py-24 sm:py-32 px-4 sm:px-8 relative overflow-hidden bg-[var(--color-surface)] text-white">
-                <div className="absolute inset-0 bg-gradient-to-tr from-[var(--color-accent)]/20 via-transparent to-amber-400/10" />
+            <section className="relative py-24 sm:py-32 px-4 sm:px-8 overflow-hidden">
+                {/* Section bg — deep plum surface with subtle gradient pool */}
+                <div className="absolute inset-x-4 sm:inset-x-8 inset-y-0 -z-10 rounded-[40px] bg-[var(--color-ink)] overflow-hidden">
+                    <div
+                        className="absolute inset-0 opacity-60"
+                        style={{
+                            background:
+                                "radial-gradient(ellipse 60% 50% at 18% 20%, rgba(91, 33, 182, 0.55), transparent 60%), radial-gradient(ellipse 50% 40% at 85% 80%, rgba(225, 29, 72, 0.40), transparent 60%), radial-gradient(ellipse 50% 40% at 50% 100%, rgba(217, 119, 6, 0.25), transparent 60%)",
+                        }}
+                    />
+                </div>
 
-                <div className="max-w-5xl mx-auto relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
-
+                <div className="max-w-6xl mx-auto relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center text-white">
                     <div>
-                        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-amber-300 mb-5">
+                        <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-amber-300 mb-5 inline-flex items-center gap-2">
+                            <span className="w-5 h-px bg-amber-300" aria-hidden="true" />
                             On Amazon itself
                         </p>
-                        <h2 className="font-display text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-[-0.04em] leading-[1.0] mb-6">
-                            Install on Chrome.
+                        <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-medium tracking-[-0.035em] leading-[1.0] mb-6">
+                            Already searching?{" "}
+                            <span className="italic text-white/65">Skip a step.</span>
                         </h2>
-                        <p className="text-lg text-slate-300 leading-relaxed mb-8 max-w-md">
-                            The extension drops a PureFind button onto every Amazon search results page. Click it, get the pick — without leaving the tab.
+                        <p className="text-base sm:text-lg text-white/70 leading-relaxed mb-8 max-w-md">
+                            The Chrome extension drops a PureFind button onto every Amazon search results page. Click it, get the pick, never leave the tab.
                         </p>
                         <Link
                             href="/extension"
-                            className="btn-amazon text-base px-8 py-4 inline-flex items-center gap-2 shadow-2xl shadow-orange-500/20"
+                            className="btn-amazon text-base px-8 py-4 inline-flex items-center gap-2 shadow-2xl shadow-black/30"
                         >
                             Get the extension
                         </Link>
                     </div>
 
+                    {/* Browser-frame illustration */}
                     <div className="hidden md:block">
-                        <div className="bg-white/5 border border-white/10 rounded-xl backdrop-blur-sm overflow-hidden">
-
-                            <div className="flex items-center px-4 py-2.5 bg-white/[0.03] border-b border-white/10">
-                                <span className="text-[11px] font-mono uppercase tracking-[0.18em] text-white/40">
+                        <div className="bg-white/[0.04] border border-white/10 rounded-2xl backdrop-blur-md overflow-hidden shadow-[0_24px_60px_-12px_rgba(0,0,0,0.4)]">
+                            <div className="flex items-center px-4 py-2.5 bg-white/[0.02] border-b border-white/10">
+                                <span className="font-mono tnum text-[11px] uppercase tracking-[0.18em] text-white/40">
                                     amazon.com/s
                                 </span>
-                                <WindowControls />
+                                <BrowserChrome />
                             </div>
-
                             <div className="px-4 py-3 border-b border-white/10">
-                                <div className="bg-white/5 rounded-md px-3 py-1.5 flex items-center gap-2 text-[12px] font-mono text-white/50">
+                                <div className="bg-white/5 rounded-md px-3 py-1.5 flex items-center gap-2 text-[12px] font-mono text-white/55">
                                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                                         <rect x="3" y="11" width="18" height="11" rx="2" />
                                         <path d="M7 11V7a5 5 0 0 1 10 0v4" />
@@ -413,12 +245,14 @@ export default function HomePage() {
                                     https://www.amazon.com/s?k=standing+desk
                                 </div>
                             </div>
-
                             <div className="p-4 space-y-3">
                                 <div className="bg-white/5 rounded-md px-3 py-2.5 text-[12px] text-white/55 font-mono">
                                     standing desk under $300
                                 </div>
-                                <div className="bg-[var(--color-accent)] text-white rounded-md px-3 py-2.5 inline-flex items-center gap-2 text-sm font-bold">
+                                <div
+                                    className="rounded-md px-3 py-2.5 inline-flex items-center gap-2 text-sm font-bold text-white"
+                                    style={{ background: "linear-gradient(135deg, #5B21B6 0%, #E11D48 100%)" }}
+                                >
                                     <span className="w-1.5 h-1.5 rounded-full bg-white" aria-hidden="true" />
                                     Search with PureFind
                                 </div>
@@ -428,7 +262,6 @@ export default function HomePage() {
                             </div>
                         </div>
                     </div>
-
                 </div>
             </section>
 

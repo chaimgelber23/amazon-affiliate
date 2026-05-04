@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { buildAffiliateUrl, buildAffiliateSearchUrl } from "@/lib/affiliate";
+import { CompareTable } from "./CompareTable";
 
 interface Product {
     rank: number;
@@ -16,6 +17,8 @@ interface Product {
     imageUrl?: string;
     reviewCount?: number;
     verified?: boolean;
+    tier?: "budget" | "mid" | "premium";
+    confidence?: "high" | "medium" | "low";
 }
 
 interface SearchResult {
@@ -65,14 +68,14 @@ function SkeletonCard() {
     return (
         <div className="product-card p-6 sm:p-7 shimmer-bg">
             <div className="flex gap-5 sm:gap-7">
-                <div className="w-28 h-28 sm:w-36 sm:h-36 flex-shrink-0 rounded-2xl bg-slate-200/50" />
+                <div className="w-28 h-28 sm:w-36 sm:h-36 flex-shrink-0 rounded-2xl bg-[var(--color-bg-warm)]" />
                 <div className="flex-1 space-y-4 py-2">
-                    <div className="h-4 bg-slate-200/50 rounded-full w-1/4" />
-                    <div className="h-6 bg-slate-200/50 rounded-full w-3/4" />
-                    <div className="h-5 bg-slate-200/50 rounded-full w-1/3 mt-2" />
+                    <div className="h-4 bg-[var(--color-bg-warm)] rounded-full w-1/4" />
+                    <div className="h-6 bg-[var(--color-bg-warm)] rounded-full w-3/4" />
+                    <div className="h-5 bg-[var(--color-bg-warm)] rounded-full w-1/3 mt-2" />
                     <div className="h-px bg-[var(--color-border)] mt-5 mb-2" />
-                    <div className="h-4 bg-slate-200/50 rounded-full w-full" />
-                    <div className="h-4 bg-slate-200/50 rounded-full w-5/6" />
+                    <div className="h-4 bg-[var(--color-bg-warm)] rounded-full w-full" />
+                    <div className="h-4 bg-[var(--color-bg-warm)] rounded-full w-5/6" />
                 </div>
             </div>
         </div>
@@ -86,7 +89,7 @@ function StarRating({ rating, reviewCount }: { rating: number; reviewCount?: num
         <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--color-surface-dim)]">
             <span className="inline-flex gap-px">
                 {Array.from({ length: 5 }).map((_, i) => (
-                    <span key={i} className={i < full ? "text-amber-400" : i === full && half ? "text-amber-300" : "text-slate-200"} aria-hidden="true">
+                    <span key={i} className={i < full ? "text-amber-500" : i === full && half ? "text-amber-300" : "text-[var(--color-bg-elevated)]"} aria-hidden="true">
                         ★
                     </span>
                 ))}
@@ -117,14 +120,30 @@ function setCached(q: string, data: SearchResult) {
 }
 
 export function SearchBox() {
-    const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
     const [query, setQuery] = useState("");
+    const [originalQuery, setOriginalQuery] = useState<string | null>(null);
+    const [refinementChain, setRefinementChain] = useState<string[]>([]);
     const [detectedAsin, setDetectedAsin] = useState<string | null>(null);
     const [results, setResults] = useState<SearchResult | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [expandedCard, setExpandedCard] = useState<number | null>(null);
     const [showAll, setShowAll] = useState(false);
+    const [compareSet, setCompareSet] = useState<Set<number>>(new Set());
+
+    const toggleCompare = (rank: number) => {
+        setCompareSet((prev) => {
+            const next = new Set(prev);
+            if (next.has(rank)) next.delete(rank);
+            else if (next.size < 3) next.add(rank);
+            return next;
+        });
+    };
+
+    const compareProducts = useMemo(() => {
+        if (!results) return [];
+        return results.products.filter((p) => compareSet.has(p.rank));
+    }, [results, compareSet]);
 
     const handleQueryChange = (val: string) => {
         setQuery(val);
@@ -133,6 +152,16 @@ export function SearchBox() {
         } else {
             setDetectedAsin(null);
         }
+    };
+
+    const resetSearch = () => {
+        setResults(null);
+        setQuery("");
+        setOriginalQuery(null);
+        setRefinementChain([]);
+        setExpandedCard(null);
+        setDetectedAsin(null);
+        setCompareSet(new Set());
     };
 
     const doSearch = async (q: string, isRefinement = false) => {
@@ -145,15 +174,15 @@ export function SearchBox() {
         setError(null);
         setExpandedCard(null);
         setShowAll(false);
+        setCompareSet(new Set());
 
         if (!isRefinement) {
             const cached = getCached(q);
             if (cached) {
                 setResults(cached);
-                setMessages([
-                    { role: "user", content: q },
-                    { role: "assistant", content: JSON.stringify(cached) },
-                ]);
+                setOriginalQuery(q);
+                setRefinementChain([]);
+                setQuery("");
                 return;
             }
             setResults(null);
@@ -161,15 +190,29 @@ export function SearchBox() {
 
         setLoading(true);
 
-        const newMessages = isRefinement
-            ? [...messages, { role: "user", content: q }]
-            : [{ role: "user", content: q }];
+        // Build the refinement payload — server sees `priorProducts` and treats
+        // the new query as a narrowing constraint, not a fresh search.
+        const body = isRefinement && results
+            ? {
+                messages: [{ role: "user", content: q }],
+                originalQuery: originalQuery ?? q,
+                priorProducts: results.products.map((p) => ({
+                    rank: p.rank,
+                    title: p.title,
+                    priceEstimate: p.priceEstimate,
+                    rating: p.rating,
+                    category: p.category,
+                })),
+            }
+            : {
+                messages: [{ role: "user", content: q }],
+            };
 
         try {
             const res = await fetch("/api/search", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ messages: newMessages }),
+                body: JSON.stringify(body),
             });
 
             if (!res.ok) {
@@ -181,8 +224,14 @@ export function SearchBox() {
             const data: SearchResult = await res.json();
 
             setResults(data);
-            setMessages([...newMessages, { role: "assistant", content: JSON.stringify(data) }]);
-            if (!isRefinement) setCached(q, data);
+            if (isRefinement) {
+                setRefinementChain((chain) => [...chain, q]);
+            } else {
+                setOriginalQuery(q);
+                setRefinementChain([]);
+                setCached(q, data);
+            }
+            setQuery("");
         } catch {
             setError("Something went wrong. Please try again.");
         } finally {
@@ -195,6 +244,9 @@ export function SearchBox() {
         doSearch(query, !!results);
     };
 
+    const inRefinementMode = !!results;
+    const refinementCount = results?.products.length ?? 0;
+
     const amazonHref = (p: Product) => {
         const cleanAsin = typeof p.asin === "string" ? p.asin.trim() : "";
         if (!cleanAsin || cleanAsin === "SEARCH") {
@@ -206,50 +258,84 @@ export function SearchBox() {
     return (
         <div className="w-full max-w-3xl mx-auto relative z-20">
 
+            {/* ── REFINEMENT BREADCRUMB CHAIN ── */}
+            {inRefinementMode && !loading && (originalQuery || refinementChain.length > 0) && (
+                <div className="mb-4 flex items-center gap-2 flex-wrap text-xs font-medium text-[var(--color-ink-muted)] animate-fade-in">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--color-plum)]">
+                        Narrowing {refinementCount} {refinementCount === 1 ? "pick" : "picks"}
+                    </span>
+                    {originalQuery && (
+                        <>
+                            <span className="text-[var(--color-ink-dim)]">·</span>
+                            <span className="px-2.5 py-0.5 bg-[var(--color-bg-warm)] border border-[var(--color-border)] rounded-full">
+                                {originalQuery.length > 40 ? originalQuery.slice(0, 40) + "…" : originalQuery}
+                            </span>
+                        </>
+                    )}
+                    {refinementChain.map((step, i) => (
+                        <span key={i} className="flex items-center gap-2">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-[var(--color-rose)]">
+                                <polyline points="9 18 15 12 9 6" />
+                            </svg>
+                            <span className="px-2.5 py-0.5 bg-[var(--color-accent-muted)] border border-[var(--color-border)] rounded-full text-[var(--color-plum)]">
+                                {step.length > 32 ? step.slice(0, 32) + "…" : step}
+                            </span>
+                        </span>
+                    ))}
+                </div>
+            )}
+
             {/* ── SEARCH BAR ── */}
             <form onSubmit={handleSubmit} className="relative group">
-                {results && !loading && (
-                    <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-accent)] mb-3">
-                        Refine your results
-                    </p>
-                )}
+                {/* Soft glowing aura — picks up the brand gradient on focus, not the indigo→purple AI-tell */}
+                <div className="absolute -inset-1 bg-[var(--color-accent-gradient)] rounded-[30px] opacity-0 group-focus-within:opacity-30 blur-2xl transition duration-500 group-focus-within:duration-200" />
 
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-[var(--color-accent)] to-purple-500 rounded-[28px] opacity-0 group-focus-within:opacity-100 blur transition duration-500 group-focus-within:duration-200" />
-
-                <div className="relative flex items-center bg-white/95 backdrop-blur-3xl border border-[var(--color-border-strong)] rounded-[26px] overflow-hidden transition-all shadow-xl shadow-slate-200/50">
+                <div className={`relative flex items-center bg-[var(--color-bg-card-solid)] backdrop-blur-xl rounded-[26px] overflow-hidden transition-all shadow-[0_8px_32px_-12px_rgba(91,33,182,0.18)] ${
+                    inRefinementMode
+                        ? "border-2 border-[var(--color-plum)]/30"
+                        : "border border-[var(--color-border-strong)]"
+                }`}>
+                    {inRefinementMode && (
+                        <span className="ml-5 sm:ml-6 flex-shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-full bg-[var(--color-accent-muted)] text-[var(--color-plum)]" aria-hidden="true">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                <circle cx="11" cy="11" r="7" />
+                                <line x1="21" y1="21" x2="16.5" y2="16.5" />
+                            </svg>
+                        </span>
+                    )}
                     <input
-                        className="w-full bg-transparent text-[var(--color-surface)] placeholder-[var(--color-surface-dim)] px-7 py-5 sm:px-8 sm:py-6 focus:outline-none text-lg sm:text-xl font-semibold"
-                        placeholder={results
-                            ? "Narrow it down — e.g. \"under $100\" or \"wireless\""
-                            : "standing desk under $300"}
+                        className="w-full bg-transparent text-[var(--color-ink)] placeholder-[var(--color-ink-dim)] px-7 py-5 sm:px-7 sm:py-6 focus:outline-none text-lg sm:text-xl font-medium"
+                        placeholder={inRefinementMode
+                            ? `Narrow further — "under $100", "wireless", "for a small office"…`
+                            : `Try "standing desk under $300" or "best espresso machine for beginners"`}
                         value={query}
                         onChange={(e) => handleQueryChange(e.target.value)}
                         disabled={loading}
                         autoComplete="off"
-                        aria-label="Search for an Amazon product"
+                        aria-label={inRefinementMode ? "Refine current results" : "Search for an Amazon product"}
                     />
                     {detectedAsin && (
-                        <span className="mx-3 px-3 py-1.5 bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold rounded-full whitespace-nowrap flex items-center gap-1.5 flex-shrink-0">
+                        <span className="mx-3 px-3 py-1.5 bg-[var(--color-accent-muted)] border border-[var(--color-plum)]/20 text-[var(--color-plum)] text-xs font-semibold rounded-full whitespace-nowrap flex items-center gap-1.5 flex-shrink-0">
                             Amazon link detected
                         </span>
                     )}
                     <button
                         type="submit"
                         disabled={loading || !query.trim()}
-                        className="btn-primary mx-3 py-3.5 px-6 sm:px-8 text-sm sm:text-base disabled:opacity-50 whitespace-nowrap shadow-md"
+                        className="btn-primary mx-3 py-3.5 px-6 sm:px-8 text-sm sm:text-base disabled:opacity-50 whitespace-nowrap"
                     >
-                        {loading ? "Searching…" : detectedAsin ? "Compare" : results ? "Search within" : "Find products"}
+                        {loading ? "Working…" : detectedAsin ? "Compare" : inRefinementMode ? "Narrow it" : "Find the pick"}
                     </button>
                 </div>
-                {results && !loading && (
-                    <p className="text-xs font-semibold text-[var(--color-surface-dim)] mt-4">
-                        Type above to narrow down · or{" "}
+                {inRefinementMode && !loading && (
+                    <p className="text-xs font-medium text-[var(--color-ink-dim)] mt-3 pl-1">
+                        Refining inside your shortlist · or{" "}
                         <button
                             type="button"
-                            onClick={() => { setResults(null); setQuery(""); setMessages([]); setExpandedCard(null); setDetectedAsin(null); }}
-                            className="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] hover:underline transition-colors"
+                            onClick={resetSearch}
+                            className="text-[var(--color-plum)] hover:text-[var(--color-rose)] hover:underline transition-colors font-semibold"
                         >
-                            start fresh
+                            start a fresh search
                         </button>
                     </p>
                 )}
@@ -297,13 +383,34 @@ export function SearchBox() {
                         </p>
                     </div>
 
+                    {/* ── COMPARE TABLE — renders only when 2+ items selected ── */}
+                    <CompareTable
+                        products={compareProducts}
+                        onClose={() => setCompareSet(new Set())}
+                        onUnselect={(rank) => toggleCompare(rank)}
+                    />
+
+                    {/* Compare-mode hint when exactly 1 item is selected */}
+                    {compareSet.size === 1 && (
+                        <div className="mb-6 mx-1 p-3 bg-[var(--color-accent-muted)] border border-[var(--color-plum)]/15 rounded-2xl text-sm text-[var(--color-plum)] flex items-center gap-2 animate-fade-in">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                <rect x="3" y="3" width="7" height="7" rx="1" />
+                                <rect x="14" y="3" width="7" height="7" rx="1" />
+                                <rect x="3" y="14" width="7" height="7" rx="1" />
+                            </svg>
+                            <span className="font-semibold">Pick 1 more to compare side-by-side.</span>
+                        </div>
+                    )}
+
                     <div className="space-y-6">
-                        {results.products.slice(0, showAll ? undefined : 5).map((product) => (
+                        {results.products.slice(0, showAll ? undefined : 5).map((product) => {
+                            const isInCompare = compareSet.has(product.rank);
+                            return (
                             <article
                                 key={product.rank}
-                                className="product-card p-6 sm:p-8 cursor-pointer relative overflow-hidden"
+                                className={`product-card p-6 sm:p-8 cursor-pointer relative overflow-hidden ${isInCompare ? "ring-2 ring-[var(--color-plum)]/40 ring-offset-2 ring-offset-[var(--color-bg)]" : ""}`}
                             >
-                                <div className="absolute -top-10 -right-4 font-display text-[120px] font-black text-slate-100/50 select-none pointer-events-none z-0 tnum">
+                                <div className="absolute -top-10 -right-4 font-display text-[120px] font-medium text-[var(--color-bg-warm)] select-none pointer-events-none z-0 tnum">
                                     #{product.rank}
                                 </div>
 
@@ -313,8 +420,17 @@ export function SearchBox() {
                                     <div className="flex-1 min-w-0">
                                         <div className="flex flex-wrap items-center gap-2 mb-2">
                                             {product.rank === 1 && (
-                                                <span className="px-3 py-1 bg-[var(--color-accent-muted)] text-[var(--color-accent)] text-[10px] font-black uppercase tracking-[0.18em] rounded-md">
+                                                <span className="px-3 py-1 bg-[var(--color-accent-muted)] text-[var(--color-plum)] text-[10px] font-bold uppercase tracking-[0.18em] rounded-md">
                                                     Top pick
+                                                </span>
+                                            )}
+                                            {product.tier && (
+                                                <span className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.15em] rounded-md border ${
+                                                    product.tier === "budget" ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
+                                                    product.tier === "premium" ? "bg-amber-50 text-amber-800 border-amber-200" :
+                                                    "bg-[var(--color-bg-warm)] text-[var(--color-ink-muted)] border-[var(--color-border)]"
+                                                }`}>
+                                                    {product.tier === "budget" ? "Budget" : product.tier === "premium" ? "Premium" : "Mid-range"}
                                                 </span>
                                             )}
                                             {product.verified && (
@@ -350,12 +466,39 @@ export function SearchBox() {
                                         </div>
 
                                         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 mt-7">
-                                            <button
-                                                onClick={(e) => { e.stopPropagation(); setExpandedCard(expandedCard === product.rank ? null : product.rank); }}
-                                                className="btn-secondary text-sm py-3"
-                                            >
-                                                {expandedCard === product.rank ? "Hide pros / cons" : "Show pros / cons"}
-                                            </button>
+                                            <div className="flex flex-wrap items-stretch gap-2">
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); setExpandedCard(expandedCard === product.rank ? null : product.rank); }}
+                                                    className="btn-secondary text-sm py-3"
+                                                >
+                                                    {expandedCard === product.rank ? "Hide pros / cons" : "Show pros / cons"}
+                                                </button>
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); toggleCompare(product.rank); }}
+                                                    aria-pressed={isInCompare}
+                                                    disabled={!isInCompare && compareSet.size >= 3}
+                                                    className={`text-sm py-3 px-5 rounded-[14px] font-semibold transition-all flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed ${
+                                                        isInCompare
+                                                            ? "bg-[var(--color-plum)] text-white border border-[var(--color-plum)] shadow-[0_4px_12px_-2px_rgba(91,33,182,0.32)]"
+                                                            : "bg-[var(--color-bg-card-solid)] text-[var(--color-ink-muted)] border border-[var(--color-border-strong)] hover:border-[var(--color-plum)] hover:text-[var(--color-plum)]"
+                                                    }`}
+                                                >
+                                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                                        {isInCompare ? (
+                                                            <>
+                                                                <polyline points="20 6 9 17 4 12" />
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <rect x="3" y="3" width="7" height="7" rx="1" />
+                                                                <rect x="14" y="3" width="7" height="7" rx="1" />
+                                                                <rect x="3" y="14" width="7" height="7" rx="1" />
+                                                            </>
+                                                        )}
+                                                    </svg>
+                                                    {isInCompare ? "In comparison" : "Compare"}
+                                                </button>
+                                            </div>
 
                                             <div className="flex flex-col items-stretch sm:items-end gap-1.5">
                                                 <a
@@ -367,7 +510,7 @@ export function SearchBox() {
                                                 >
                                                     {product.verified ? "View on Amazon" : "Search on Amazon"}
                                                 </a>
-                                                <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--color-surface-dim)] text-center sm:text-right">
+                                                <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--color-ink-dim)] text-center sm:text-right">
                                                     Affiliate link
                                                 </span>
                                             </div>
@@ -406,14 +549,15 @@ export function SearchBox() {
                                     </div>
                                 </div>
                             </article>
-                        ))}
+                            );
+                        })}
                     </div>
 
                     {!showAll && results.products.length > 5 && (
                         <div className="mt-8 flex justify-center pb-8">
                             <button
                                 onClick={() => setShowAll(true)}
-                                className="btn-secondary px-8 py-3.5 shadow-sm bg-white hover:bg-slate-50 border border-slate-200"
+                                className="btn-secondary px-8 py-3.5"
                             >
                                 Show {results.products.length - 5} more
                             </button>

@@ -12,16 +12,18 @@ export default function ExtensionPage() {
     return (
         <div className="relative min-h-screen overflow-hidden">
 
-            <div className="mesh-orb w-[600px] h-[600px] bg-indigo-400/15 top-[-220px] left-1/2 -translate-x-1/2 animate-float" />
-
             <section className="relative pt-12 sm:pt-20 pb-24 px-4 sm:px-8">
                 <div className="max-w-3xl mx-auto">
 
-                    <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-accent)] mb-5">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-rose)] mb-5 inline-flex items-center gap-2">
+                        <span className="w-5 h-px bg-[var(--color-rose)]" aria-hidden="true" />
                         For Chrome &amp; Edge
                     </p>
 
-                    <h1 className="font-display text-4xl sm:text-6xl md:text-7xl font-extrabold text-slate-900 tracking-tight leading-[1.02] mb-7">
+                    <h1
+                        className="font-display text-4xl sm:text-6xl md:text-7xl font-medium text-[var(--color-ink)] tracking-[-0.035em] leading-[1.0] mb-7"
+                        style={{ fontVariationSettings: '"SOFT" 50, "WONK" 0, "opsz" 144' }}
+                    >
                         PureFind, on Amazon itself.
                     </h1>
 

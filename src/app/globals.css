@@ -1,47 +1,59 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Geist", "Inter", system-ui, -apple-system, sans-serif;
-  --font-display: "Geist", "Inter", system-ui, sans-serif;
-  --font-mono: "Geist Mono", "JetBrains Mono", ui-monospace, monospace;
+  /* Type system — Fraunces (display, variable serif) + Inter (body) + JetBrains Mono (numerals) */
+  --font-sans: var(--font-sans), "Inter", system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-display), "Fraunces", "Inter", system-ui, serif;
+  --font-mono: var(--font-mono), "JetBrains Mono", ui-monospace, monospace;
 
-  /* Premium Pro Max Light Theme Palette */
-  --color-bg: #F8FAFC;
-  --color-bg-mesh-1: rgba(199, 210, 254, 0.35);
-  --color-bg-mesh-2: rgba(253, 230, 138, 0.25);
-  --color-bg-mesh-3: rgba(244, 231, 243, 0.25);
+  /* ── Surface palette — warm cream, not cold slate ── */
+  --color-bg: #FAF7F2;
+  --color-bg-warm: #F5EFE6;
+  --color-bg-card: rgba(255, 253, 250, 0.92);
+  --color-bg-card-solid: #FFFDFA;
+  --color-bg-elevated: #F0E9DD;
+  --color-bg-hover: #E8DFD0;
 
-  --color-bg-card: rgba(255, 255, 255, 0.8);
-  --color-bg-card-solid: #FFFFFF;
-  --color-bg-elevated: #F1F5F9;
-  --color-bg-hover: #E2E8F0;
+  --color-ink: #1A0F08;
+  --color-ink-muted: #4A3D34;
+  --color-ink-dim: #8A7B6E;
 
-  --color-surface: #0F172A;
-  --color-surface-muted: #475569;
-  --color-surface-dim: #94A3B8;
+  /* Legacy aliases (existing components reference these — keep mapped to the new palette) */
+  --color-surface: #1A0F08;
+  --color-surface-muted: #4A3D34;
+  --color-surface-dim: #8A7B6E;
 
-  /* Indigo Accent */
-  --color-accent: #6366F1;
-  --color-accent-hover: #4F46E5;
-  --color-accent-gradient: linear-gradient(135deg, #6366F1 0%, #A855F7 100%);
-  --color-accent-muted: rgba(99, 102, 241, 0.08);
+  /* ── Brand gradient — deep plum → warm rose (organic cool→warm shift) ── */
+  --color-plum: #5B21B6;
+  --color-plum-deep: #4C1D95;
+  --color-rose: #E11D48;
+  --color-rose-deep: #BE123C;
+  --color-amber: #D97706;
 
-  --color-success: #10B981;
-  --color-success-muted: rgba(16, 185, 129, 0.1);
-  --color-warning: #F59E0B;
-  --color-danger: #EF4444;
+  --color-accent: #5B21B6;
+  --color-accent-hover: #4C1D95;
+  --color-accent-gradient: linear-gradient(135deg, #5B21B6 0%, #E11D48 100%);
+  --color-accent-gradient-soft: linear-gradient(135deg, rgba(91, 33, 182, 0.12) 0%, rgba(225, 29, 72, 0.12) 100%);
+  --color-accent-muted: rgba(91, 33, 182, 0.08);
 
+  --color-success: #047857;
+  --color-success-muted: rgba(4, 120, 87, 0.1);
+  --color-warning: #B45309;
+  --color-danger: #BE123C;
+
+  /* Amazon CTA — preserved (compliance + recognizability) */
   --color-amazon: #FF9900;
   --color-amazon-hover: #F59300;
   --color-amazon-gradient: linear-gradient(135deg, #FF9900 0%, #FFB03A 100%);
 
-  --color-border: rgba(15, 23, 42, 0.06);
-  --color-border-strong: rgba(15, 23, 42, 0.12);
-  --color-border-glass: rgba(255, 255, 255, 0.6);
+  /* ── Borders — soft warm tones, not cold slate ── */
+  --color-border: rgba(26, 15, 8, 0.08);
+  --color-border-strong: rgba(26, 15, 8, 0.16);
+  --color-border-glass: rgba(255, 253, 250, 0.6);
 
-  --color-badge-best: #6366F1;
-  --color-badge-popular: #EC4899;
-  --color-badge-value: #10B981;
+  --color-badge-best: #5B21B6;
+  --color-badge-popular: #E11D48;
+  --color-badge-value: #047857;
 }
 
 /* ============================================
@@ -54,25 +66,27 @@ html {
 
 body {
   background-color: var(--color-bg);
+  /* Organic gradient field — deep plum + warm rose pools (replaces the cold mesh-orb stack) */
   background-image:
-    radial-gradient(at 0% 0%, var(--color-bg-mesh-1) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, var(--color-bg-mesh-2) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, var(--color-bg-mesh-3) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, var(--color-bg-mesh-1) 0px, transparent 50%);
+    radial-gradient(ellipse 70% 50% at 18% 12%, rgba(91, 33, 182, 0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 45% at 85% 18%, rgba(225, 29, 72, 0.08) 0%, transparent 65%),
+    radial-gradient(ellipse 70% 50% at 90% 85%, rgba(217, 119, 6, 0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 10% 92%, rgba(91, 33, 182, 0.06) 0%, transparent 60%);
   background-attachment: fixed;
-  color: var(--color-surface);
+  color: var(--color-ink);
   font-family: var(--font-sans);
+  font-feature-settings: "ss01" 1, "cv11" 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
-  background: rgba(99, 102, 241, 0.2);
-  color: var(--color-surface);
+  background: rgba(91, 33, 182, 0.18);
+  color: var(--color-ink);
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-plum);
   outline-offset: 2px;
   border-radius: 8px;
 }
@@ -99,7 +113,7 @@ body {
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-surface-dim);
+  background: var(--color-ink-dim);
 }
 
 /* ============================================
@@ -121,15 +135,32 @@ body {
   100% { background-position: 200% 0; }
 }
 
-@keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
-  100% { transform: translateY(0px); }
-}
-
 @keyframes pulse-subtle {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.7; }
+}
+
+/* Organic blob morph — used by HeroOrganicLoop */
+@keyframes blob-drift-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); border-radius: 64% 36% 58% 42% / 52% 48% 52% 48%; }
+  33%      { transform: translate3d(3%, -4%, 0) scale(1.06); border-radius: 42% 58% 36% 64% / 56% 44% 56% 44%; }
+  66%      { transform: translate3d(-3%, 3%, 0) scale(0.96); border-radius: 56% 44% 64% 36% / 44% 56% 44% 56%; }
+}
+
+@keyframes blob-drift-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); border-radius: 38% 62% 50% 50% / 64% 36% 64% 36%; }
+  50%      { transform: translate3d(-4%, 5%, 0) scale(1.08); border-radius: 62% 38% 64% 36% / 38% 62% 38% 62%; }
+}
+
+@keyframes blob-drift-c {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); border-radius: 50% 50% 62% 38% / 38% 62% 50% 50%; }
+  50%      { transform: translate3d(5%, -5%, 0) scale(0.94); border-radius: 38% 62% 38% 62% / 62% 38% 62% 38%; }
+}
+
+@keyframes blob-converge {
+  0%   { transform: translate3d(var(--blob-x-from, 0), var(--blob-y-from, 0), 0) scale(var(--blob-scale-from, 1)); opacity: var(--blob-op-from, 0.6); }
+  60%  { transform: translate3d(calc(var(--blob-x-to, 0) * 0.95), calc(var(--blob-y-to, 0) * 0.95), 0) scale(calc(var(--blob-scale-to, 0.7) * 1.05)); opacity: 0.85; }
+  100% { transform: translate3d(var(--blob-x-to, 0), var(--blob-y-to, 0), 0) scale(var(--blob-scale-to, 0.7)); opacity: var(--blob-op-to, 0.4); }
 }
 
 .animate-fade-in-up {
@@ -140,10 +171,6 @@ body {
   animation: fadeIn 0.5s ease-out forwards;
 }
 
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
 .stagger-1 { animation-delay: 0.1s; }
 .stagger-2 { animation-delay: 0.2s; }
 .stagger-3 { animation-delay: 0.3s; }
@@ -152,9 +179,9 @@ body {
 .shimmer-bg {
   background: linear-gradient(
     90deg,
-    rgba(255,255,255,0) 0%,
-    rgba(255,255,255,0.8) 50%,
-    rgba(255,255,255,0) 100%
+    rgba(255,253,250,0) 0%,
+    rgba(255,253,250,0.85) 50%,
+    rgba(255,253,250,0) 100%
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
@@ -172,42 +199,42 @@ body {
   border-top: 1px solid var(--color-border-glass);
   border-left: 1px solid var(--color-border-glass);
   box-shadow:
-    0 4px 24px -2px rgba(15, 23, 42, 0.03),
-    0 1px 2px -1px rgba(15, 23, 42, 0.02);
+    0 4px 24px -2px rgba(26, 15, 8, 0.04),
+    0 1px 2px -1px rgba(26, 15, 8, 0.03);
 }
 
 .card {
   background: var(--color-bg-card-solid);
   border: 1px solid var(--color-border);
   border-radius: 20px;
-  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04);
+  box-shadow: 0 1px 3px 0 rgba(26, 15, 8, 0.04);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .card:hover {
   border-color: var(--color-border-strong);
   box-shadow:
-    0 12px 32px -8px rgba(15, 23, 42, 0.08),
-    0 1px 3px -1px rgba(15, 23, 42, 0.04);
+    0 12px 32px -8px rgba(91, 33, 182, 0.10),
+    0 1px 3px -1px rgba(26, 15, 8, 0.04);
   transform: translateY(-2px);
 }
 
 .product-card {
   background: var(--color-bg-card-solid);
   border: 1px solid var(--color-border);
-  border-radius: 20px;
+  border-radius: 24px;
   box-shadow:
-    0 1px 3px 0 rgba(15, 23, 42, 0.02),
-    0 1px 2px -1px rgba(15, 23, 42, 0.02);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    0 1px 3px 0 rgba(26, 15, 8, 0.03),
+    0 1px 2px -1px rgba(26, 15, 8, 0.02);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .product-card:hover {
   border-color: var(--color-border-strong);
   box-shadow:
-    0 20px 48px -12px rgba(15, 23, 42, 0.1),
-    0 2px 8px -2px rgba(15, 23, 42, 0.04);
-  transform: translateY(-3px);
+    0 28px 56px -16px rgba(91, 33, 182, 0.14),
+    0 4px 12px -4px rgba(225, 29, 72, 0.06);
+  transform: translateY(-4px);
 }
 
 /* ============================================
@@ -216,8 +243,8 @@ body {
 
 .btn-amazon {
   background: var(--color-amazon-gradient);
-  color: #111;
-  font-weight: 800;
+  color: #1A0F08;
+  font-weight: 700;
   padding: 12px 24px;
   border-radius: 12px;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -227,15 +254,16 @@ body {
   gap: 8px;
   text-decoration: none;
   font-size: 14px;
+  letter-spacing: -0.01em;
   box-shadow:
-    0 4px 12px -2px rgba(255, 153, 0, 0.3),
+    0 4px 12px -2px rgba(255, 153, 0, 0.32),
     inset 0 1px 0 rgba(255,255,255,0.4);
 }
 
 .btn-amazon:hover {
   transform: translateY(-1px);
   box-shadow:
-    0 8px 20px -4px rgba(255, 153, 0, 0.4),
+    0 10px 24px -4px rgba(255, 153, 0, 0.42),
     inset 0 1px 0 rgba(255,255,255,0.4);
 }
 
@@ -246,7 +274,7 @@ body {
 .btn-primary {
   background: var(--color-accent-gradient);
   color: white;
-  font-weight: 700;
+  font-weight: 600;
   padding: 12px 28px;
   border-radius: 14px;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -256,16 +284,19 @@ body {
   gap: 8px;
   text-decoration: none;
   font-size: 15px;
+  letter-spacing: -0.01em;
   box-shadow:
-    0 6px 16px -4px rgba(99, 102, 241, 0.3),
-    inset 0 1px 0 rgba(255,255,255,0.2);
+    0 8px 20px -4px rgba(91, 33, 182, 0.32),
+    0 2px 4px -1px rgba(225, 29, 72, 0.10),
+    inset 0 1px 0 rgba(255,255,255,0.18);
 }
 
 .btn-primary:hover {
   transform: translateY(-1px);
   box-shadow:
-    0 12px 28px -6px rgba(99, 102, 241, 0.4),
-    inset 0 1px 0 rgba(255,255,255,0.2);
+    0 16px 32px -6px rgba(91, 33, 182, 0.42),
+    0 4px 8px -2px rgba(225, 29, 72, 0.14),
+    inset 0 1px 0 rgba(255,255,255,0.18);
 }
 
 .btn-primary:active {
@@ -273,22 +304,23 @@ body {
 }
 
 .btn-secondary {
-  background: var(--color-bg-elevated);
-  color: var(--color-surface);
+  background: var(--color-bg-card-solid);
+  color: var(--color-ink);
   font-weight: 600;
   padding: 12px 28px;
   border-radius: 14px;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-strong);
   transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 15px;
+  letter-spacing: -0.01em;
 }
 
 .btn-secondary:hover {
-  background: var(--color-bg-hover);
-  border-color: var(--color-border-strong);
+  background: var(--color-bg-warm);
+  border-color: var(--color-plum);
 }
 
 /* ============================================
@@ -297,17 +329,18 @@ body {
 
 .section-heading {
   font-family: var(--font-display);
-  font-size: clamp(2.5rem, 6vw, 4.5rem);
-  font-weight: 700;
-  letter-spacing: -0.04em;
-  line-height: 1.02;
-  color: var(--color-surface);
+  font-size: clamp(2.5rem, 6vw, 4.75rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.0;
+  color: var(--color-ink);
+  font-variation-settings: "SOFT" 50, "WONK" 0, "opsz" 144;
 }
 
 .font-display {
   font-family: var(--font-display);
-  letter-spacing: -0.035em;
-  font-feature-settings: "ss01" 1;
+  letter-spacing: -0.03em;
+  font-variation-settings: "SOFT" 50, "WONK" 0, "opsz" 144;
 }
 
 .font-mono {
@@ -326,20 +359,10 @@ body {
   background-image: var(--color-accent-gradient);
 }
 
-.mesh-orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  z-index: -1;
-  opacity: 0.6;
-  pointer-events: none;
-}
-
 /* ============================================
-   DEAL CARD REFINEMENTS
+   PRODUCT CARD REFINEMENTS
    ============================================ */
 
-/* Smooth image zoom on deal cards */
 .deal-card-img {
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -348,12 +371,10 @@ body {
   transform: scale(1.05);
 }
 
-/* Verified badge animation */
 .verified-pulse {
   animation: pulse-subtle 2s ease-in-out infinite;
 }
 
-/* FAQ details arrow rotation */
 details summary::-webkit-details-marker {
   display: none;
 }

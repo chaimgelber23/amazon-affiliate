@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -6,8 +7,29 @@ import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistratio
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://purefind.vercel.app";
 
+const fraunces = Fraunces({
+    subsets: ["latin"],
+    display: "swap",
+    variable: "--font-display",
+    axes: ["SOFT", "WONK", "opsz"],
+});
+
+const inter = Inter({
+    subsets: ["latin"],
+    display: "swap",
+    variable: "--font-sans",
+    weight: ["400", "500", "600", "700", "800"],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+    subsets: ["latin"],
+    display: "swap",
+    variable: "--font-mono",
+    weight: ["400", "500", "600", "700"],
+});
+
 export const viewport: Viewport = {
-    themeColor: "#0F172A",
+    themeColor: "#FAF7F2",
     width: "device-width",
     initialScale: 1,
     maximumScale: 5,
@@ -112,14 +134,8 @@ function JsonLd() {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html lang="en">
+        <html lang="en" className={`${fraunces.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
             <head>
-                <link rel="preconnect" href="https://fonts.googleapis.com" />
-                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-                <link
-                    href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@500;600;700&display=swap"
-                    rel="stylesheet"
-                />
                 <JsonLd />
             </head>
             <body className="bg-[var(--color-bg)] text-[var(--color-surface)] font-sans antialiased">

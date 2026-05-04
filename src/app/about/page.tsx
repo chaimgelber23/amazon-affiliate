@@ -42,12 +42,12 @@ export default function AboutPage() {
                     <h2 className="text-xl font-bold mb-4">How PureFind works</h2>
                     <div className="space-y-6 text-sm text-[var(--color-surface-muted)] leading-relaxed">
                         <p>
-                            <strong className="text-white">You search.</strong> Tell us what you&apos;re
+                            <strong className="text-[var(--color-ink)]">You search.</strong> Tell us what you&apos;re
                             looking for — &quot;best wireless headphones under $200&quot; or &quot;standing desk
                             for a small apartment.&quot; Anything.
                         </p>
                         <p>
-                            <strong className="text-white">AI shortlists.</strong> Our AI builds
+                            <strong className="text-[var(--color-ink)]">AI shortlists.</strong> Our AI builds
                             a shortlist of products in your category and ranks them by what it
                             knows about typical specs, common complaints, and reasonable price
                             bands. We then verify each pick against live Amazon data (title,
@@ -60,7 +60,7 @@ export default function AboutPage() {
                             against live PA-API data at search time.
                         </p>
                         <p>
-                            <strong className="text-white">You buy on Amazon.</strong> Click the link
+                            <strong className="text-[var(--color-ink)]">You buy on Amazon.</strong> Click the link
                             and buy directly on your own Amazon account. Same prices. Same Prime
                             shipping. Same everything. We just helped you skip the noise.
                         </p>
