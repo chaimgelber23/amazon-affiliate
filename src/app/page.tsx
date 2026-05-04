@@ -1,8 +1,11 @@
-"use client";
-
 import Link from "next/link";
 import { SearchBox } from "@/components/SearchBox";
 import { RotatingText } from "@/components/RotatingText";
+import { TrendingProducts } from "@/components/TrendingProducts";
+
+// Re-render the home page (and refresh trending PA-API data) every 30 min.
+// Stays well under PA-API's 1-hour price-cache ceiling.
+export const revalidate = 1800;
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://purefind.vercel.app";
 
@@ -310,6 +313,9 @@ export default function HomePage() {
 
                 </div>
             </section>
+
+            {/* ── TRENDING (server-rendered, real affiliate links) ── */}
+            <TrendingProducts />
 
             {/* ── WHAT IT DOES ── */}
             <section className="py-24 sm:py-32 px-4 sm:px-8 relative z-10 bg-gradient-to-b from-transparent via-slate-50/60 to-transparent">
