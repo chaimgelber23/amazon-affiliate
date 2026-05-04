@@ -7,7 +7,10 @@ import { NextRequest } from "next/server";
 import { enrichProducts } from "@/lib/amazon-paapi";
 import { logSearch, logError } from "@/lib/analytics";
 
-export const maxDuration = 25;
+// 60s ceiling — Pro+grounding can take 8-15s, Flash fallback adds another
+// 4-8s, PA-API enrichment up to 6s, Claude repair (rare) +3-5s. At 25s the
+// chain reliably timed out for cold queries.
+export const maxDuration = 60;
 
 // Quality tier — 2.5 Pro is the reasoning model; Flash is the fast fallback
 // when Pro is rate-limited or errors. Flash-Lite is too shallow for "find the
