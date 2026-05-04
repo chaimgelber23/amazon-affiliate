@@ -34,7 +34,7 @@ export default function AboutPage() {
                         <span className="italic text-[var(--color-plum)]">time on research</span>.
                     </h1>
                     <p className="mt-7 text-base sm:text-lg text-[var(--color-ink-muted)] max-w-xl mx-auto leading-relaxed">
-                        Amazon has plenty of good products. Finding which ones is the hard part. PureFind reads through the listings in your category and hands you a six-pick shortlist with a one-line take on each — so you spend a minute deciding instead of an afternoon.
+                        Finding the right product on Amazon can be difficult. PureFind reads through the listings in your category and hands you a six-pick shortlist with a one-line take on each — so you spend a minute deciding instead of an afternoon.
                     </p>
                 </div>
 
