@@ -82,11 +82,14 @@ function SkeletonCard() {
     );
 }
 
-function StarRating({ rating, reviewCount }: { rating: number; reviewCount?: number }) {
+function StarRating({ rating, reviewCount, verified }: { rating: number; reviewCount?: number; verified?: boolean }) {
     const full = Math.floor(rating);
     const half = rating - full >= 0.3;
     return (
-        <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--color-surface-dim)]">
+        <span
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--color-surface-dim)]"
+            title={verified ? "Live Amazon rating" : "AI-estimated rating — confirm on Amazon"}
+        >
             <span className="inline-flex gap-px">
                 {Array.from({ length: 5 }).map((_, i) => (
                     <span key={i} className={i < full ? "text-amber-500" : i === full && half ? "text-amber-300" : "text-[var(--color-bg-elevated)]"} aria-hidden="true">
@@ -95,11 +98,15 @@ function StarRating({ rating, reviewCount }: { rating: number; reviewCount?: num
                 ))}
             </span>
             <span className="font-mono tnum">{rating.toFixed(1)}</span>
-            {reviewCount && (
+            {verified && reviewCount ? (
                 <span className="text-xs font-mono tnum text-[var(--color-surface-dim)]">
                     ({reviewCount.toLocaleString()})
                 </span>
-            )}
+            ) : !verified ? (
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-surface-dim)] opacity-70">
+                    est.
+                </span>
+            ) : null}
         </span>
     );
 }
@@ -447,10 +454,13 @@ export function SearchBox() {
                                         </h3>
 
                                         <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-3">
-                                            <span className="font-mono tnum text-2xl sm:text-[28px] font-bold text-[var(--color-surface)] tracking-tight">
-                                                {product.priceEstimate}
+                                            <span
+                                                className="font-mono tnum text-2xl sm:text-[28px] font-bold text-[var(--color-surface)] tracking-tight"
+                                                title={product.verified ? "Live Amazon price" : "AI-estimated price — confirm on Amazon"}
+                                            >
+                                                {product.verified ? product.priceEstimate : `~${product.priceEstimate}`}
                                             </span>
-                                            <StarRating rating={product.rating} reviewCount={product.reviewCount} />
+                                            <StarRating rating={product.rating} reviewCount={product.reviewCount} verified={product.verified} />
                                             <span className="text-[11px] font-semibold text-[var(--color-surface-dim)] px-2.5 py-1 bg-[var(--color-bg-elevated)] rounded-full uppercase tracking-wider">
                                                 {product.category}
                                             </span>

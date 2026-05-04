@@ -69,13 +69,6 @@ export default function HomePage() {
                 </div>
 
                 <div className="relative z-10 max-w-4xl w-full text-center animate-fade-in-up">
-                    {/* Eyebrow */}
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--color-rose)] mb-6 inline-flex items-center gap-2">
-                        <span className="w-5 h-px bg-[var(--color-rose)]" aria-hidden="true" />
-                        Amazon, decoded
-                        <span className="w-5 h-px bg-[var(--color-rose)]" aria-hidden="true" />
-                    </p>
-
                     {/* The headline — Fraunces variable serif, organic optical-size */}
                     <h1
                         className="font-display text-[44px] sm:text-6xl lg:text-7xl xl:text-[88px] font-medium text-[var(--color-ink)] tracking-[-0.035em] leading-[0.98] mb-6"

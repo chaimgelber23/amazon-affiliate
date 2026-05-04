@@ -147,8 +147,11 @@ export function CompareTable({
                         <CompareRow label="Price">
                             {cols.map((p) => (
                                 <td key={p.rank} className="p-4 align-top border-x border-b border-[var(--color-border)] bg-[var(--color-bg-card-solid)]">
-                                    <span className="font-mono tnum text-2xl font-semibold text-[var(--color-ink)] tracking-tight">
-                                        {p.priceEstimate}
+                                    <span
+                                        className="font-mono tnum text-2xl font-semibold text-[var(--color-ink)] tracking-tight"
+                                        title={p.verified ? "Live Amazon price" : "AI-estimated price — confirm on Amazon"}
+                                    >
+                                        {p.verified ? p.priceEstimate : `~${p.priceEstimate}`}
                                     </span>
                                 </td>
                             ))}
@@ -158,14 +161,21 @@ export function CompareTable({
                         <CompareRow label="Rating">
                             {cols.map((p) => (
                                 <td key={p.rank} className="p-4 align-top border-x border-b border-[var(--color-border)] bg-[var(--color-bg-card-solid)]">
-                                    <div className="flex items-center gap-1.5 text-[var(--color-ink-muted)]">
+                                    <div
+                                        className="flex items-center gap-1.5 text-[var(--color-ink-muted)]"
+                                        title={p.verified ? "Live Amazon rating" : "AI-estimated rating — confirm on Amazon"}
+                                    >
                                         <span className="text-amber-500" aria-hidden="true">★</span>
                                         <span className="font-mono tnum font-semibold text-[var(--color-ink)]">{p.rating.toFixed(1)}</span>
-                                        {p.reviewCount && (
+                                        {p.verified && p.reviewCount ? (
                                             <span className="font-mono tnum text-xs text-[var(--color-ink-dim)]">
                                                 ({p.reviewCount.toLocaleString()})
                                             </span>
-                                        )}
+                                        ) : !p.verified ? (
+                                            <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-ink-dim)] opacity-70">
+                                                est.
+                                            </span>
+                                        ) : null}
                                     </div>
                                 </td>
                             ))}

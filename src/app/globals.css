@@ -157,10 +157,15 @@ body {
   50%      { transform: translate3d(5%, -5%, 0) scale(0.94); border-radius: 38% 62% 38% 62% / 62% 38% 62% 38%; }
 }
 
-@keyframes blob-converge {
-  0%   { transform: translate3d(var(--blob-x-from, 0), var(--blob-y-from, 0), 0) scale(var(--blob-scale-from, 1)); opacity: var(--blob-op-from, 0.6); }
-  60%  { transform: translate3d(calc(var(--blob-x-to, 0) * 0.95), calc(var(--blob-y-to, 0) * 0.95), 0) scale(calc(var(--blob-scale-to, 0.7) * 1.05)); opacity: 0.85; }
-  100% { transform: translate3d(var(--blob-x-to, 0), var(--blob-y-to, 0), 0) scale(var(--blob-scale-to, 0.7)); opacity: var(--blob-op-to, 0.4); }
+/* Synchronized breathing cycle — all particles scatter (0%) → cluster (50%) → scatter (100%)
+   in unison. Single full loop = one breath. No `alternate` direction needed because the
+   keyframe itself round-trips, which gives a clean "in, hold, out" rhythm where the eye
+   sees every particle leave and return together. */
+@keyframes blob-breathe {
+  0%   { transform: translate3d(var(--blob-x-from, 0), var(--blob-y-from, 0), 0) scale(var(--blob-scale-from, 0.7)) rotate(0deg); opacity: var(--blob-op-from, 0.35); }
+  45%  { transform: translate3d(calc(var(--blob-x-to, 0) * 0.95), calc(var(--blob-y-to, 0) * 0.95), 0) scale(calc(var(--blob-scale-to, 0.9) * 1.02)) rotate(var(--blob-rot, 8deg)); opacity: var(--blob-op-to, 0.55); }
+  55%  { transform: translate3d(var(--blob-x-to, 0), var(--blob-y-to, 0), 0) scale(var(--blob-scale-to, 0.9)) rotate(var(--blob-rot, 8deg)); opacity: var(--blob-op-to, 0.55); }
+  100% { transform: translate3d(var(--blob-x-from, 0), var(--blob-y-from, 0), 0) scale(var(--blob-scale-from, 0.7)) rotate(0deg); opacity: var(--blob-op-from, 0.35); }
 }
 
 .animate-fade-in-up {
