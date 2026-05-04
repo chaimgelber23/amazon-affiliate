@@ -93,14 +93,14 @@ function HeroDemoPanel() {
 
                 <div className="flex items-center justify-between mb-5">
                     <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
-                        8 picks for
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500" aria-hidden="true" />
+                        Example only
                         <span className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-mono normal-case tracking-normal text-[11px]">
                             standing desk
                         </span>
                     </div>
                     <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">
-                        ranked
+                        not real picks
                     </span>
                 </div>
 
@@ -188,7 +188,7 @@ function SamplePickCard() {
                             Top pick
                         </span>
                         <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase tracking-[0.15em] rounded-md border border-emerald-200">
-                            Verified
+                            Example only
                         </span>
                     </div>
 
@@ -297,7 +297,8 @@ export default function HomePage() {
                                 href="/privacy#amazon-affiliate-links"
                                 className="text-[12px] text-[var(--color-surface-dim)] hover:text-[var(--color-surface-muted)] transition-colors"
                             >
-                                Affiliate disclosure
+                                As an Amazon Associate we earn from qualifying purchases
+                                <span className="ml-1 underline">details</span>
                             </Link>
                         </div>
                     </div>

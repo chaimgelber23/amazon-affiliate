@@ -277,15 +277,21 @@ export function SearchBox() {
             {/* ── RESULTS ── */}
             {results && !loading && (
                 <div className="mt-12 animate-fade-in-up">
+                    <p className="text-[11px] text-[var(--color-surface-dim)] mb-3 pl-2 leading-relaxed">
+                        Heads-up: links below are affiliate links. As an Amazon Associate we earn from qualifying purchases — at no extra cost to you.
+                    </p>
                     <div className="mb-10 text-center sm:text-left pl-2">
                         <p className="font-display text-xl font-bold text-[var(--color-surface)] leading-relaxed">{results.summary}</p>
                         <p className="text-sm font-medium text-[var(--color-surface-dim)] mt-3 flex items-center gap-2 justify-center sm:justify-start flex-wrap">
                             <span className="font-mono tnum">{results.products.length}</span>
                             <span>recommendations</span>
                             {results.enriched && (
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold rounded-full">
+                                <span
+                                    className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold rounded-full"
+                                    title="Prices and ratings fetched live from Amazon's PA-API at search time"
+                                >
                                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                                    Verified on Amazon
+                                    Live Amazon data
                                 </span>
                             )}
                         </p>
@@ -312,8 +318,11 @@ export function SearchBox() {
                                                 </span>
                                             )}
                                             {product.verified && (
-                                                <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase tracking-[0.15em] rounded-md border border-emerald-200">
-                                                    Verified
+                                                <span
+                                                    className="px-2.5 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase tracking-[0.15em] rounded-md border border-emerald-200"
+                                                    title="Live data fetched from Amazon's Product Advertising API at search time"
+                                                >
+                                                    Live data
                                                 </span>
                                             )}
                                         </div>
