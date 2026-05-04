@@ -10,13 +10,18 @@ export const revalidate = 1800;
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://purefind.vercel.app";
 
+// Mix of abstract calls-to-action and concrete category examples. Phrases
+// kept ≤14 chars so the longest (italic Fraunces at the H1's 44px mobile
+// size) safely fits inside a 320–375px viewport without horizontal overflow.
 const ROTATING_QUERIES = [
+    "what you want",
     "standing desk",
+    "the right gift",
     "coffee grinder",
+    "your next pick",
     "running shoe",
-    "mechanical keyboard",
+    "what to buy",
     "kitchen knife",
-    "Christmas gift",
 ];
 
 function HomeJsonLd() {

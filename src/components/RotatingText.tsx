@@ -41,28 +41,30 @@ export function RotatingText({
 
   const longest = words.reduce((l, w) => (w.length > l.length ? w : l), "");
 
+  // Pure opacity crossfade — no translateY or blur. The previous animation
+  // pushed the leaving word down by 0.5em and got clipped by `overflow-hidden`,
+  // which made descenders and italic letters appear chopped. The crossfade
+  // version stays in place so nothing leaves the box.
   return (
     <span className={`relative inline-block align-baseline ${className}`}>
+      {/* Sizing placeholder — invisible copy of the longest word holds the
+          inline-block's dimensions so the surrounding line doesn't reflow. */}
       <span className="invisible whitespace-nowrap" aria-hidden="true">
         {longest}
       </span>
-      <span className="absolute inset-0 flex items-baseline justify-start whitespace-nowrap overflow-hidden">
-        {words.map((w, i) => (
-          <span
-            key={w}
-            aria-hidden={i !== idx}
-            className="absolute inset-0 flex items-baseline justify-start"
-            style={{
-              opacity: i === idx ? 1 : 0,
-              transform: i === idx ? "translateY(0)" : "translateY(0.5em)",
-              filter: i === idx ? "blur(0px)" : "blur(6px)",
-              transition: "opacity 460ms cubic-bezier(0.22,1,0.36,1), transform 460ms cubic-bezier(0.22,1,0.36,1), filter 460ms cubic-bezier(0.22,1,0.36,1)",
-            }}
-          >
-            {w}
-          </span>
-        ))}
-      </span>
+      {words.map((w, i) => (
+        <span
+          key={w}
+          aria-hidden={i !== idx}
+          className="absolute inset-0 flex items-baseline justify-start whitespace-nowrap"
+          style={{
+            opacity: i === idx ? 1 : 0,
+            transition: "opacity 520ms cubic-bezier(0.22,1,0.36,1)",
+          }}
+        >
+          {w}
+        </span>
+      ))}
     </span>
   );
 }
