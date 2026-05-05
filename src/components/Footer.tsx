@@ -41,6 +41,7 @@ export function Footer() {
                             {[
                                 { label: "Home", href: "/" },
                                 { label: "About", href: "/about" },
+                                { label: "How we rank", href: "/how-we-rank" },
                                 { label: "Chrome extension", href: "/extension" },
                             ].map((link) => (
                                 <li key={link.href}>
