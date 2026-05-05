@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
+import { ScrollToTopOnLoad } from "@/components/ScrollToTopOnLoad";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://purefind.vercel.app";
 
@@ -139,6 +140,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <JsonLd />
             </head>
             <body className="bg-[var(--color-bg)] text-[var(--color-surface)] font-sans antialiased">
+                <ScrollToTopOnLoad />
                 <ServiceWorkerRegistration />
                 <Header />
                 <main className="min-h-screen">{children}</main>

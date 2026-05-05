@@ -364,13 +364,14 @@ export function SearchBox() {
             </form>
 
             {/* ── EXAMPLE PROMPT CHIPS ──
-                Pre-search state only. Shows the kinds of natural-language queries
-                this thing handles. Click → prefills + submits the search. */}
+                Pre-search state only. The eyebrow specifically frames these as
+                EXAMPLES OF HOW TO TYPE — not as product picks the visitor should
+                "use". Click → prefills + submits the search. */}
             {!inRefinementMode && !loading && !error && (
                 <div className="mt-7 animate-fade-in">
                     <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--color-ink-dim)] mb-3 inline-flex items-center gap-2">
                         <span className="w-4 h-px bg-[var(--color-ink-dim)]" aria-hidden="true" />
-                        Or try one of these
+                        Try a search like
                     </p>
                     <div className="flex flex-wrap gap-2">
                         {EXAMPLE_PROMPTS.map((prompt) => (
