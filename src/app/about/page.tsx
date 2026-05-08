@@ -16,9 +16,86 @@ export const metadata: Metadata = {
     },
 };
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://productfindai.com";
+
+const ABOUT_FAQS: { q: string; a: string }[] = [
+    {
+        q: "How is ProductFindAI different from Wirecutter or NerdWallet?",
+        a: "Wirecutter and NerdWallet rank a small fixed set of products their editors have tested. ProductFindAI generates a fresh shortlist from any Amazon search you type, in any category, using AI plus live Amazon Product Advertising API data. We don't claim to test products in a lab — we filter the noise.",
+    },
+    {
+        q: "Are the recommendations independent or paid?",
+        a: "Independent. No seller pays for placement. ProductFindAI earns a standard Amazon Associates referral fee (typically 1–4.5%) when you buy through our links — the same Amazon affiliate program any blog or review site uses. The price you pay on Amazon is identical with or without our link.",
+    },
+    {
+        q: "Do you actually verify the prices and ratings, or is it just AI making them up?",
+        a: "Every product on the results page is verified live against Amazon's Product Advertising API at search time — the title, price, image, star rating, and review count come from Amazon directly, not from the AI. The AI's job is picking which products to show; the data on the card is real.",
+    },
+    {
+        q: "What does the Chrome extension do?",
+        a: "The free Chrome extension overlays a one-line take on Amazon listings as you browse. It tells you whether a product is over-rated for the price, under-rated, or fairly priced based on the same AI signal we use to build shortlists. You don't need an account.",
+    },
+    {
+        q: "Is ProductFindAI free?",
+        a: "Yes. Search is free, the Chrome extension is free, and there's nothing to sign up for. The Amazon Associates referral fee on purchases is what funds the site.",
+    },
+    {
+        q: "Why don't you cover Walmart, Target, or other retailers?",
+        a: "Amazon has the largest product catalog and the most consistent live data feed, so we focused there to keep the verification step honest. Adding other retailers would mean introducing data sources of varying reliability — for now, ProductFindAI is Amazon-only by design.",
+    },
+];
+
+function AboutJsonLd() {
+    const breadcrumb = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+            {
+                "@type": "ListItem",
+                position: 1,
+                name: "Home",
+                item: SITE_URL,
+            },
+            {
+                "@type": "ListItem",
+                position: 2,
+                name: "About",
+                item: `${SITE_URL}/about`,
+            },
+        ],
+    };
+
+    const faq = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: ABOUT_FAQS.map((f) => ({
+            "@type": "Question",
+            name: f.q,
+            acceptedAnswer: {
+                "@type": "Answer",
+                text: f.a,
+            },
+        })),
+    };
+
+    return (
+        <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(faq) }}
+            />
+        </>
+    );
+}
+
 export default function AboutPage() {
     return (
         <div className="min-h-screen pt-28 pb-20 px-4 sm:px-6">
+            <AboutJsonLd />
             <div className="max-w-3xl mx-auto">
                 {/* Header */}
                 <div className="text-center mb-16">
@@ -117,6 +194,29 @@ export default function AboutPage() {
                         price. This commission is what keeps ProductFindAI free to use and allows us to
                         keep improving the AI.
                     </p>
+                </div>
+
+                {/* FAQ */}
+                <div className="mb-12">
+                    <h2 className="text-2xl font-bold mb-6 text-[var(--color-ink)]">
+                        Common questions
+                    </h2>
+                    <div className="space-y-4">
+                        {ABOUT_FAQS.map((f) => (
+                            <details
+                                key={f.q}
+                                className="card p-5 bg-[var(--color-bg-card)] border border-[var(--color-border)] group"
+                            >
+                                <summary className="cursor-pointer font-semibold text-sm text-[var(--color-ink)] list-none flex items-center justify-between">
+                                    <span>{f.q}</span>
+                                    <span className="text-[var(--color-surface-dim)] group-open:rotate-45 transition-transform">+</span>
+                                </summary>
+                                <p className="mt-4 text-sm text-[var(--color-surface-muted)] leading-relaxed">
+                                    {f.a}
+                                </p>
+                            </details>
+                        ))}
+                    </div>
                 </div>
 
                 {/* CTA */}

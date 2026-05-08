@@ -118,9 +118,21 @@ function JsonLd() {
                 "@type": "Organization",
                 "@id": `${siteUrl}/#organization`,
                 name: "ProductFindAI",
+                legalName: "SYE Group LLC",
                 url: siteUrl,
                 description:
                     "ProductFindAI cuts through Amazon's noise to find products actually worth buying using AI.",
+                sameAs: [
+                    "https://chrome.google.com/webstore",
+                    "https://seohandoff.com",
+                    "https://aisecretaryhelp.com",
+                ],
+                contactPoint: {
+                    "@type": "ContactPoint",
+                    contactType: "customer support",
+                    email: "hello@productfindai.com",
+                    availableLanguage: "English",
+                },
             },
         ],
     };
