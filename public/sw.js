@@ -1,4 +1,4 @@
-const CACHE_NAME = "purefind-v1";
+const CACHE_NAME = "productfindai-v1";
 const PRECACHE_URLS = ["/", "/deals"];
 
 self.addEventListener("install", (event) => {

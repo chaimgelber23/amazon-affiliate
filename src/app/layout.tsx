@@ -6,7 +6,7 @@ import { Footer } from "@/components/Footer";
 import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
 import { ScrollToTopOnLoad } from "@/components/ScrollToTopOnLoad";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://purefind.vercel.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://productfindai.com";
 
 const fraunces = Fraunces({
     subsets: ["latin"],
@@ -39,32 +39,32 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
     title: {
-        default: "PureFind — Save hours of Amazon research.",
-        template: "%s | PureFind",
+        default: "ProductFindAI — Save hours of Amazon research.",
+        template: "%s | ProductFindAI",
     },
     description:
-        "PureFind filters the seller word salad and hands you the perfect product. Search any Amazon category, refine inside the results, install on Chrome.",
+        "ProductFindAI filters the seller word salad and hands you the perfect product. Search any Amazon category, refine inside the results, install on Chrome.",
     metadataBase: new URL(siteUrl),
     manifest: "/manifest.json",
     appleWebApp: {
         capable: true,
         statusBarStyle: "black-translucent",
-        title: "PureFind",
+        title: "ProductFindAI",
     },
     openGraph: {
         type: "website",
         locale: "en_US",
-        siteName: "PureFind",
-        title: "PureFind — Save hours of Amazon research.",
+        siteName: "ProductFindAI",
+        title: "ProductFindAI — Save hours of Amazon research.",
         description:
-            "PureFind filters the seller word salad and hands you the perfect product. Free Chrome extension included.",
+            "ProductFindAI filters the seller word salad and hands you the perfect product. Free Chrome extension included.",
         url: siteUrl,
     },
     twitter: {
         card: "summary_large_image",
-        title: "PureFind — Save hours of Amazon research.",
+        title: "ProductFindAI — Save hours of Amazon research.",
         description:
-            "PureFind filters the seller word salad and hands you the perfect product.",
+            "ProductFindAI filters the seller word salad and hands you the perfect product.",
     },
     robots: {
         index: true,
@@ -102,9 +102,9 @@ function JsonLd() {
                 "@type": "WebSite",
                 "@id": `${siteUrl}/#website`,
                 url: siteUrl,
-                name: "PureFind",
+                name: "ProductFindAI",
                 description:
-                    "Cut through the keyword-stuffed Amazon listings. Tell PureFind what you want, get the one to buy.",
+                    "Cut through the keyword-stuffed Amazon listings. Tell ProductFindAI what you want, get the one to buy.",
                 potentialAction: {
                     "@type": "SearchAction",
                     target: {
@@ -117,10 +117,10 @@ function JsonLd() {
             {
                 "@type": "Organization",
                 "@id": `${siteUrl}/#organization`,
-                name: "PureFind",
+                name: "ProductFindAI",
                 url: siteUrl,
                 description:
-                    "PureFind cuts through Amazon's noise to find products actually worth buying using AI.",
+                    "ProductFindAI cuts through Amazon's noise to find products actually worth buying using AI.",
             },
         ],
     };

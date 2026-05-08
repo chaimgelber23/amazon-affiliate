@@ -134,7 +134,7 @@ const JSON_SCHEMA_BLOCK = `JSON SCHEMA:
 }`;
 
 function buildFreshSystemPrompt(): string {
-    return `You are PureFind's product recommendation engine. Cut through Amazon's noise and find genuinely great products.
+    return `You are ProductFindAI's product recommendation engine. Cut through Amazon's noise and find genuinely great products.
 
 ${BASE_RULES}
 - Recommend 6-8 products ranked by genuine quality.
@@ -150,7 +150,7 @@ function buildRefinementSystemPrompt(prior: PriorProduct[], originalQuery: strin
         return bits.join(" ");
     }).join("\n");
 
-    return `You are PureFind's product refinement engine. The user already saw a curated shortlist for "${originalQuery}" and now wants to NARROW it down. Your job is to filter, rerank, and (only if needed) substitute — NOT to start a fresh search.
+    return `You are ProductFindAI's product refinement engine. The user already saw a curated shortlist for "${originalQuery}" and now wants to NARROW it down. Your job is to filter, rerank, and (only if needed) substitute — NOT to start a fresh search.
 
 PRIOR SHORTLIST (what the user already saw):
 ${priorList}

@@ -8,7 +8,7 @@ import { HeroOrganicLoop } from "@/components/HeroOrganicLoop";
 // Stays well under PA-API's 1-hour price-cache ceiling.
 export const revalidate = 1800;
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://purefind.vercel.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://productfindai.com";
 
 // Mix of abstract calls-to-action and concrete category examples. Phrases
 // kept ≤14 chars so the longest (italic Fraunces at the H1's 44px mobile
@@ -28,11 +28,11 @@ function HomeJsonLd() {
     const schema = {
         "@context": "https://schema.org",
         "@type": "WebApplication",
-        name: "PureFind",
+        name: "ProductFindAI",
         url: siteUrl,
         applicationCategory: "ShoppingApplication",
         description:
-            "Save hours of Amazon research. PureFind filters the seller word salad and hands you 6-8 picks. Refine inside your results to narrow further.",
+            "Save hours of Amazon research. ProductFindAI filters the seller word salad and hands you 6-8 picks. Refine inside your results to narrow further.",
         offers: {
             "@type": "Offer",
             price: "0",
@@ -215,7 +215,7 @@ export default function HomePage() {
                             <span className="italic text-white/65">Skip a step.</span>
                         </h2>
                         <p className="text-base sm:text-lg text-white/70 leading-relaxed mb-8 max-w-md">
-                            The Chrome extension drops a PureFind button onto every Amazon search results page. Click it, get the pick, never leave the tab.
+                            The Chrome extension drops a ProductFindAI button onto every Amazon search results page. Click it, get the pick, never leave the tab.
                         </p>
                         <Link
                             href="/extension"
@@ -252,7 +252,7 @@ export default function HomePage() {
                                     style={{ background: "linear-gradient(135deg, #5B21B6 0%, #E11D48 100%)" }}
                                 >
                                     <span className="w-1.5 h-1.5 rounded-full bg-white" aria-hidden="true" />
-                                    Search with PureFind
+                                    Search with ProductFindAI
                                 </div>
                                 <p className="text-[11px] text-white/40 pt-2 leading-relaxed">
                                     The button appears on every Amazon search page.

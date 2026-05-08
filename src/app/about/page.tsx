@@ -3,14 +3,14 @@ import { ShieldCheck, Search, Eye, Heart, Zap, TrendingUp } from "lucide-react";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-    title: "About PureFind — Save time on Amazon research",
+    title: "About ProductFindAI — Save time on Amazon research",
     description:
-        "PureFind is a small AI tool that gives you a curated shortlist of Amazon products so you spend less time digging through listings. We earn an Amazon affiliate commission when you buy through our links — same price for you.",
+        "ProductFindAI is a small AI tool that gives you a curated shortlist of Amazon products so you spend less time digging through listings. We earn an Amazon affiliate commission when you buy through our links — same price for you.",
     alternates: {
         canonical: "/about",
     },
     openGraph: {
-        title: "About PureFind — Save time on Amazon research",
+        title: "About ProductFindAI — Save time on Amazon research",
         description:
             "A small AI tool that turns 'standing desk under $300' into a six-pick shortlist with a one-line take on each.",
     },
@@ -34,13 +34,13 @@ export default function AboutPage() {
                         <span className="italic text-[var(--color-plum)]">time on research</span>.
                     </h1>
                     <p className="mt-7 text-base sm:text-lg text-[var(--color-ink-muted)] max-w-xl mx-auto leading-relaxed">
-                        Finding the right product on Amazon can be difficult. PureFind reads through the listings in your category and hands you a six-pick shortlist with a one-line take on each — so you spend a minute deciding instead of an afternoon.
+                        Finding the right product on Amazon can be difficult. ProductFindAI reads through the listings in your category and hands you a six-pick shortlist with a one-line take on each — so you spend a minute deciding instead of an afternoon.
                     </p>
                 </div>
 
                 {/* The pitch */}
                 <div className="card p-8 bg-[var(--color-bg-card)] border border-[var(--color-border)] mb-12">
-                    <h2 className="text-xl font-bold mb-4">How PureFind works</h2>
+                    <h2 className="text-xl font-bold mb-4">How ProductFindAI works</h2>
                     <div className="space-y-6 text-sm text-[var(--color-surface-muted)] leading-relaxed">
                         <p>
                             <strong className="text-[var(--color-ink)]">You search.</strong> Tell us what you&apos;re
@@ -111,10 +111,10 @@ export default function AboutPage() {
                         How we make money
                     </h3>
                     <p className="text-sm text-[var(--color-surface-muted)] leading-relaxed">
-                        PureFind is part of the Amazon Associates program. When you click a product
+                        ProductFindAI is part of the Amazon Associates program. When you click a product
                         link and buy something on Amazon, we earn a small referral fee (typically
                         1-4.5%). This costs you absolutely nothing extra — you pay the same Amazon
-                        price. This commission is what keeps PureFind free to use and allows us to
+                        price. This commission is what keeps ProductFindAI free to use and allows us to
                         keep improving the AI.
                     </p>
                 </div>

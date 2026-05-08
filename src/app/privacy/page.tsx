@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
     title: "Privacy Policy",
-    description: "PureFind privacy policy — what we collect, what we don't, and how the Chrome extension works.",
+    description: "ProductFindAI privacy policy — what we collect, what we don't, and how the Chrome extension works.",
     alternates: { canonical: "/privacy" },
 };
 
@@ -17,7 +17,7 @@ export default function PrivacyPage() {
                     <section>
                         <h2 className="text-lg font-bold text-[var(--color-surface)] mb-3">What We Collect</h2>
                         <p>
-                            PureFind does <strong>not</strong> require accounts, logins, emails, or any form of
+                            ProductFindAI does <strong>not</strong> require accounts, logins, emails, or any form of
                             registration. We do collect and store the following for service quality and abuse
                             prevention:
                         </p>
@@ -52,7 +52,7 @@ export default function PrivacyPage() {
                     <section>
                         <h2 className="text-lg font-bold text-[var(--color-surface)] mb-3">Cookies &amp; Local Storage</h2>
                         <p>
-                            PureFind uses browser session storage to cache your recent search results for faster
+                            ProductFindAI uses browser session storage to cache your recent search results for faster
                             repeat searches. This data stays on your device and is cleared when you close your
                             browser tab. We do not use tracking cookies, pixels, or third-party analytics.
                         </p>
@@ -89,17 +89,17 @@ export default function PrivacyPage() {
                     <section>
                         <h2 className="text-lg font-bold text-[var(--color-surface)] mb-3">Chrome Extension</h2>
                         <p>
-                            The PureFind Chrome extension runs on <code>https://www.amazon.com/s*</code>{" "}
+                            The ProductFindAI Chrome extension runs on <code>https://www.amazon.com/s*</code>{" "}
                             (Amazon search result pages) only. When installed, it:
                         </p>
                         <ul className="list-disc pl-5 mt-2 space-y-1">
                             <li>
-                                Injects a floating PureFind button onto Amazon search pages. Clicking the button
+                                Injects a floating ProductFindAI button onto Amazon search pages. Clicking the button
                                 opens an in-page iframe with our search widget.
                             </li>
                             <li>
                                 The search widget sends queries <em>you explicitly type</em> to our API at{" "}
-                                <code>purefind.vercel.app/api/search</code>. It does <strong>not</strong>{" "}
+                                <code>productfindai.com/api/search</code>. It does <strong>not</strong>{" "}
                                 automatically read the Amazon search input field, browsing history, or any
                                 other page content.
                             </li>
@@ -138,8 +138,8 @@ export default function PrivacyPage() {
                             We don&apos;t store data tied to an identity, so most data requests (access, deletion)
                             are trivially satisfied — there&apos;s nothing linked to you to begin with. For any
                             other questions or requests related to this policy, contact us at{" "}
-                            <a href="mailto:support@purefind.com" className="text-[var(--color-accent)] hover:underline">
-                                support@purefind.com
+                            <a href="mailto:support@productfindai.com" className="text-[var(--color-accent)] hover:underline">
+                                support@productfindai.com
                             </a>.
                         </p>
                     </section>

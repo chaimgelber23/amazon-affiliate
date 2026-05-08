@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
     title: "Get the Chrome extension",
     description:
-        "Install PureFind for Chrome. Search any Amazon page directly through PureFind without leaving the tab.",
+        "Install ProductFindAI for Chrome. Search any Amazon page directly through ProductFindAI without leaving the tab.",
     alternates: { canonical: "/extension" },
 };
 
@@ -24,11 +24,11 @@ export default function ExtensionPage() {
                         className="font-display text-4xl sm:text-6xl md:text-7xl font-medium text-[var(--color-ink)] tracking-[-0.035em] leading-[1.0] mb-7"
                         style={{ fontVariationSettings: '"SOFT" 50, "WONK" 0, "opsz" 144' }}
                     >
-                        PureFind, on Amazon itself.
+                        ProductFindAI, on Amazon itself.
                     </h1>
 
                     <p className="text-lg sm:text-xl text-[var(--color-surface-muted)] leading-relaxed max-w-2xl mb-10">
-                        The extension drops a PureFind button onto every Amazon search results page. Click it, type what you actually want, get the pick — without leaving the tab.
+                        The extension drops a ProductFindAI button onto every Amazon search results page. Click it, type what you actually want, get the pick — without leaving the tab.
                     </p>
 
                     <div className="flex flex-wrap items-center gap-4 mb-14">
@@ -79,7 +79,7 @@ export default function ExtensionPage() {
                                         Click <strong>Load unpacked</strong> and select the folder.
                                     </p>
                                     <p className="text-sm text-[var(--color-surface-muted)] leading-relaxed">
-                                        That&apos;s it. The PureFind button appears next time you load an Amazon search results page.
+                                        That&apos;s it. The ProductFindAI button appears next time you load an Amazon search results page.
                                     </p>
                                 </div>
                             </li>

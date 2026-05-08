@@ -1,11 +1,11 @@
 import type { SiteConfig } from "./types";
 
 export const siteConfig: SiteConfig = {
-    name: process.env.NEXT_PUBLIC_SITE_NAME || "PureFind",
+    name: process.env.NEXT_PUBLIC_SITE_NAME || "ProductFindAI",
     tagline: "Find the best. Skip the noise.",
     description:
-        "PureFind cuts through Amazon's SEO noise to find the products actually worth buying. Search for anything — we'll find the best option.",
-    url: process.env.NEXT_PUBLIC_SITE_URL || "https://purefind.com",
+        "ProductFindAI cuts through Amazon's SEO noise to find the products actually worth buying. Search for anything — we'll find the best option.",
+    url: process.env.NEXT_PUBLIC_SITE_URL || "https://productfindai.com",
 };
 
 /**

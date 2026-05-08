@@ -1,6 +1,6 @@
 {
-  "name": "PureFind — AI Product Search",
-  "short_name": "PureFind",
+  "name": "ProductFindAI — AI Product Search",
+  "short_name": "ProductFindAI",
   "description": "Skip the sponsored junk. AI finds the best products on Amazon.",
   "start_url": "/",
   "display": "standalone",

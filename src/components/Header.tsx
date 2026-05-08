@@ -30,7 +30,7 @@ export function Header() {
                         className="font-display text-[22px] font-medium tracking-[-0.03em] text-[var(--color-ink)] hover:opacity-70 transition-opacity"
                         style={{ fontVariationSettings: '"SOFT" 50, "WONK" 0, "opsz" 144' }}
                     >
-                        PureFind
+                        ProductFindAI
                         <span className="text-[var(--color-rose)]">.</span>
                     </Link>
 

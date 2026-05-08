@@ -1,5 +1,5 @@
 /**
- * HeroOrganicLoop — the visual signature of the PureFind hero.
+ * HeroOrganicLoop — the visual signature of the ProductFindAI hero.
  *
  * Concept: a chaotic field of organic shapes (Amazon's noise) gathers into a
  * focal cluster (the curated shortlist), holds, then scatters back out — one

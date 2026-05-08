@@ -1,5 +1,5 @@
 // ============================================================================
-// PureFind — Amazon Product Advertising API 5.0 client
+// ProductFindAI — Amazon Product Advertising API 5.0 client
 // ============================================================================
 //
 // This replaces the former HTML scraper (`amazon-lookup.ts`, now renamed to

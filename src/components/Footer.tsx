@@ -9,7 +9,7 @@ export function Footer() {
                 <p className="max-w-5xl mx-auto text-xs text-[var(--color-ink-muted)] font-medium text-center leading-relaxed">
                     <strong className="text-[var(--color-ink)]">Affiliate Disclosure:</strong>{" "}
                     As an Amazon Associate we earn from qualifying purchases.
-                    PureFind earns a small commission when you buy through our links, at no extra cost to you.
+                    ProductFindAI earns a small commission when you buy through our links, at no extra cost to you.
                 </p>
             </div>
 
@@ -23,7 +23,7 @@ export function Footer() {
                                 className="font-display text-2xl font-medium tracking-[-0.03em] text-[var(--color-ink)]"
                                 style={{ fontVariationSettings: '"SOFT" 50, "WONK" 0, "opsz" 144' }}
                             >
-                                PureFind
+                                ProductFindAI
                             </span>
                             <span className="text-[var(--color-rose)] font-display text-2xl font-medium">.</span>
                         </Link>
@@ -80,7 +80,7 @@ export function Footer() {
                 </div>
 
                 <div className="mt-14 pt-8 border-t border-[var(--color-border)] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium text-[var(--color-ink-dim)]">
-                    <p>&copy; {new Date().getFullYear()} PureFind. All rights reserved.</p>
+                    <p>&copy; {new Date().getFullYear()} ProductFindAI. All rights reserved.</p>
                     <p className="font-mono tnum">Built in NYC</p>
                 </div>
             </div>
