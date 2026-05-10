@@ -134,6 +134,71 @@ function JsonLd() {
                     availableLanguage: "English",
                 },
             },
+            {
+                "@type": "FAQPage",
+                "@id": `${siteUrl}/#faq`,
+                mainEntity: [
+                    {
+                        "@type": "Question",
+                        name: "How is ProductFindAI different from Wirecutter or NerdWallet?",
+                        acceptedAnswer: {
+                            "@type": "Answer",
+                            text: "Wirecutter and NerdWallet rank a small fixed set of products their editors have tested. ProductFindAI generates a fresh shortlist from any Amazon search you type, in any category, using AI plus live Amazon Product Advertising API data.",
+                        },
+                    },
+                    {
+                        "@type": "Question",
+                        name: "Are the recommendations independent or paid?",
+                        acceptedAnswer: {
+                            "@type": "Answer",
+                            text: "Independent. No seller pays for placement. ProductFindAI earns a standard Amazon Associates referral fee when you buy through our links — the same Amazon affiliate program any blog or review site uses. The price you pay on Amazon is identical with or without our link.",
+                        },
+                    },
+                    {
+                        "@type": "Question",
+                        name: "Do you actually verify prices and ratings?",
+                        acceptedAnswer: {
+                            "@type": "Answer",
+                            text: "Every product on the results page is verified live against Amazon's Product Advertising API at search time — title, price, image, star rating, and review count come from Amazon directly, not from the AI.",
+                        },
+                    },
+                    {
+                        "@type": "Question",
+                        name: "Is ProductFindAI free?",
+                        acceptedAnswer: {
+                            "@type": "Answer",
+                            text: "Yes. Search is free, the Chrome extension is free, and there's nothing to sign up for. The Amazon Associates referral fee on purchases is what funds the site.",
+                        },
+                    },
+                ],
+            },
+            {
+                "@type": "HowTo",
+                "@id": `${siteUrl}/#howto`,
+                name: "How to find the right Amazon product with ProductFindAI",
+                description: "Type what you want, refine inside the results, click through to buy on Amazon.",
+                totalTime: "PT2M",
+                step: [
+                    {
+                        "@type": "HowToStep",
+                        position: 1,
+                        name: "Type what you want",
+                        text: "Search for any product in plain language — 'standing desk under $300', 'wireless headphones for running', 'coffee grinder for espresso'.",
+                    },
+                    {
+                        "@type": "HowToStep",
+                        position: 2,
+                        name: "Refine inside the results",
+                        text: "Use the search-within-search to narrow the shortlist by price band, brand, feature, or any other constraint without leaving the page.",
+                    },
+                    {
+                        "@type": "HowToStep",
+                        position: 3,
+                        name: "Click through to Amazon",
+                        text: "Each pick is verified live against Amazon's Product Advertising API. Click any card to buy on Amazon at the same price you'd pay anywhere.",
+                    },
+                ],
+            },
         ],
     };
 
