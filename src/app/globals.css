@@ -387,3 +387,20 @@ details summary::-webkit-details-marker {
 details[open] summary .faq-icon {
   transform: rotate(45deg);
 }
+
+/*
+ * Hydration safety net for SSR'd Framer Motion initial states.
+ * Sections that ship with inline opacity:0;transform:translate* stay
+ * invisible until JS hydrates. This 2.5s backstop reveals them so the
+ * page is never blank on slow connections / JS failure. Framer Motion
+ * still wins under healthy conditions (~200ms hydration).
+ */
+@keyframes hydration-reveal {
+  to { opacity: 1; transform: none; }
+}
+[style*="opacity:0"][style*="transform"] {
+  animation: hydration-reveal 0.6s ease-out 2.5s forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  [style*="opacity:0"] { opacity: 1 !important; transform: none !important; animation: none !important; }
+}
