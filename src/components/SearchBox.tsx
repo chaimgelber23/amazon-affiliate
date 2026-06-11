@@ -56,6 +56,7 @@ function ProductImage({ product }: { product: Product }) {
 
     if (product.imageUrl && !errored) {
         return (
+            // eslint-disable-next-line @next/next/no-img-element -- remote Amazon product image with onError fallback; next/image would need per-domain config and change loading behavior
             <img
                 src={product.imageUrl}
                 alt={product.title}

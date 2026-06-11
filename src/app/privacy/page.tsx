@@ -29,7 +29,7 @@ export default function PrivacyPage() {
                                 our database.
                             </li>
                             <li>
-                                Request metadata: result count, whether the result was verified against Amazon's
+                                Request metadata: result count, whether the result was verified against Amazon&apos;s
                                 Product Advertising API, and the duration of the request.
                             </li>
                         </ul>
@@ -63,7 +63,7 @@ export default function PrivacyPage() {
                         <p>
                             Product links include our Amazon Associates tracking tag. When you click a link and
                             make a purchase on Amazon, we earn a commission at no extra cost to you. Rates
-                            vary by category (1-10%) per Amazon's published rate card:{" "}
+                            vary by category (1-10%) per Amazon&apos;s published rate card:{" "}
                             <a
                                 href="https://affiliate-program.amazon.com/help/node/topic/GRXPHT8U84RAYDXZ"
                                 target="_blank"

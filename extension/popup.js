@@ -21,7 +21,6 @@ const queryEl = document.getElementById("query");
 const searchBtn = document.getElementById("search-btn");
 const refineQueryEl = document.getElementById("refine-query");
 const refineBtn = document.getElementById("refine-btn");
-const searchContainer = document.getElementById("search-container");
 const refineContainer = document.getElementById("refine-container");
 const resultsEl = document.getElementById("results");
 const clearBtn = document.getElementById("clear-btn");

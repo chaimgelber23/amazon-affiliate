@@ -32,7 +32,6 @@
   "use strict";
 
   const WIDGET_ID = "purefind-widget-container";
-  let iframeRef = null;
 
   function inject() {
     if (document.getElementById(WIDGET_ID)) return;
@@ -51,7 +50,6 @@
     iframe.id = "purefind-iframe";
     iframe.src = chrome.runtime.getURL("popup.html");
     iframe.allow = "clipboard-write"; // Optional: if copy/paste needed later
-    iframeRef = iframe;
     container.appendChild(iframe);
 
     // The FAB Button

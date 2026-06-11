@@ -237,7 +237,7 @@ export async function TrendingProducts() {
                         <line x1="12" y1="16" x2="12.01" y2="16" />
                     </svg>
                     <p className="text-sm text-amber-900 leading-relaxed">
-                        <strong className="font-semibold">Heads-up:</strong> the cards below are <strong>example categories</strong>, not actual product picks. ProductFindAI is awaiting Amazon Associates approval, which unlocks live product data via Amazon's Product Advertising API. The search bar above already produces real shortlists in the meantime.
+                        <strong className="font-semibold">Heads-up:</strong> the cards below are <strong>example categories</strong>, not actual product picks. ProductFindAI is awaiting Amazon Associates approval, which unlocks live product data via Amazon&apos;s Product Advertising API. The search bar above already produces real shortlists in the meantime.
                     </p>
                 </div>
 

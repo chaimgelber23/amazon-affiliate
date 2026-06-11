@@ -28,7 +28,7 @@ export function Footer() {
                             <span className="text-[var(--color-rose)] font-display text-2xl font-medium">.</span>
                         </Link>
                         <p className="text-[15px] text-[var(--color-ink-muted)] leading-relaxed max-w-md">
-                            The shortlist for whatever you're trying to buy on Amazon. We read past the keyword salad so you don't have to.
+                            The shortlist for whatever you&apos;re trying to buy on Amazon. We read past the keyword salad so you don&apos;t have to.
                         </p>
                     </div>
 

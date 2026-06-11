@@ -6,7 +6,9 @@
         "dev": "next dev",
         "build": "next build",
         "start": "next start",
-        "lint": "next lint"
+        "lint": "eslint .",
+
+        "prepare": "git config core.hooksPath .githooks"
     },
     "dependencies": {
         "@ai-sdk/anthropic": "^3.0.58",
@@ -28,6 +30,8 @@
         "@types/node": "^22.0.0",
         "@types/react": "^19.0.0",
         "@types/react-dom": "^19.0.0",
+        "eslint": "^9.39.4",
+        "eslint-config-next": "^16.2.9",
         "tailwindcss": "^4.0.0",
         "typescript": "^5.7.0"
     }

@@ -93,7 +93,7 @@ export default function HomePage() {
 
                     <p className="text-lg sm:text-xl text-[var(--color-ink-muted)] mb-9 max-w-2xl mx-auto leading-snug font-normal">
                         Type what you want. We read past the keyword-stuffed listings and hand you{" "}
-                        <span className="font-semibold text-[var(--color-ink)]">six to eight picks, ranked</span>. Then narrow the list inside — &ldquo;under $200&rdquo;, &ldquo;walnut&rdquo;, &ldquo;for a small office&rdquo; — until it's exactly what you wanted.
+                        <span className="font-semibold text-[var(--color-ink)]">six to eight picks, ranked</span>. Then narrow the list inside — &ldquo;under $200&rdquo;, &ldquo;walnut&rdquo;, &ldquo;for a small office&rdquo; — until it&apos;s exactly what you wanted.
                     </p>
 
                     {/* Above-the-fold affiliate disclosure — sits right above the search bar.
@@ -150,7 +150,7 @@ export default function HomePage() {
                                 Type what you want.
                             </h3>
                             <p className="text-[var(--color-ink-muted)] leading-relaxed mt-4 text-[15px]">
-                                Plain English. &ldquo;Standing desk under $300.&rdquo; &ldquo;Best espresso for a beginner.&rdquo; &ldquo;Wireless headphones for travel.&rdquo; Mistype it &mdash; we'll figure it out.
+                                Plain English. &ldquo;Standing desk under $300.&rdquo; &ldquo;Best espresso for a beginner.&rdquo; &ldquo;Wireless headphones for travel.&rdquo; Mistype it &mdash; we&apos;ll figure it out.
                             </p>
                         </div>
                         <div className="relative">
