@@ -145,7 +145,7 @@ function JsonLd() {
                         name: "How is ProductFindAI different from Wirecutter or NerdWallet?",
                         acceptedAnswer: {
                             "@type": "Answer",
-                            text: "Wirecutter and NerdWallet rank a small fixed set of products their editors have tested. ProductFindAI generates a fresh shortlist from any Amazon search you type, in any category, using AI plus live Amazon Product Advertising API data.",
+                            text: "Wirecutter and NerdWallet rank a small fixed set of products their editors have tested. ProductFindAI generates a fresh shortlist from any Amazon search you type, in any category, using AI, then links you to the product on Amazon to confirm the current price and rating.",
                         },
                     },
                     {
@@ -161,7 +161,7 @@ function JsonLd() {
                         name: "Do you actually verify prices and ratings?",
                         acceptedAnswer: {
                             "@type": "Answer",
-                            text: "Every product on the results page is verified live against Amazon's Product Advertising API at search time — title, price, image, star rating, and review count come from Amazon directly, not from the AI.",
+                            text: "We never present a price or star rating as Amazon's unless it is pulled live from Amazon's Product Advertising API at search time. Until that live data is connected, we link you straight to the product on Amazon so you confirm the current price and rating there before you buy.",
                         },
                     },
                     {
@@ -197,7 +197,7 @@ function JsonLd() {
                         "@type": "HowToStep",
                         position: 3,
                         name: "Click through to Amazon",
-                        text: "Each pick is verified live against Amazon's Product Advertising API. Click any card to buy on Amazon at the same price you'd pay anywhere.",
+                        text: "Click any card to go to the product on Amazon and confirm the current price and rating before you buy, at the same price you'd pay anywhere.",
                     },
                 ],
             },
