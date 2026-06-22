@@ -1,7 +1,12 @@
 import Link from "next/link";
 import { SearchBox } from "@/components/SearchBox";
+import { RotatingText } from "@/components/RotatingText";
 import { TrendingProducts } from "@/components/TrendingProducts";
 import { HeroOrganicLoop } from "@/components/HeroOrganicLoop";
+
+// Hero line 1 keeps "We do the" fixed and rotates only the final word.
+// Periods live inside the words so the swap reads as one clean line.
+const HERO_WORDS = ["research.", "digging.", "comparing."];
 
 // Re-render the home page (and refresh trending PA-API data) every 30 min.
 // Stays well under PA-API's 1-hour price-cache ceiling.
@@ -59,11 +64,13 @@ export default function HomePage() {
                 </div>
 
                 <div className="relative z-10 max-w-4xl w-full text-center animate-fade-in-up">
-                    {/* The headline — sharp + concrete; brand accent on the payoff number */}
+                    {/* The headline — "We do the" is fixed; only the final word swaps.
+                        Line 2 holds the payoff with the brand-accent number. */}
                     <h1
-                        className="font-display text-balance text-[30px] sm:text-5xl lg:text-5xl xl:text-[52px] font-bold text-[var(--color-ink)] tracking-[-0.03em] leading-[1.06] mb-6"
+                        className="font-display text-[30px] sm:text-5xl lg:text-5xl xl:text-[52px] font-bold text-[var(--color-ink)] tracking-[-0.03em] leading-[1.06] mb-6"
                     >
-                        We do the product research.
+                        We do the{" "}
+                        <RotatingText words={HERO_WORDS} className="text-[var(--color-plum)]" />
                         <br />
                         You get about <span className="text-[var(--color-plum)]">7</span> ranked picks.
                     </h1>
