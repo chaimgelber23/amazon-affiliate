@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-  /* Type system — Fraunces (display, variable serif) + Inter (body) + JetBrains Mono (numerals) */
+  /* Type system — Plus Jakarta Sans (display grotesk) + Inter (body) + JetBrains Mono (numerals) */
   --font-sans: var(--font-sans), "Inter", system-ui, -apple-system, sans-serif;
-  --font-display: var(--font-display), "Fraunces", "Inter", system-ui, serif;
+  --font-display: var(--font-display), "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
   --font-mono: var(--font-mono), "JetBrains Mono", ui-monospace, monospace;
 
   /* ── Surface palette — warm cream, not cold slate ── */
@@ -140,32 +140,17 @@ body {
   50% { opacity: 0.7; }
 }
 
-/* Organic blob morph — used by HeroOrganicLoop */
-@keyframes blob-drift-a {
-  0%, 100% { transform: translate3d(0, 0, 0) scale(1); border-radius: 64% 36% 58% 42% / 52% 48% 52% 48%; }
-  33%      { transform: translate3d(3%, -4%, 0) scale(1.06); border-radius: 42% 58% 36% 64% / 56% 44% 56% 44%; }
-  66%      { transform: translate3d(-3%, 3%, 0) scale(0.96); border-radius: 56% 44% 64% 36% / 44% 56% 44% 56%; }
+/* Organic shapes — appear from nothing, then disappear back to nothing, in place.
+   Position + scale are set statically inline; only opacity animates here. */
+@keyframes blob-fade {
+  0%, 100% { opacity: 0; }
+  50%      { opacity: var(--blob-op-to, 0.5); }
 }
 
-@keyframes blob-drift-b {
-  0%, 100% { transform: translate3d(0, 0, 0) scale(1); border-radius: 38% 62% 50% 50% / 64% 36% 64% 36%; }
-  50%      { transform: translate3d(-4%, 5%, 0) scale(1.08); border-radius: 62% 38% 64% 36% / 38% 62% 38% 62%; }
-}
-
-@keyframes blob-drift-c {
-  0%, 100% { transform: translate3d(0, 0, 0) scale(1); border-radius: 50% 50% 62% 38% / 38% 62% 50% 50%; }
-  50%      { transform: translate3d(5%, -5%, 0) scale(0.94); border-radius: 38% 62% 38% 62% / 62% 38% 62% 38%; }
-}
-
-/* Synchronized breathing cycle — all particles scatter (0%) → cluster (50%) → scatter (100%)
-   in unison. Single full loop = one breath. No `alternate` direction needed because the
-   keyframe itself round-trips, which gives a clean "in, hold, out" rhythm where the eye
-   sees every particle leave and return together. */
-@keyframes blob-breathe {
-  0%   { transform: translate3d(var(--blob-x-from, 0), var(--blob-y-from, 0), 0) scale(var(--blob-scale-from, 0.7)) rotate(0deg); opacity: var(--blob-op-from, 0.35); }
-  45%  { transform: translate3d(calc(var(--blob-x-to, 0) * 0.95), calc(var(--blob-y-to, 0) * 0.95), 0) scale(calc(var(--blob-scale-to, 0.9) * 1.02)) rotate(var(--blob-rot, 8deg)); opacity: var(--blob-op-to, 0.55); }
-  55%  { transform: translate3d(var(--blob-x-to, 0), var(--blob-y-to, 0), 0) scale(var(--blob-scale-to, 0.9)) rotate(var(--blob-rot, 8deg)); opacity: var(--blob-op-to, 0.55); }
-  100% { transform: translate3d(var(--blob-x-from, 0), var(--blob-y-from, 0), 0) scale(var(--blob-scale-from, 0.7)) rotate(0deg); opacity: var(--blob-op-from, 0.35); }
+/* Ambient background glows — soft opacity pulse, no movement */
+@keyframes blob-fade-ambient {
+  0%, 100% { opacity: 0.16; }
+  50%      { opacity: 0.5; }
 }
 
 .animate-fade-in-up {
@@ -335,17 +320,15 @@ body {
 .section-heading {
   font-family: var(--font-display);
   font-size: clamp(2.5rem, 6vw, 4.75rem);
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: -0.035em;
   line-height: 1.0;
   color: var(--color-ink);
-  font-variation-settings: "SOFT" 50, "WONK" 0, "opsz" 144;
 }
 
 .font-display {
   font-family: var(--font-display);
-  letter-spacing: -0.03em;
-  font-variation-settings: "SOFT" 50, "WONK" 0, "opsz" 144;
+  letter-spacing: -0.025em;
 }
 
 .font-mono {

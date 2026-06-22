@@ -27,21 +27,6 @@ interface SearchResult {
     enriched?: boolean;
 }
 
-// Example prompts shown as clickable chips below the search bar in the pre-search
-// state. Goal: demonstrate the natural-language range — multi-constraint queries
-// ("cheapest X with the best reviews"), use-case framing ("for a small kitchen"),
-// and quality qualifiers ("that holds an edge"). All are verified to produce
-// real responses from the API. NOTE: don't add prompts that imply we have data
-// we don't (return rates, price history, expert curation) — those would violate
-// Amazon Associates compliance #6 (no misleading AI capability claims).
-const EXAMPLE_PROMPTS = [
-    "cheapest broom with the best reviews",
-    "running shoes for flat feet",
-    "espresso machine for a beginner",
-    "kitchen knife that holds an edge",
-    "standing desk for a tiny apartment",
-];
-
 function extractAsinFromText(text: string): string | null {
     const match = text.match(/(?:dp|product|gp\/product|d)\/([A-Z0-9]{10})(?:[/?]|$)/i);
     return match ? match[1].toUpperCase() : null;
@@ -363,38 +348,6 @@ export function SearchBox() {
                     </p>
                 )}
             </form>
-
-            {/* ── EXAMPLE PROMPT CHIPS ──
-                Pre-search state only. The eyebrow specifically frames these as
-                EXAMPLES OF HOW TO TYPE — not as product picks the visitor should
-                "use". Click → prefills + submits the search. */}
-            {!inRefinementMode && !loading && !error && (
-                <div className="mt-7 animate-fade-in">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--color-ink-dim)] mb-3 inline-flex items-center gap-2">
-                        <span className="w-4 h-px bg-[var(--color-ink-dim)]" aria-hidden="true" />
-                        Try a search like
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                        {EXAMPLE_PROMPTS.map((prompt) => (
-                            <button
-                                key={prompt}
-                                type="button"
-                                disabled={loading}
-                                onClick={() => {
-                                    setQuery(prompt);
-                                    doSearch(prompt, false);
-                                }}
-                                className="text-[13px] font-medium text-[var(--color-ink-muted)] bg-[var(--color-bg-card-solid)] border border-[var(--color-border)] hover:border-[var(--color-plum)] hover:text-[var(--color-plum)] hover:bg-[var(--color-accent-muted)] px-3.5 py-2 rounded-full transition-all shadow-[0_1px_2px_rgba(91,33,182,0.04)]"
-                            >
-                                {prompt}
-                            </button>
-                        ))}
-                    </div>
-                    <p className="text-[11px] font-medium text-[var(--color-ink-dim)] mt-4 pl-1 leading-relaxed">
-                        After you get results, type into the same bar to narrow them down — &ldquo;under $100&rdquo;, &ldquo;wireless&rdquo;, &ldquo;for a small kitchen&rdquo;. No need to start over.
-                    </p>
-                </div>
-            )}
 
             {/* ── LOADING SKELETONS ── */}
             {loading && (

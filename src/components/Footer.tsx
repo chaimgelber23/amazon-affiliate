@@ -19,16 +19,13 @@ export function Footer() {
                     {/* Brand */}
                     <div className="md:col-span-2">
                         <Link href="/" className="inline-flex items-baseline mb-5 group">
-                            <span
-                                className="font-display text-2xl font-medium tracking-[-0.03em] text-[var(--color-ink)]"
-                                style={{ fontVariationSettings: '"SOFT" 50, "WONK" 0, "opsz" 144' }}
-                            >
+                            <span className="font-display text-2xl font-bold tracking-[-0.03em] text-[var(--color-ink)]">
                                 ProductFindAI
                             </span>
-                            <span className="text-[var(--color-rose)] font-display text-2xl font-medium">.</span>
+                            <span className="text-[var(--color-rose)] font-display text-2xl font-bold">.</span>
                         </Link>
                         <p className="text-[15px] text-[var(--color-ink-muted)] leading-relaxed max-w-md">
-                            The shortlist for whatever you&apos;re trying to buy on Amazon. We read past the keyword salad so you don&apos;t have to.
+                            A short, ranked list instead of Amazon&rsquo;s wall of near-identical listings. No sponsored slots, no paid placement.
                         </p>
                     </div>
 
