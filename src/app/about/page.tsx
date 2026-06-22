@@ -28,8 +28,8 @@ const ABOUT_FAQS: { q: string; a: string }[] = [
         a: "Independent. No seller pays for placement. ProductFindAI earns a standard Amazon Associates referral fee (typically 1–4.5%) when you buy through our links — the same Amazon affiliate program any blog or review site uses. The price you pay on Amazon is identical with or without our link.",
     },
     {
-        q: "Do you actually verify the prices and ratings, or is it just AI making them up?",
-        a: "Every product on the results page is verified live against Amazon's Product Advertising API at search time — the title, price, image, star rating, and review count come from Amazon directly, not from the AI. The AI's job is picking which products to show; the data on the card is real.",
+        q: "Do you show prices and ratings, or is the AI making them up?",
+        a: "The AI's job is picking which products to show. We do not present a price or star rating as Amazon's unless it comes live from Amazon's Product Advertising API at search time. Until that live data is connected, we leave the numbers off and link you to the product on Amazon so you confirm the current price and rating there.",
     },
     {
         q: "What does the Chrome extension do?",

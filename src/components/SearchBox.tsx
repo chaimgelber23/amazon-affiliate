@@ -475,13 +475,25 @@ export function SearchBox() {
                                         </h3>
 
                                         <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-3">
-                                            <span
-                                                className="font-mono tnum text-2xl sm:text-[28px] font-bold text-[var(--color-surface)] tracking-tight"
-                                                title={product.verified ? "Live Amazon price" : "AI-estimated price — confirm on Amazon"}
-                                            >
-                                                {product.verified ? product.priceEstimate : `~${product.priceEstimate}`}
-                                            </span>
-                                            <StarRating rating={product.rating} reviewCount={product.reviewCount} verified={product.verified} />
+                                            {/* Amazon Associates compliance: a price or rating may only be
+                                                shown when it comes live from the Product Advertising API.
+                                                Until PA-API is live (verified === true) we show neither —
+                                                no AI-estimated numbers presented as Amazon's. */}
+                                            {product.verified ? (
+                                                <>
+                                                    <span
+                                                        className="font-mono tnum text-2xl sm:text-[28px] font-bold text-[var(--color-surface)] tracking-tight"
+                                                        title="Live Amazon price"
+                                                    >
+                                                        {product.priceEstimate}
+                                                    </span>
+                                                    <StarRating rating={product.rating} reviewCount={product.reviewCount} verified={product.verified} />
+                                                </>
+                                            ) : (
+                                                <span className="text-sm font-semibold text-[var(--color-surface-dim)]">
+                                                    See price &amp; rating on Amazon
+                                                </span>
+                                            )}
                                             <span className="text-[11px] font-semibold text-[var(--color-surface-dim)] px-2.5 py-1 bg-[var(--color-bg-elevated)] rounded-full uppercase tracking-wider">
                                                 {product.category}
                                             </span>

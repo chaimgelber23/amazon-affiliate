@@ -220,7 +220,7 @@ export async function TrendingProducts() {
                             Six categories to try.
                         </h2>
                         <p className="mt-5 text-base sm:text-lg text-[var(--color-ink-muted)] leading-relaxed max-w-xl">
-                            These are example categories with a one-line note on what to look for. Run any of them through the search bar above to get a real, AI-generated shortlist with current prices and ratings.
+                            These are example categories with a one-line note on what to look for. Run any of them through the search bar above to get a real, AI-generated shortlist.
                         </p>
                     </div>
                     <p className="text-xs text-[var(--color-ink-dim)] leading-relaxed max-w-[18rem]">
