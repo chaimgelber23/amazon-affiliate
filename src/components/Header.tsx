@@ -27,8 +27,7 @@ export function Header() {
 
                     <Link
                         href="/"
-                        className="font-display text-[22px] font-medium tracking-[-0.03em] text-[var(--color-ink)] hover:opacity-70 transition-opacity"
-                        style={{ fontVariationSettings: '"SOFT" 50, "WONK" 0, "opsz" 144' }}
+                        className="font-display text-[22px] font-bold tracking-[-0.03em] text-[var(--color-ink)] hover:opacity-70 transition-opacity"
                     >
                         ProductFindAI
                         <span className="text-[var(--color-rose)]">.</span>

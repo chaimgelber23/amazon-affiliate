@@ -1,17 +1,16 @@
 /**
  * HeroOrganicLoop — the visual signature of the ProductFindAI hero.
  *
- * Concept: a chaotic field of organic shapes (Amazon's noise) gathers into a
- * focal cluster (the curated shortlist), holds, then scatters back out — one
- * synchronized breath per loop. Cluster offsets to the lower-left of viewport
- * so the centered headline + search bar stay legible.
+ * Concept: a spread field of organic shapes (Amazon's noise) sits in place and
+ * gently fades in and out — a calm breathing presence rather than motion across
+ * the viewport. Shapes hold positions away from the center so the headline +
+ * search bar stay legible.
  *
  * Pure CSS + SVG (no Three.js, no video file). The SVG goo filter merges
  * adjacent shapes into one organic mass. Shapes are mixed: organic blobs
  * (irregular border-radius), rounded squares, capsules, and circles.
  *
- * Motion-reduce safe — degrades to the converged still frame so the metaphor
- * still reads.
+ * Motion-reduce safe — degrades to a static still frame.
  */
 
 type Shape = "circle" | "blob" | "square" | "capsule";
@@ -70,8 +69,9 @@ function shapeStyles(shape: Shape, size: number): React.CSSProperties {
     }
 }
 
-// Single shared cycle so all particles breathe together.
-const CYCLE_SECONDS = 14;
+// Each shape fully appears from nothing, then disappears back to nothing — see the
+// per-particle timing below. No single shared cycle: durations + phases are varied
+// so the field twinkles instead of vanishing all at once.
 
 export function HeroOrganicLoop({ className = "" }: { className?: string }) {
     return (
@@ -105,33 +105,33 @@ export function HeroOrganicLoop({ className = "" }: { className?: string }) {
                 className="absolute inset-0 flex items-center justify-center"
                 style={{ filter: "url(#hero-goo)" }}
             >
-                {PARTICLES.map((p, i) => (
-                    <span
-                        key={i}
-                        className="hero-particle"
-                        style={{
-                            ...shapeStyles(p.shape, p.size),
-                            ["--blob-x-from" as string]: p.fromX,
-                            ["--blob-y-from" as string]: p.fromY,
-                            ["--blob-scale-from" as string]: p.fromScale,
-                            ["--blob-op-from" as string]: p.fromOp,
-                            ["--blob-x-to" as string]: p.toX,
-                            ["--blob-y-to" as string]: p.toY,
-                            ["--blob-scale-to" as string]: p.toScale,
-                            ["--blob-op-to" as string]: p.toOp,
-                            ["--blob-rot" as string]: p.rot,
+                {PARTICLES.map((p, i) => {
+                    // Vary each shape's lifespan and start phase so they appear and
+                    // disappear independently (a living twinkle), never in lockstep.
+                    // Deterministic — no Math.random — so SSR and client markup match.
+                    const dur = 7 + (i % 6);            // 7–12s lifespan
+                    const delay = -((i * 2.3) % dur);   // out-of-phase (negative) start
+                    return (
+                        <span
+                            key={i}
+                            className="hero-particle"
+                            style={{
+                                ...shapeStyles(p.shape, p.size),
+                                ["--blob-op-to" as string]: p.toOp,
 
-                            background: `radial-gradient(circle at 35% 30%, ${p.color}, ${p.color.replace(/[\d.]+\)$/, "0.12)")})`,
-                            position: "absolute",
-                            // Subtle stagger (≤0.4s) keeps it from feeling robotic without breaking the unison feel.
-                            animation: `blob-breathe ${CYCLE_SECONDS}s cubic-bezier(0.45, 0.05, 0.35, 0.95) ${(i % 4) * 0.1}s infinite`,
-                            willChange: "transform, opacity",
-                        }}
-                    />
-                ))}
+                                background: `radial-gradient(circle at 35% 30%, ${p.color}, ${p.color.replace(/[\d.]+\)$/, "0.12)")})`,
+                                position: "absolute",
+                                // Fixed, spread-out position; only opacity animates (0 → peak → 0).
+                                transform: `translate3d(${p.fromX}, ${p.fromY}, 0) scale(${p.toScale}) rotate(${p.rot})`,
+                                animation: `blob-fade ${dur}s ease-in-out ${delay}s infinite`,
+                                willChange: "opacity",
+                            }}
+                        />
+                    );
+                })}
             </div>
 
-            {/* Background ambient — three slow-drifting blobs for atmospheric depth */}
+            {/* Background ambient — three soft glows that fade in place (no drift) */}
             <span
                 aria-hidden="true"
                 className="absolute"
@@ -139,9 +139,8 @@ export function HeroOrganicLoop({ className = "" }: { className?: string }) {
                     left: "8%", top: "12%", width: "46vmin", height: "46vmin",
                     background: `radial-gradient(circle at 30% 30%, ${PLUM}, transparent 65%)`,
                     filter: "blur(60px)",
-                    animation: "blob-drift-a 22s ease-in-out infinite",
-                    opacity: 0.45,
-                    willChange: "transform",
+                    animation: "blob-fade-ambient 11s ease-in-out infinite",
+                    willChange: "opacity",
                 }}
             />
             <span
@@ -151,9 +150,8 @@ export function HeroOrganicLoop({ className = "" }: { className?: string }) {
                     right: "6%", top: "8%", width: "40vmin", height: "40vmin",
                     background: `radial-gradient(circle at 60% 40%, ${ROSE}, transparent 65%)`,
                     filter: "blur(70px)",
-                    animation: "blob-drift-b 26s ease-in-out infinite",
-                    opacity: 0.40,
-                    willChange: "transform",
+                    animation: "blob-fade-ambient 13s ease-in-out -4s infinite",
+                    willChange: "opacity",
                 }}
             />
             <span
@@ -163,14 +161,13 @@ export function HeroOrganicLoop({ className = "" }: { className?: string }) {
                     left: "55%", bottom: "8%", width: "44vmin", height: "44vmin",
                     background: `radial-gradient(circle at 50% 50%, ${AMBER}, transparent 70%)`,
                     filter: "blur(80px)",
-                    animation: "blob-drift-c 28s ease-in-out infinite",
-                    opacity: 0.35,
-                    willChange: "transform",
+                    animation: "blob-fade-ambient 15s ease-in-out -8s infinite",
+                    willChange: "opacity",
                 }}
             />
 
             {/* Soft radial readability mask — fades the central area where the headline + search bar live,
-                so even when blobs are mid-flight no shape sits directly behind the text. */}
+                so even when shapes are at full opacity none sits directly behind the text. */}
             <div
                 aria-hidden="true"
                 className="absolute inset-0 pointer-events-none"
@@ -180,12 +177,11 @@ export function HeroOrganicLoop({ className = "" }: { className?: string }) {
                 }}
             />
 
-            {/* Motion-reduce fallback — show only the converged still frame */}
+            {/* Motion-reduce fallback — static still frame (shapes hold their inline position) */}
             <style>{`
                 @media (prefers-reduced-motion: reduce) {
                     .hero-particle {
                         animation: none !important;
-                        transform: translate3d(var(--blob-x-to), var(--blob-y-to), 0) scale(var(--blob-scale-to)) rotate(var(--blob-rot)) !important;
                         opacity: var(--blob-op-to) !important;
                     }
                 }

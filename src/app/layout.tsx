@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -8,11 +8,13 @@ import { ScrollToTopOnLoad } from "@/components/ScrollToTopOnLoad";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://productfindai.com";
 
-const fraunces = Fraunces({
+// Display headline — clean modern grotesk. Replaces the old Fraunces serif
+// per the Pro hero direction; carries weight on the bold gradient hero.
+const displayFont = Plus_Jakarta_Sans({
     subsets: ["latin"],
     display: "swap",
     variable: "--font-display",
-    axes: ["SOFT", "WONK"],
+    weight: ["500", "600", "700", "800"],
 });
 
 const inter = Inter({
@@ -39,11 +41,11 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
     title: {
-        default: "ProductFindAI — Save hours of Amazon research.",
+        default: "ProductFindAI: we do the Amazon product research, you get about 7 ranked picks",
         template: "%s | ProductFindAI",
     },
     description:
-        "ProductFindAI filters the seller word salad and hands you the perfect product. Search any Amazon category, refine inside the results, install on Chrome.",
+        "We do the product research you would spend an evening on. Type what you want and ProductFindAI digs through the whole category, budget to premium, reads past the keyword-stuffed titles, and ranks about 7 real contenders with the catch on each. No sponsored slots. No seller pays to rank. Refine in place without starting over.",
     metadataBase: new URL(siteUrl),
     manifest: "/manifest.json",
     appleWebApp: {
@@ -55,16 +57,16 @@ export const metadata: Metadata = {
         type: "website",
         locale: "en_US",
         siteName: "ProductFindAI",
-        title: "ProductFindAI — Save hours of Amazon research.",
+        title: "We do the product research. You get about 7 ranked picks.",
         description:
-            "ProductFindAI filters the seller word salad and hands you the perfect product. Free Chrome extension included.",
+            "The afternoon of tab-juggling, done for you. Type what you want and ProductFindAI digs through the whole category, budget to premium, reads past the keyword-stuffed titles, and ranks about 7 real contenders with the catch on each. No sponsored slots. No seller pays to rank. Refine in place without starting over.",
         url: siteUrl,
     },
     twitter: {
         card: "summary_large_image",
-        title: "ProductFindAI — Save hours of Amazon research.",
+        title: "We do the product research. You get about 7 ranked picks.",
         description:
-            "ProductFindAI filters the seller word salad and hands you the perfect product.",
+            "Type what you want. We dig through the whole category, budget to premium, read past the keyword-stuffed titles, and rank about 7 real contenders with the catch on each. No sponsored slots. No seller pays to rank. Refine in place without starting over.",
     },
     robots: {
         index: true,
@@ -212,7 +214,7 @@ function JsonLd() {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html lang="en" className={`${fraunces.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
+        <html lang="en" className={`${displayFont.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
             <head>
                 <JsonLd />
             </head>

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { SearchBox } from "@/components/SearchBox";
-import { RotatingText } from "@/components/RotatingText";
 import { TrendingProducts } from "@/components/TrendingProducts";
 import { HeroOrganicLoop } from "@/components/HeroOrganicLoop";
 
@@ -10,20 +9,6 @@ export const revalidate = 1800;
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://productfindai.com";
 
-// Mix of abstract calls-to-action and concrete category examples. Phrases
-// kept ≤14 chars so the longest (italic Fraunces at the H1's 44px mobile
-// size) safely fits inside a 320–375px viewport without horizontal overflow.
-const ROTATING_QUERIES = [
-    "what you want",
-    "standing desk",
-    "the right gift",
-    "coffee grinder",
-    "your next pick",
-    "running shoe",
-    "what to buy",
-    "kitchen knife",
-];
-
 function HomeJsonLd() {
     const schema = {
         "@context": "https://schema.org",
@@ -32,7 +17,7 @@ function HomeJsonLd() {
         url: siteUrl,
         applicationCategory: "ShoppingApplication",
         description:
-            "Save hours of Amazon research. ProductFindAI filters the seller word salad and hands you 6-8 picks. Refine inside your results to narrow further.",
+            "We do the product research. Type what you want and ProductFindAI digs through the whole category and hands back about 7 ranked picks, each with the catch. No sponsored slots. Refine in place without starting over.",
         offers: {
             "@type": "Offer",
             price: "0",
@@ -74,26 +59,17 @@ export default function HomePage() {
                 </div>
 
                 <div className="relative z-10 max-w-4xl w-full text-center animate-fade-in-up">
-                    {/* The headline — Fraunces variable serif, organic optical-size */}
+                    {/* The headline — sharp + concrete; brand accent on the payoff number */}
                     <h1
-                        className="font-display text-[44px] sm:text-6xl lg:text-7xl xl:text-[88px] font-medium text-[var(--color-ink)] tracking-[-0.035em] leading-[0.98] mb-6"
-                        style={{ fontVariationSettings: '"SOFT" 50, "WONK" 0, "opsz" 144' }}
+                        className="font-display text-balance text-[30px] sm:text-5xl lg:text-5xl xl:text-[52px] font-bold text-[var(--color-ink)] tracking-[-0.03em] leading-[1.06] mb-6"
                     >
-                        The shortlist for{" "}
-                        <span className="relative inline-block">
-                            <RotatingText
-                                words={ROTATING_QUERIES}
-                                className="italic font-medium text-[var(--color-plum)]"
-                            />
-                        </span>
-                        ,
+                        We do the product research.
                         <br />
-                        without the noise.
+                        You get about <span className="text-[var(--color-plum)]">7</span> ranked picks.
                     </h1>
 
                     <p className="text-lg sm:text-xl text-[var(--color-ink-muted)] mb-9 max-w-2xl mx-auto leading-snug font-normal">
-                        Type what you want. We read past the keyword-stuffed listings and hand you{" "}
-                        <span className="font-semibold text-[var(--color-ink)]">six to eight picks, ranked</span>. Then narrow the list inside — &ldquo;under $200&rdquo;, &ldquo;walnut&rdquo;, &ldquo;for a small office&rdquo; — until it&apos;s exactly what you wanted.
+                        Type what you want in plain English. We dig through the whole category, budget to premium, and read past the keyword-stuffed titles and the five-star reviews that say nothing. Then we hand back about 7 picks, ranked, with one line on why each ranks and one line on the catch. No sponsored slots. No seller pays to rank. Change your mind mid-search and the list re-ranks in place, so you never start over.
                     </p>
 
                     {/* Above-the-fold affiliate disclosure — sits right above the search bar.
@@ -136,43 +112,43 @@ export default function HomePage() {
                             How it works
                         </p>
                         <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-medium text-[var(--color-ink)] tracking-[-0.035em] leading-[1.0] max-w-3xl mx-auto">
-                            We do the search.{" "}
-                            <span className="text-[var(--color-ink-dim)] italic">You get the shortlist.</span>
+                            You search once.{" "}
+                            <span className="text-[var(--color-ink-dim)]">We hand back the short list.</span>
                         </h2>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 sm:gap-8 lg:gap-12">
                         <div className="relative">
                             <span className="font-mono tnum text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-plum)]">
-                                Step one
+                                Type it
                             </span>
                             <h3 className="font-display text-2xl sm:text-3xl font-medium text-[var(--color-ink)] mt-3 leading-tight tracking-tight">
-                                Type what you want.
+                                Say what you want.
                             </h3>
                             <p className="text-[var(--color-ink-muted)] leading-relaxed mt-4 text-[15px]">
-                                Plain English. &ldquo;Standing desk under $300.&rdquo; &ldquo;Best espresso for a beginner.&rdquo; &ldquo;Wireless headphones for travel.&rdquo; Mistype it &mdash; we&apos;ll figure it out.
+                                Plain English works. &ldquo;Standing desk under $300.&rdquo; &ldquo;Quiet espresso machine for a beginner.&rdquo; Spelling doesn&rsquo;t matter. We read the request, not the keywords sellers stuffed into their titles.
                             </p>
                         </div>
                         <div className="relative">
                             <span className="font-mono tnum text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-rose)]">
-                                Step two
+                                Read the picks
                             </span>
                             <h3 className="font-display text-2xl sm:text-3xl font-medium text-[var(--color-ink)] mt-3 leading-tight tracking-tight">
-                                Get six to eight picks.
+                                Get about 7, ranked.
                             </h3>
                             <p className="text-[var(--color-ink-muted)] leading-relaxed mt-4 text-[15px]">
-                                Ranked. Across budget, mid-range, and premium. Each with one line on why it earns its slot &mdash; and one line on what you give up by picking it.
+                                Budget, mid-range, premium. Each pick gets one line on why it ranks where it does and one line on what you give up by choosing it. We have no reason to push the expensive one. If two are basically the same, we say so.
                             </p>
                         </div>
                         <div className="relative">
                             <span className="font-mono tnum text-[11px] font-bold uppercase tracking-[0.18em] text-amber-700">
-                                Step three
+                                Refine in place
                             </span>
                             <h3 className="font-display text-2xl sm:text-3xl font-medium text-[var(--color-ink)] mt-3 leading-tight tracking-tight">
-                                Narrow without restarting.
+                                Narrow it without restarting.
                             </h3>
                             <p className="text-[var(--color-ink-muted)] leading-relaxed mt-4 text-[15px]">
-                                The same search bar refines what you already see. Type &ldquo;under $200&rdquo;, &ldquo;walnut&rdquo;, &ldquo;quieter&rdquo; &mdash; the list collapses around the new constraint instead of starting over.
+                                Type &ldquo;under $200&rdquo; or &ldquo;walnut&rdquo; into the same bar and the list filters to what&rsquo;s left. Your short list stays put. You start over only when you want a different category.
                             </p>
                         </div>
                     </div>
@@ -182,7 +158,7 @@ export default function HomePage() {
                         <div className="inline-flex flex-wrap items-center justify-center gap-2 bg-[var(--color-bg-card-solid)] border border-[var(--color-border-strong)] rounded-full px-5 py-2 shadow-[0_4px_16px_-4px_rgba(91,33,182,0.10)]">
                             <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--color-plum)]">Search-within-search</span>
                             <span className="text-[var(--color-ink-dim)]">·</span>
-                            <span className="text-sm font-medium text-[var(--color-ink-muted)]">Refining keeps your shortlist intact. Restart only when you want a new category.</span>
+                            <span className="text-sm font-medium text-[var(--color-ink-muted)]">Refining narrows the list you already have. No re-scroll, no fresh wall of results.</span>
                         </div>
                     </div>
                 </div>
@@ -211,17 +187,17 @@ export default function HomePage() {
                             On Amazon itself
                         </p>
                         <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-medium tracking-[-0.035em] leading-[1.0] mb-6">
-                            Already searching?{" "}
-                            <span className="italic text-white/65">Skip a step.</span>
+                            Already on an Amazon results page?{" "}
+                            <span className="text-white/65">Cut it down from there.</span>
                         </h2>
                         <p className="text-base sm:text-lg text-white/70 leading-relaxed mb-8 max-w-md">
-                            The Chrome extension drops a ProductFindAI button onto every Amazon search results page. Click it, get the pick, never leave the tab.
+                            The free Chrome extension puts a ProductFindAI button on every Amazon search page. Click it and the wall of listings becomes a short ranked list, in the same tab.
                         </p>
                         <Link
                             href="/extension"
                             className="btn-amazon text-base px-8 py-4 inline-flex items-center gap-2 shadow-2xl shadow-black/30"
                         >
-                            Get the extension
+                            Get the free extension
                         </Link>
                     </div>
 
