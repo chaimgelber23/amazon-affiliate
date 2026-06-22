@@ -64,6 +64,8 @@ interface AIProduct {
     priceEstimate: string;
     rating: number;
     category: string;
+    tier?: "budget" | "mid" | "premium";
+    confidence?: "high" | "medium" | "low";
 }
 
 interface AIResponse {
@@ -290,12 +292,24 @@ async function generateWithFallback(
     // why the Claude Haiku JSON-repair path exists downstream.
     const groundingTools = { google_search: google.tools.googleSearch({}) };
 
+    // Shared time budget across all fallback attempts so the chain always returns
+    // cleanly before the 60s function ceiling (a hard timeout returns an ugly,
+    // unparseable body the client can't read). The primary grounded call gets
+    // generous time since it usually succeeds; later fallbacks use the remainder;
+    // once the budget is nearly spent we stop and let the caller return a clean 503.
+    const genStart = Date.now();
+    const TOTAL_BUDGET_MS = 52_000;
+    const remainingMs = () => TOTAL_BUDGET_MS - (Date.now() - genStart);
+
     const tryModel = async (modelId: string, withGrounding: boolean) => {
+        const cap = Math.min(withGrounding ? 40_000 : 16_000, remainingMs() - 1_500);
+        if (cap < 3_000) return { ok: false as const, err: "time budget exhausted" };
         try {
             const result = await generateText({
                 model: google(modelId),
                 system: systemPrompt,
                 messages,
+                abortSignal: AbortSignal.timeout(cap),
                 ...(withGrounding ? { tools: groundingTools } : {}),
             });
             return { ok: true as const, text: result.text };
@@ -372,6 +386,8 @@ interface EnrichedProductRow {
     reviewCount?: number;
     verified: boolean;
     aiRank: number;
+    tier?: "budget" | "mid" | "premium";
+    confidence?: "high" | "medium" | "low";
 }
 
 function qualityScore(p: EnrichedProductRow): number {
@@ -514,6 +530,8 @@ export async function POST(req: NextRequest) {
             imageUrl: p.amazonData?.imageUrl,
             reviewCount: p.amazonData?.reviewCount,
             verified: !!p.amazonData,
+            tier: p.tier as EnrichedProductRow["tier"],
+            confidence: p.confidence as EnrichedProductRow["confidence"],
         }));
 
         const reranked = rerankByQuality(rows);
@@ -533,6 +551,8 @@ export async function POST(req: NextRequest) {
                 imageUrl: p.imageUrl,
                 reviewCount: p.reviewCount,
                 verified: p.verified,
+                tier: p.tier,
+                confidence: p.confidence,
             })),
             enriched: reranked.some((p) => p.verified),
             meta: { model: modelUsed, cached: cacheHit, grounded },
