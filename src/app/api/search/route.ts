@@ -18,6 +18,18 @@ export const maxDuration = 60;
 const PRIMARY_MODEL = "gemini-2.5-pro";
 const FALLBACK_MODEL = "gemini-2.5-flash";
 
+// Quota circuit breaker. Once Pro returns a quota / rate-limit error, route
+// straight to Flash for a short cooldown so we stop wasting a doomed Pro call on
+// every request while its quota is exhausted. Module-scope (shared per warm
+// serverless instance); starts at 0 — NOT Date.now() — so a cold start never
+// trips it. Pro is retried automatically once the cooldown elapses.
+let proQuotaCooldownUntil = 0;
+const PRO_COOLDOWN_MS = 90_000;
+
+function isQuotaError(msg: string): boolean {
+    return /429|RESOURCE_EXHAUSTED|quota|rate.?limit|Too Many Requests/i.test(msg);
+}
+
 // Server-side AI response cache TTL. Identical normalized query → same picks
 // for 24h. Saves Gemini quota; PA-API enrichment still re-runs (cached 1h).
 const AI_CACHE_TTL_HOURS = 24;
@@ -327,30 +339,50 @@ async function generateWithFallback(
     let modelUsed = PRIMARY_MODEL;
     let grounded = true;
     let raw = "";
+    let got = false;
 
-    const primaryGrounded = await tryModel(PRIMARY_MODEL, true);
-    if (primaryGrounded.ok) {
-        raw = primaryGrounded.text;
-    } else {
-        console.warn(`[search] ${PRIMARY_MODEL} grounded failed: ${primaryGrounded.err}`);
-        const primaryPlain = await tryModel(PRIMARY_MODEL, false);
-        if (primaryPlain.ok) {
-            raw = primaryPlain.text;
-            grounded = false;
+    // Skip Pro entirely while it's cooling down from a recent quota hit — Flash
+    // fills in directly instead of burning a doomed Pro call on every request.
+    const proCoolingDown = Date.now() < proQuotaCooldownUntil;
+
+    if (!proCoolingDown) {
+        const proGrounded = await tryModel(PRIMARY_MODEL, true);
+        if (proGrounded.ok) {
+            raw = proGrounded.text;
+            got = true;
+        } else if (isQuotaError(proGrounded.err)) {
+            // Pro is out of quota — open the breaker and jump straight to Flash.
+            proQuotaCooldownUntil = Date.now() + PRO_COOLDOWN_MS;
+            console.warn(`[search] ${PRIMARY_MODEL} quota hit — Flash fills in for ${PRO_COOLDOWN_MS / 1000}s`);
         } else {
-            console.warn(`[search] ${PRIMARY_MODEL} ungrounded failed: ${primaryPlain.err}`);
-            modelUsed = FALLBACK_MODEL;
-            const fallbackGrounded = await tryModel(FALLBACK_MODEL, true);
-            if (fallbackGrounded.ok) {
-                raw = fallbackGrounded.text;
-            } else {
-                const fallbackPlain = await tryModel(FALLBACK_MODEL, false);
-                if (!fallbackPlain.ok) {
-                    throw new Error(`All Gemini paths failed (last: ${fallbackPlain.err})`);
-                }
-                raw = fallbackPlain.text;
+            console.warn(`[search] ${PRIMARY_MODEL} grounded failed: ${proGrounded.err}`);
+            const proPlain = await tryModel(PRIMARY_MODEL, false);
+            if (proPlain.ok) {
+                raw = proPlain.text;
                 grounded = false;
+                got = true;
+            } else if (isQuotaError(proPlain.err)) {
+                proQuotaCooldownUntil = Date.now() + PRO_COOLDOWN_MS;
+            } else {
+                console.warn(`[search] ${PRIMARY_MODEL} ungrounded failed: ${proPlain.err}`);
             }
+        }
+    }
+
+    // Flash fills in — Pro is cooling down, quota-limited, or otherwise failed.
+    if (!got) {
+        modelUsed = FALLBACK_MODEL;
+        grounded = true;
+        const flashGrounded = await tryModel(FALLBACK_MODEL, true);
+        if (flashGrounded.ok) {
+            raw = flashGrounded.text;
+        } else {
+            const flashPlain = await tryModel(FALLBACK_MODEL, false);
+            if (!flashPlain.ok) {
+                throw new Error(`All Gemini paths failed (last: ${flashPlain.err})`);
+            }
+            raw = flashPlain.text;
+            grounded = false;
         }
     }
 
