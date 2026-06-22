@@ -168,7 +168,7 @@ function renderResults(data) {
         <div class="card-rank ${rankClass}">${rankLabel}</div>
         <div class="card-title">${escHtml(p.title)}</div>
         <div class="card-meta">
-          ${p.priceEstimate ? `<span class="card-price">${escHtml(p.priceEstimate)}</span>` : ""}
+          ${p.verified && p.priceEstimate ? `<span class="card-price">${escHtml(p.priceEstimate)}</span>` : ""}
           ${p.category ? `<span class="card-category">${escHtml(p.category)}</span>` : ""}
         </div>
         ${p.whyThisPick ? `<div class="card-why">${escHtml(p.whyThisPick)}</div>` : ""}
