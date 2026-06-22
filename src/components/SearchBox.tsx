@@ -127,6 +127,39 @@ function setCached(q: string, data: SearchResult) {
     } catch { /* quota exceeded — ignore */ }
 }
 
+// POST /api/search with automatic retry. The engine occasionally returns a 5xx
+// (a transient Gemini hiccup surfaces as 503 "temporarily unavailable"); a quick
+// retry recovers it before the user ever sees an error. 4xx — including a 429
+// rate-limit — is surfaced immediately, never retried.
+async function postSearch(
+    payload: unknown,
+    attempts = 3,
+): Promise<{ ok: true; data: SearchResult } | { ok: false; error: string }> {
+    for (let i = 0; i < attempts; i++) {
+        try {
+            const res = await fetch("/api/search", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+            if (res.ok) return { ok: true, data: (await res.json()) as SearchResult };
+            if (res.status >= 500 && i < attempts - 1) {
+                await new Promise((r) => setTimeout(r, 1200 * (i + 1)));
+                continue;
+            }
+            const errData = await res.json().catch(() => ({}));
+            return { ok: false, error: (errData as { error?: string }).error || "Search failed. Please try again." };
+        } catch {
+            if (i < attempts - 1) {
+                await new Promise((r) => setTimeout(r, 1200 * (i + 1)));
+                continue;
+            }
+            return { ok: false, error: "Something went wrong. Please try again." };
+        }
+    }
+    return { ok: false, error: "The search engine is busy right now. Please try again in a moment." };
+}
+
 export function SearchBox() {
     const [query, setQuery] = useState("");
     const [originalQuery, setOriginalQuery] = useState<string | null>(null);
@@ -216,21 +249,9 @@ export function SearchBox() {
                 messages: [{ role: "user", content: q }],
             };
 
-        try {
-            const res = await fetch("/api/search", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(body),
-            });
-
-            if (!res.ok) {
-                const errData = await res.json().catch(() => ({}));
-                setError((errData as { error?: string }).error || "Search failed. Please try again.");
-                return;
-            }
-
-            const data: SearchResult = await res.json();
-
+        const result = await postSearch(body);
+        if (result.ok) {
+            const data = result.data;
             setResults(data);
             if (isRefinement) {
                 setRefinementChain((chain) => [...chain, q]);
@@ -240,11 +261,10 @@ export function SearchBox() {
                 setCached(q, data);
             }
             setQuery("");
-        } catch {
-            setError("Something went wrong. Please try again.");
-        } finally {
-            setLoading(false);
+        } else {
+            setError(result.error);
         }
+        setLoading(false);
     };
 
     const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
