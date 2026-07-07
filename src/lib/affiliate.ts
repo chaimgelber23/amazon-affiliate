@@ -4,7 +4,7 @@ export const siteConfig: SiteConfig = {
     name: process.env.NEXT_PUBLIC_SITE_NAME || "ProductFindAI",
     tagline: "Find the best. Skip the noise.",
     description:
-        "ProductFindAI cuts through Amazon's SEO noise to find the products actually worth buying. Search for anything — we'll find the best option.",
+        "ProductFindAI turns an Amazon product search into a short ranked list with trade-offs on each pick.",
     url: process.env.NEXT_PUBLIC_SITE_URL || "https://productfindai.com",
 };
 

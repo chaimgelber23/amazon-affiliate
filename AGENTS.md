@@ -9,7 +9,7 @@ PureFind is:
 
 - A Next.js 15 single-page AI product search at `purefind.vercel.app`
 - A Chrome extension (`extension/`) that surfaces the same search on `amazon.com/s*` pages
-- A 24h Supabase cache on Amazon Product Advertising API 5.0 responses
+- A 1-hour Supabase cache on Amazon Product Advertising API 5.0 responses
 
 Nothing else is built. If an agent's plan refers to "editorial review pages", "slugged product pages", "comparison pages", or a "self-improvement loop" — the plan is out of date. Those were scaffolded in early design docs and never shipped. See `directives/README.md`.
 
@@ -36,7 +36,7 @@ Nothing else is built. If an agent's plan refers to "editorial review pages", "s
 | Path | Purpose |
 |------|---------|
 | `src/app/api/search/route.ts` | The only dynamic endpoint. AI + PA-API enrichment. 25s max duration, 10 req/min/IP rate limit. |
-| `src/lib/amazon-paapi.ts` | PA-API client, 24h Supabase cache, 1 TPS rate limiter, 2s retry on 429. |
+| `src/lib/amazon-paapi.ts` | PA-API client, 1-hour Supabase cache, 1 TPS rate limiter, 2s retry on 429. |
 | `src/lib/amazon-lookup.legacy.ts` | Deprecated scraper — throws at import unless `AMAZON_ALLOW_SCRAPE=1`. |
 | `src/lib/analytics.ts` | Fire-and-forget logging to `pf_search_logs` / `pf_error_logs`. |
 | `extension/` | Chrome extension (production). Scoped to `amazon.com/s*`. |

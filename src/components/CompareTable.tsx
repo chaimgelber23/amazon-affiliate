@@ -148,7 +148,7 @@ export function CompareTable({
                         <CompareRow label="Price">
                             {cols.map((p) => (
                                 <td key={p.rank} className="p-4 align-top border-x border-b border-[var(--color-border)] bg-[var(--color-bg-card-solid)]">
-                                    {p.verified ? (
+                                    {p.verified && p.priceEstimate ? (
                                         <span
                                             className="font-mono tnum text-2xl font-semibold text-[var(--color-ink)] tracking-tight"
                                             title="Live Amazon price"
@@ -166,7 +166,7 @@ export function CompareTable({
                         <CompareRow label="Rating">
                             {cols.map((p) => (
                                 <td key={p.rank} className="p-4 align-top border-x border-b border-[var(--color-border)] bg-[var(--color-bg-card-solid)]">
-                                    {p.verified ? (
+                                    {p.verified && p.rating > 0 ? (
                                         <div className="flex items-center gap-1.5 text-[var(--color-ink-muted)]" title="Live Amazon rating">
                                             <span className="text-amber-500" aria-hidden="true">★</span>
                                             <span className="font-mono tnum font-semibold text-[var(--color-ink)]">{p.rating.toFixed(1)}</span>

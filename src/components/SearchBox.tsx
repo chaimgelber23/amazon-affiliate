@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { buildAffiliateUrl, buildAffiliateSearchUrl } from "@/lib/affiliate";
 import { CompareTable } from "./CompareTable";
 
@@ -25,6 +25,7 @@ interface SearchResult {
     summary: string;
     products: Product[];
     enriched?: boolean;
+    fetchedAt?: string;
 }
 
 function extractAsinFromText(text: string): string | null {
@@ -89,7 +90,7 @@ function StarRating({ rating, reviewCount, verified }: { rating: number; reviewC
     return (
         <span
             className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--color-surface-dim)]"
-            title={verified ? "Live Amazon rating" : "AI-estimated rating — confirm on Amazon"}
+            title={verified ? "Live Amazon rating" : "Confirm rating on Amazon"}
         >
             <span className="inline-flex gap-px">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -114,17 +115,43 @@ function StarRating({ rating, reviewCount, verified }: { rating: number; reviewC
 
 const CACHE_PREFIX = "pf-search:";
 
+function hasAmazonProductContent(data: SearchResult): boolean {
+    return !!data.enriched || data.products.some((product) => !!product.verified);
+}
+
 function getCached(q: string): SearchResult | null {
     try {
-        const raw = sessionStorage.getItem(CACHE_PREFIX + q.toLowerCase().trim());
-        return raw ? JSON.parse(raw) : null;
+        const key = CACHE_PREFIX + q.toLowerCase().trim();
+        const raw = sessionStorage.getItem(key);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw) as SearchResult;
+        if (hasAmazonProductContent(parsed)) {
+            sessionStorage.removeItem(key);
+            return null;
+        }
+        return parsed;
     } catch { return null; }
 }
 
 function setCached(q: string, data: SearchResult) {
     try {
+        if (hasAmazonProductContent(data)) return;
         sessionStorage.setItem(CACHE_PREFIX + q.toLowerCase().trim(), JSON.stringify(data));
     } catch { /* quota exceeded — ignore */ }
+}
+
+function formatSearchTime(iso?: string): string {
+    if (!iso) return "search time";
+    const date = new Date(iso);
+    if (Number.isNaN(date.getTime())) return "search time";
+    return date.toLocaleString(undefined, {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        timeZoneName: "short",
+    });
 }
 
 // POST /api/search with automatic retry. The engine occasionally returns a 5xx
@@ -160,7 +187,13 @@ async function postSearch(
     return { ok: false, error: "The search engine is busy right now. Please try again in a moment." };
 }
 
-export function SearchBox() {
+export function SearchBox({
+    onActiveChange,
+    placeholder = `Try "standing desk under $300"`,
+}: {
+    onActiveChange?: (active: boolean) => void;
+    placeholder?: string;
+} = {}) {
     const [query, setQuery] = useState("");
     const [originalQuery, setOriginalQuery] = useState<string | null>(null);
     const [refinementChain, setRefinementChain] = useState<string[]>([]);
@@ -171,6 +204,12 @@ export function SearchBox() {
     const [expandedCard, setExpandedCard] = useState<number | null>(null);
     const [showAll, setShowAll] = useState(false);
     const [compareSet, setCompareSet] = useState<Set<number>>(new Set());
+
+    // Let the hero know when a search owns the viewport (loading or results
+    // showing) so it can tuck away the demo shortlist and proof chips.
+    useEffect(() => {
+        onActiveChange?.(loading || !!results);
+    }, [loading, results, onActiveChange]);
 
     const toggleCompare = (rank: number) => {
         setCompareSet((prev) => {
@@ -209,7 +248,7 @@ export function SearchBox() {
         if (!q.trim()) return;
         const asin = extractAsinFromText(q);
         if (asin && isAmazonUrl(q)) {
-            q = `I'm looking at Amazon product ASIN ${asin}. Show me this exact product first, then find me similar alternatives that are better — better reviews, better price, or better overall value for the same use case.`;
+            q = `I'm looking at Amazon product ASIN ${asin}. Show me this exact product first, then find similar alternatives that may fit the same use case better.`;
             setDetectedAsin(null);
         }
         setError(null);
@@ -240,8 +279,8 @@ export function SearchBox() {
                 priorProducts: results.products.map((p) => ({
                     rank: p.rank,
                     title: p.title,
-                    priceEstimate: p.priceEstimate,
-                    rating: p.rating,
+                    priceEstimate: p.verified && p.priceEstimate ? p.priceEstimate : undefined,
+                    rating: p.verified && p.rating > 0 ? p.rating : undefined,
                     category: p.category,
                 })),
             }
@@ -290,7 +329,7 @@ export function SearchBox() {
             {inRefinementMode && !loading && (originalQuery || refinementChain.length > 0) && (
                 <div className="mb-4 flex items-center gap-2 flex-wrap text-xs font-medium text-[var(--color-ink-muted)] animate-fade-in">
                     <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--color-plum)]">
-                        Narrowing {refinementCount} {refinementCount === 1 ? "pick" : "picks"}
+                        Searching within {refinementCount} {refinementCount === 1 ? "pick" : "picks"}
                     </span>
                     {originalQuery && (
                         <>
@@ -318,7 +357,9 @@ export function SearchBox() {
                 {/* Soft glowing aura — picks up the brand gradient on focus, not the indigo→purple AI-tell */}
                 <div className="absolute -inset-1 bg-[var(--color-accent-gradient)] rounded-[30px] opacity-0 group-focus-within:opacity-30 blur-2xl transition duration-500 group-focus-within:duration-200" />
 
-                <div className={`relative flex items-center bg-[var(--color-bg-card-solid)] backdrop-blur-xl rounded-[26px] overflow-hidden transition-all shadow-[0_8px_32px_-12px_rgba(91,33,182,0.18)] ${
+                <div className={`relative flex bg-[var(--color-bg-card-solid)] backdrop-blur-xl rounded-[26px] overflow-hidden transition-all shadow-[0_8px_32px_-12px_rgba(91,33,182,0.18)] ${
+                    inRefinementMode ? "items-center" : "flex-col items-stretch sm:flex-row sm:items-center"
+                } ${
                     inRefinementMode
                         ? "border-2 border-[var(--color-plum)]/30"
                         : "border border-[var(--color-border-strong)]"
@@ -332,15 +373,15 @@ export function SearchBox() {
                         </span>
                     )}
                     <input
-                        className="w-full bg-transparent text-[var(--color-ink)] placeholder-[var(--color-ink-dim)] px-7 py-5 sm:px-7 sm:py-6 focus:outline-none text-lg sm:text-xl font-medium"
+                        className="min-w-0 w-full bg-transparent text-[var(--color-ink)] placeholder-[var(--color-ink-dim)] px-5 py-4 sm:px-7 sm:py-6 focus:outline-none text-base sm:text-xl font-medium"
                         placeholder={inRefinementMode
-                            ? `Narrow further — "under $100", "wireless", "for a small office"…`
-                            : `Try "standing desk under $300" or "best espresso machine for beginners"`}
+                            ? `Add a detail: "under $100", "wireless", "small office"`
+                            : placeholder}
                         value={query}
                         onChange={(e) => handleQueryChange(e.target.value)}
                         disabled={loading}
                         autoComplete="off"
-                        aria-label={inRefinementMode ? "Refine current results" : "Search for an Amazon product"}
+                        aria-label={inRefinementMode ? "Search within current picks" : "Search for an Amazon product"}
                     />
                     {detectedAsin && (
                         <span className="mx-3 px-3 py-1.5 bg-[var(--color-accent-muted)] border border-[var(--color-plum)]/20 text-[var(--color-plum)] text-xs font-semibold rounded-full whitespace-nowrap flex items-center gap-1.5 flex-shrink-0">
@@ -350,20 +391,24 @@ export function SearchBox() {
                     <button
                         type="submit"
                         disabled={loading || !query.trim()}
-                        className="btn-primary mx-3 py-3.5 px-6 sm:px-8 text-sm sm:text-base disabled:opacity-50 whitespace-nowrap"
+                        className={`btn-primary py-3 px-4 sm:py-3.5 sm:px-8 text-sm sm:text-base disabled:opacity-80 disabled:cursor-not-allowed whitespace-nowrap ${
+                            inRefinementMode
+                                ? "mx-2 sm:mx-3"
+                                : "mx-3 mb-3 w-[calc(100%-1.5rem)] sm:mx-3 sm:mb-0 sm:w-auto"
+                        }`}
                     >
-                        {loading ? "Working…" : detectedAsin ? "Compare" : inRefinementMode ? "Narrow it" : "Find the pick"}
+                        {loading ? "Working…" : detectedAsin ? "Compare" : inRefinementMode ? "Update picks" : "Find my picks"}
                     </button>
                 </div>
                 {inRefinementMode && !loading && (
-                    <p className="text-xs font-medium text-[var(--color-ink-dim)] mt-3 pl-1">
-                        Refining inside your shortlist · or{" "}
+                    <p className="text-xs font-medium text-[var(--color-ink-dim)] mt-3 pl-1 leading-relaxed">
+                        ProductFindAI keeps your first search in mind and adds your new detail.{" "}
                         <button
                             type="button"
                             onClick={resetSearch}
                             className="text-[var(--color-plum)] hover:text-[var(--color-rose)] hover:underline transition-colors font-semibold"
                         >
-                            start a fresh search
+                            Start fresh anytime.
                         </button>
                     </p>
                 )}
@@ -391,9 +436,21 @@ export function SearchBox() {
             {/* ── RESULTS ── */}
             {results && !loading && (
                 <div className="mt-12 animate-fade-in-up">
-                    <p className="text-[11px] text-[var(--color-surface-dim)] mb-3 pl-2 leading-relaxed">
-                        Heads-up: links below are affiliate links. As an Amazon Associate we earn from qualifying purchases — at no extra cost to you.
-                    </p>
+                    <div className="text-[11px] text-[var(--color-surface-dim)] mb-4 pl-2 leading-relaxed space-y-1.5">
+                        <p>
+                            Links below are affiliate links. As an Amazon Associate I earn from qualifying purchases.
+                        </p>
+                        {results.enriched && (
+                            <>
+                                <p>
+                                    Product prices and availability are accurate as of the date/time indicated and are subject to change. Any price and availability information displayed on Amazon.com at the time of purchase will apply to the purchase of this product. Search time: {formatSearchTime(results.fetchedAt)}.
+                                </p>
+                                <p>
+                                    CERTAIN CONTENT THAT APPEARS ON THIS SITE COMES FROM AMAZON. THIS CONTENT IS PROVIDED &quot;AS IS&quot; AND IS SUBJECT TO CHANGE OR REMOVAL AT ANY TIME.
+                                </p>
+                            </>
+                        )}
+                    </div>
                     <div className="mb-10 text-center sm:text-left pl-2">
                         <p className="font-display text-xl font-bold text-[var(--color-surface)] leading-relaxed">{results.summary}</p>
                         <p className="text-sm font-medium text-[var(--color-surface-dim)] mt-3 flex items-center gap-2 justify-center sm:justify-start flex-wrap">
@@ -433,6 +490,8 @@ export function SearchBox() {
                     <div className="space-y-6">
                         {results.products.slice(0, showAll ? undefined : 5).map((product) => {
                             const isInCompare = compareSet.has(product.rank);
+                            const hasVerifiedPrice = product.verified && !!product.priceEstimate;
+                            const hasVerifiedRating = product.verified && product.rating > 0;
                             return (
                             <article
                                 key={product.rank}
@@ -479,15 +538,19 @@ export function SearchBox() {
                                                 shown when it comes live from the Product Advertising API.
                                                 Until PA-API is live (verified === true) we show neither —
                                                 no AI-estimated numbers presented as Amazon's. */}
-                                            {product.verified ? (
+                                            {hasVerifiedPrice || hasVerifiedRating ? (
                                                 <>
-                                                    <span
-                                                        className="font-mono tnum text-2xl sm:text-[28px] font-bold text-[var(--color-surface)] tracking-tight"
-                                                        title="Live Amazon price"
-                                                    >
-                                                        {product.priceEstimate}
-                                                    </span>
-                                                    <StarRating rating={product.rating} reviewCount={product.reviewCount} verified={product.verified} />
+                                                    {hasVerifiedPrice && (
+                                                        <span
+                                                            className="font-mono tnum text-2xl sm:text-[28px] font-bold text-[var(--color-surface)] tracking-tight"
+                                                            title="Live Amazon price"
+                                                        >
+                                                            {product.priceEstimate}
+                                                        </span>
+                                                    )}
+                                                    {hasVerifiedRating && (
+                                                        <StarRating rating={product.rating} reviewCount={product.reviewCount} verified={product.verified} />
+                                                    )}
                                                 </>
                                             ) : (
                                                 <span className="text-sm font-semibold text-[var(--color-surface-dim)]">

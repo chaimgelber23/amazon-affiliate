@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
     title: "Privacy Policy",
-    description: "ProductFindAI privacy policy — what we collect, what we don't, and how the Chrome extension works.",
+    description: "ProductFindAI privacy policy - what we collect, what we don't collect, and how Amazon affiliate links work.",
     alternates: { canonical: "/privacy" },
 };
 
@@ -45,25 +45,28 @@ export default function PrivacyPage() {
                             Amazon via the official <strong>Amazon Product Advertising API 5.0</strong> under
                             our Associates account. We do <strong>not</strong> scrape Amazon pages or extract
                             data from the Amazon website. PA-API responses are cached in our database for up
-                            to 24 hours to reduce load and improve response time.
+                            to 1 hour to reduce load and improve response time.
                         </p>
                     </section>
 
                     <section>
                         <h2 className="text-lg font-bold text-[var(--color-surface)] mb-3">Cookies &amp; Local Storage</h2>
                         <p>
-                            ProductFindAI uses browser session storage to cache your recent search results for faster
-                            repeat searches. This data stays on your device and is cleared when you close your
-                            browser tab. We do not use tracking cookies, pixels, or third-party analytics.
+                            ProductFindAI uses browser session storage to cache non-verified recent search results
+                            for faster repeat searches. Search results that include Amazon Product Advertising API
+                            data are not cached in browser session storage. Session storage stays on your device
+                            and is cleared when you close your browser tab. We do not use tracking cookies, pixels,
+                            or third-party analytics.
                         </p>
                     </section>
 
                     <section>
                         <h2 className="text-lg font-bold text-[var(--color-surface)] mb-3">Amazon Affiliate Links</h2>
                         <p>
-                            Product links include our Amazon Associates tracking tag. When you click a link and
-                            make a purchase on Amazon, we earn a commission at no extra cost to you. Rates
-                            vary by category (1-10%) per Amazon&apos;s published rate card:{" "}
+                            Product links include our Amazon Associates tracking tag. As an Amazon Associate I
+                            earn from qualifying purchases. ProductFindAI may earn a commission when you click a
+                            link and make a purchase on Amazon, at no extra cost to you. Current rate information
+                            is published by Amazon:{" "}
                             <a
                                 href="https://affiliate-program.amazon.com/help/node/topic/GRXPHT8U84RAYDXZ"
                                 target="_blank"
@@ -86,38 +89,12 @@ export default function PrivacyPage() {
                         </p>
                     </section>
 
-                    <section>
-                        <h2 className="text-lg font-bold text-[var(--color-surface)] mb-3">Chrome Extension</h2>
+                    <section id="chrome-extension">
+                        <h2 className="text-lg font-bold text-[var(--color-surface)] mb-3">Chrome Extension Status</h2>
                         <p>
-                            The ProductFindAI Chrome extension runs on <code>https://www.amazon.com/s*</code>{" "}
-                            (Amazon search result pages) only. When installed, it:
-                        </p>
-                        <ul className="list-disc pl-5 mt-2 space-y-1">
-                            <li>
-                                Injects a floating ProductFindAI button onto Amazon search pages. Clicking the button
-                                opens an in-page iframe with our search widget.
-                            </li>
-                            <li>
-                                The search widget sends queries <em>you explicitly type</em> to our API at{" "}
-                                <code>productfindai.com/api/search</code>. It does <strong>not</strong>{" "}
-                                automatically read the Amazon search input field, browsing history, or any
-                                other page content.
-                            </li>
-                            <li>
-                                Uses <code>chrome.storage.local</code> to remember your last query and results
-                                between popup openings. This data never leaves your device.
-                            </li>
-                            <li>
-                                When you are browsing on Amazon and click a recommended product, the extension
-                                opens the link <strong>without</strong> our affiliate tag to avoid a
-                                self-referral — affiliate commissions apply only when you click from our
-                                website or from the extension toolbar popup on a non-Amazon tab.
-                            </li>
-                        </ul>
-                        <p className="mt-2">
-                            The extension does <strong>not</strong> access or read the content of other
-                            websites, tabs, or your browsing history. Permissions are scoped to the Amazon
-                            search path only.
+                            The Chrome extension is paused while ProductFindAI completes Amazon Associates
+                            approval. The approval-facing website works in the browser and does not require an
+                            extension.
                         </p>
                     </section>
 

@@ -3,14 +3,14 @@ import { ShieldCheck, Search, Eye, Heart, Zap, TrendingUp } from "lucide-react";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-    title: "About ProductFindAI — Save time on Amazon research",
+    title: "About ProductFindAI - Save time on Amazon research",
     description:
-        "ProductFindAI is a small AI tool that gives you a curated shortlist of Amazon products so you spend less time digging through listings. We earn an Amazon affiliate commission when you buy through our links — same price for you.",
+        "ProductFindAI gives you a curated shortlist of Amazon products so you spend less time digging through listings. As an Amazon Associate I earn from qualifying purchases.",
     alternates: {
         canonical: "/about",
     },
     openGraph: {
-        title: "About ProductFindAI — Save time on Amazon research",
+        title: "About ProductFindAI - Save time on Amazon research",
         description:
             "A small AI tool that turns 'standing desk under $300' into a six-pick shortlist with a one-line take on each.",
     },
@@ -21,27 +21,27 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://productfindai.com"
 const ABOUT_FAQS: { q: string; a: string }[] = [
     {
         q: "How is ProductFindAI different from Wirecutter or NerdWallet?",
-        a: "Wirecutter and NerdWallet rank a small fixed set of products their editors have tested. ProductFindAI generates a fresh shortlist from any Amazon search you type, in any category, using AI plus live Amazon Product Advertising API data. We don't claim to test products in a lab — we filter the noise.",
+        a: "Wirecutter and NerdWallet publish fixed editorial picks. ProductFindAI creates a shortlist from the Amazon search you type, then uses Amazon Product Advertising API data when it is available. We do not claim lab testing. We show why each pick may fit and send you to Amazon to confirm current details.",
     },
     {
         q: "Are the recommendations independent or paid?",
-        a: "Independent. No seller pays for placement. ProductFindAI earns a standard Amazon Associates referral fee (typically 1–4.5%) when you buy through our links — the same Amazon affiliate program any blog or review site uses. The price you pay on Amazon is identical with or without our link.",
+        a: "No seller pays for placement. As an Amazon Associate I earn from qualifying purchases. ProductFindAI may earn a referral fee when you buy through links on this site, at no extra cost to you.",
     },
     {
         q: "Do you show prices and ratings, or is the AI making them up?",
         a: "The AI's job is picking which products to show. We do not present a price or star rating as Amazon's unless it comes live from Amazon's Product Advertising API at search time. Until that live data is connected, we leave the numbers off and link you to the product on Amazon so you confirm the current price and rating there.",
     },
     {
-        q: "What does the Chrome extension do?",
-        a: "The free Chrome extension overlays a one-line take on Amazon listings as you browse. It tells you whether a product is over-rated for the price, under-rated, or fairly priced based on the same AI signal we use to build shortlists. You don't need an account.",
+        q: "Can I refine a search after I see results?",
+        a: "Yes. Search once, then add details in the same search bar. ProductFindAI keeps the first search in mind and updates the same list. You can also start fresh anytime.",
     },
     {
         q: "Is ProductFindAI free?",
-        a: "Yes. Search is free, the Chrome extension is free, and there's nothing to sign up for. The Amazon Associates referral fee on purchases is what funds the site.",
+        a: "Yes. Search is free and there is nothing to sign up for. Amazon Associates referral fees help fund the site.",
     },
     {
         q: "Why don't you cover Walmart, Target, or other retailers?",
-        a: "Amazon has the largest product catalog and the most consistent live data feed, so we focused there to keep the verification step honest. Adding other retailers would mean introducing data sources of varying reliability — for now, ProductFindAI is Amazon-only by design.",
+        a: "ProductFindAI is focused on Amazon so the links and product data can stay tied to one official source. Other retailers may come later, but this site is Amazon-only today.",
     },
 ];
 
@@ -111,7 +111,7 @@ export default function AboutPage() {
                         <span className="italic text-[var(--color-plum)]">time on research</span>.
                     </h1>
                     <p className="mt-7 text-base sm:text-lg text-[var(--color-ink-muted)] max-w-xl mx-auto leading-relaxed">
-                        Finding the right product on Amazon can be difficult. ProductFindAI reads through the listings in your category and hands you a six-pick shortlist with a one-line take on each — so you spend a minute deciding instead of an afternoon.
+                        Finding the right product on Amazon can be difficult. ProductFindAI reads through the listings in your category and hands you a short ranked list with a one-line take on each, so you spend less time sorting through lookalike products.
                     </p>
                 </div>
 
@@ -121,26 +121,24 @@ export default function AboutPage() {
                     <div className="space-y-6 text-sm text-[var(--color-surface-muted)] leading-relaxed">
                         <p>
                             <strong className="text-[var(--color-ink)]">You search.</strong> Tell us what you&apos;re
-                            looking for — &quot;best wireless headphones under $200&quot; or &quot;standing desk
-                            for a small apartment.&quot; Anything.
+                            looking for: &quot;best wireless headphones under $200&quot; or &quot;standing desk
+                            for a small apartment.&quot; Plain-language searches work.
                         </p>
                         <p>
                             <strong className="text-[var(--color-ink)]">AI shortlists.</strong> Our AI builds
-                            a shortlist of products in your category and ranks them by what it
-                            knows about typical specs, common complaints, and reasonable price
-                            bands. We then verify each pick against live Amazon data (title,
-                            price, image, rating, review count) through Amazon&apos;s official
-                            Product Advertising API before showing it to you.
+                            a shortlist of products in your category and ranks them by typical
+                            specs, common complaints, and reasonable price bands. When live
+                            Amazon data is available, we use Amazon&apos;s official Product Advertising
+                            API for product titles, images, prices, ratings, and review counts.
                         </p>
                         <p className="text-xs text-[var(--color-surface-dim)] italic">
-                            What the AI is not: a price tracker, a review aggregator, or a
-                            return-rate database. It&apos;s a shortlist generator, verified
-                            against live PA-API data at search time.
+                            ProductFindAI is a shortlist generator. It does not track prices,
+                            aggregate reviews, or collect return-rate data.
                         </p>
                         <p>
                             <strong className="text-[var(--color-ink)]">You buy on Amazon.</strong> Click the link
-                            and buy directly on your own Amazon account. Same prices. Same Prime
-                            shipping. Same everything. We just helped you skip the noise.
+                            and buy directly on your own Amazon account. Amazon controls the price,
+                            shipping, returns, and customer service.
                         </p>
                     </div>
                 </div>
@@ -156,17 +154,17 @@ export default function AboutPage() {
                         {
                             icon: Eye,
                             title: "Transparent",
-                            desc: "We earn a small Amazon commission when you buy through us. Same price for you.",
+                            desc: "As an Amazon Associate I earn from qualifying purchases, at no extra cost to you.",
                         },
                         {
                             icon: Search,
                             title: "Comprehensive",
-                            desc: "We search every category on Amazon. No product is off limits.",
+                            desc: "Use plain-language searches across everyday Amazon categories.",
                         },
                         {
                             icon: Heart,
                             title: "Honest",
-                            desc: "Every product has cons. If something's popular but bad, we'll tell you.",
+                            desc: "Every pick includes trade-offs so you can see the catch before you click.",
                         },
                     ].map(({ icon: Icon, title, desc }) => (
                         <div key={title} className="card p-5 flex gap-4 items-start">
@@ -188,11 +186,10 @@ export default function AboutPage() {
                         How we make money
                     </h3>
                     <p className="text-sm text-[var(--color-surface-muted)] leading-relaxed">
-                        ProductFindAI is part of the Amazon Associates program. When you click a product
-                        link and buy something on Amazon, we earn a small referral fee (typically
-                        1-4.5%). This costs you absolutely nothing extra — you pay the same Amazon
-                        price. This commission is what keeps ProductFindAI free to use and allows us to
-                        keep improving the AI.
+                        ProductFindAI is part of the Amazon Associates program. As an Amazon Associate I
+                        earn from qualifying purchases. ProductFindAI may earn a referral fee when you buy
+                        through links on this site, at no extra cost to you. The commission helps keep
+                        ProductFindAI free to use.
                     </p>
                 </div>
 

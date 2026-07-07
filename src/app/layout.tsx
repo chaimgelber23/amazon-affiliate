@@ -45,7 +45,7 @@ export const metadata: Metadata = {
         template: "%s | ProductFindAI",
     },
     description:
-        "We do the product research you would spend an evening on. Type what you want and ProductFindAI digs through the whole category, budget to premium, reads past the keyword-stuffed titles, and ranks about 7 real contenders with the catch on each. No sponsored slots. No seller pays to rank. Refine in place without starting over.",
+        "Type what you want and ProductFindAI returns a short ranked list with the catch on each pick. Refine in place without starting over.",
     metadataBase: new URL(siteUrl),
     manifest: "/manifest.json",
     appleWebApp: {
@@ -59,14 +59,14 @@ export const metadata: Metadata = {
         siteName: "ProductFindAI",
         title: "We do the product research. You get about 7 ranked picks.",
         description:
-            "The afternoon of tab-juggling, done for you. Type what you want and ProductFindAI digs through the whole category, budget to premium, reads past the keyword-stuffed titles, and ranks about 7 real contenders with the catch on each. No sponsored slots. No seller pays to rank. Refine in place without starting over.",
+            "Type what you want and ProductFindAI returns a short ranked list with the catch on each pick. Refine in place without starting over.",
         url: siteUrl,
     },
     twitter: {
         card: "summary_large_image",
         title: "We do the product research. You get about 7 ranked picks.",
         description:
-            "Type what you want. We dig through the whole category, budget to premium, read past the keyword-stuffed titles, and rank about 7 real contenders with the catch on each. No sponsored slots. No seller pays to rank. Refine in place without starting over.",
+            "Type what you want and ProductFindAI returns a short ranked list with the catch on each pick. Refine in place without starting over.",
     },
     robots: {
         index: true,
@@ -106,7 +106,7 @@ function JsonLd() {
                 url: siteUrl,
                 name: "ProductFindAI",
                 description:
-                    "Cut through the keyword-stuffed Amazon listings. Tell ProductFindAI what you want, get the one to buy.",
+                    "Tell ProductFindAI what you want and get a short ranked list to compare before you click through to Amazon.",
                 potentialAction: {
                     "@type": "SearchAction",
                     target: {
@@ -123,12 +123,7 @@ function JsonLd() {
                 legalName: "SYE Group LLC",
                 url: siteUrl,
                 description:
-                    "ProductFindAI cuts through Amazon's noise to find products actually worth buying using AI.",
-                sameAs: [
-                    "https://chrome.google.com/webstore",
-                    "https://seohandoff.com",
-                    "https://aisecretaryhelp.com",
-                ],
+                    "ProductFindAI creates short ranked Amazon product lists from plain-language searches.",
                 contactPoint: {
                     "@type": "ContactPoint",
                     contactType: "customer support",
@@ -145,7 +140,7 @@ function JsonLd() {
                         name: "How is ProductFindAI different from Wirecutter or NerdWallet?",
                         acceptedAnswer: {
                             "@type": "Answer",
-                            text: "Wirecutter and NerdWallet rank a small fixed set of products their editors have tested. ProductFindAI generates a fresh shortlist from any Amazon search you type, in any category, using AI, then links you to the product on Amazon to confirm the current price and rating.",
+                            text: "Wirecutter and NerdWallet publish fixed editorial picks. ProductFindAI creates a shortlist from the Amazon search you type, then uses Amazon Product Advertising API data when it is available. We show why each pick may fit and send you to Amazon to confirm current details.",
                         },
                     },
                     {
@@ -153,7 +148,7 @@ function JsonLd() {
                         name: "Are the recommendations independent or paid?",
                         acceptedAnswer: {
                             "@type": "Answer",
-                            text: "Independent. No seller pays for placement. ProductFindAI earns a standard Amazon Associates referral fee when you buy through our links — the same Amazon affiliate program any blog or review site uses. The price you pay on Amazon is identical with or without our link.",
+                            text: "No seller pays for placement. As an Amazon Associate I earn from qualifying purchases. ProductFindAI may earn a referral fee when you buy through links on this site, at no extra cost to you.",
                         },
                     },
                     {
@@ -169,7 +164,7 @@ function JsonLd() {
                         name: "Is ProductFindAI free?",
                         acceptedAnswer: {
                             "@type": "Answer",
-                            text: "Yes. Search is free, the Chrome extension is free, and there's nothing to sign up for. The Amazon Associates referral fee on purchases is what funds the site.",
+                            text: "Yes. Search is free and there is nothing to sign up for. Amazon Associates referral fees help fund the site.",
                         },
                     },
                 ],
@@ -197,7 +192,7 @@ function JsonLd() {
                         "@type": "HowToStep",
                         position: 3,
                         name: "Click through to Amazon",
-                        text: "Click any card to go to the product on Amazon and confirm the current price and rating before you buy, at the same price you'd pay anywhere.",
+                        text: "Click any card to go to Amazon and confirm the current price, rating, availability, shipping, and return details before you buy.",
                     },
                 ],
             },

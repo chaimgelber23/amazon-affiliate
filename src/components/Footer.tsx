@@ -4,12 +4,12 @@ export function Footer() {
     return (
         <footer className="bg-[var(--color-bg-warm)] border-t border-[var(--color-border)] mt-auto relative z-10">
 
-            {/* Affiliate Disclosure — exact phrase required by Amazon Associates Operating Agreement */}
+            {/* Affiliate Disclosure - exact phrase required by Amazon Associates Operating Agreement */}
             <div className="bg-[var(--color-bg-card-solid)]/60 border-b border-[var(--color-border)] px-6 py-4">
                 <p className="max-w-5xl mx-auto text-xs text-[var(--color-ink-muted)] font-medium text-center leading-relaxed">
                     <strong className="text-[var(--color-ink)]">Affiliate Disclosure:</strong>{" "}
-                    As an Amazon Associate we earn from qualifying purchases.
-                    ProductFindAI earns a small commission when you buy through our links, at no extra cost to you.
+                    As an Amazon Associate I earn from qualifying purchases.
+                    ProductFindAI may earn a commission when you buy through links on this site, at no extra cost to you.
                 </p>
             </div>
 
@@ -38,7 +38,7 @@ export function Footer() {
                             {[
                                 { label: "Home", href: "/" },
                                 { label: "About", href: "/about" },
-                                { label: "Chrome extension", href: "/extension" },
+                                { label: "How it works", href: "/#how-it-works" },
                             ].map((link) => (
                                 <li key={link.href}>
                                     <Link
@@ -70,7 +70,7 @@ export function Footer() {
                                 Amazon and the Amazon logo are trademarks of Amazon.com, Inc.
                             </li>
                             <li className="text-[12px] text-[var(--color-ink-dim)] leading-relaxed">
-                                Prices and availability accurate at time of search; subject to change at Amazon.
+                                Certain content that appears on this site comes from Amazon. This content is provided &quot;as is&quot; and is subject to change or removal at any time.
                             </li>
                         </ul>
                     </div>

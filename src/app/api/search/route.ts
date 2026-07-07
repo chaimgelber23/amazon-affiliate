@@ -34,9 +34,11 @@ function isQuotaError(msg: string): boolean {
 // for 24h. Saves Gemini quota; PA-API enrichment still re-runs (cached 1h).
 const AI_CACHE_TTL_HOURS = 24;
 
-// Allow Chrome extension and other origins to call this API
+const SITE_ORIGIN = process.env.NEXT_PUBLIC_SITE_URL || "https://productfindai.com";
+
+// Same-origin website calls do not need CORS. This is only for explicit frontends.
 const CORS = {
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin": SITE_ORIGIN,
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
 };
@@ -556,8 +558,8 @@ export async function POST(req: NextRequest) {
             whyThisPick: p.whyThisPick as string,
             pros: p.pros as string[],
             cons: p.cons as string[],
-            priceEstimate: p.amazonData?.price || (p.priceEstimate as string),
-            rating: p.amazonData?.rating || (p.rating as number),
+            priceEstimate: p.amazonData?.price ?? "",
+            rating: typeof p.amazonData?.rating === "number" ? p.amazonData.rating : 0,
             category: p.category as string,
             imageUrl: p.amazonData?.imageUrl,
             reviewCount: p.amazonData?.reviewCount,
@@ -577,16 +579,17 @@ export async function POST(req: NextRequest) {
                 whyThisPick: p.whyThisPick,
                 pros: p.pros,
                 cons: p.cons,
-                priceEstimate: p.priceEstimate,
-                rating: p.rating,
+                priceEstimate: p.verified ? p.priceEstimate : "",
+                rating: p.verified ? p.rating : 0,
                 category: p.category,
-                imageUrl: p.imageUrl,
-                reviewCount: p.reviewCount,
+                imageUrl: p.verified ? p.imageUrl : undefined,
+                reviewCount: p.verified ? p.reviewCount : undefined,
                 verified: p.verified,
                 tier: p.tier,
                 confidence: p.confidence,
             })),
             enriched: reranked.some((p) => p.verified),
+            fetchedAt: new Date().toISOString(),
             meta: { model: modelUsed, cached: cacheHit, grounded },
         };
 

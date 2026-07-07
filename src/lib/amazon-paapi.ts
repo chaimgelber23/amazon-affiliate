@@ -209,7 +209,7 @@ function normalizeItem(item: any, partnerTag: string): AmazonProduct | null {
 /**
  * Search Amazon via Product Advertising API 5.0.
  *
- * - Caches identical calls for 24h in Supabase (`pf_paapi_cache`).
+ * - Caches identical calls for 1 hour in Supabase (`pf_paapi_cache`).
  * - Enforces 1 TPS locally; retries ONCE after 2s on a 429/TooManyRequests.
  * - Throws if PA-API credentials are missing (never silently scrapes).
  *

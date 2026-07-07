@@ -31,13 +31,13 @@ const TRENDING_QUERIES: { category: string; query: string; blurb: string; take: 
         category: "Workspace",
         query: "electric standing desk",
         blurb: "Dual-motor sit/stand desks under $400 with strong warranty coverage.",
-        take: "Skip the single-motor under-$200 desks — they wobble and the lift wears out inside a year.",
+        take: "Check lift stability, warranty coverage, and return policy before chasing the lowest price.",
     },
     {
         category: "Audio",
         query: "wireless noise cancelling headphones",
         blurb: "Over-ear ANC headphones for travel and focus work.",
-        take: "The flagship Sony and Bose models are 90% as good for half the price. Don't overpay for the latest revision.",
+        take: "Compare comfort, battery life, and return policy. Small fit issues matter after an hour.",
     },
     {
         category: "Kitchen",
@@ -78,24 +78,6 @@ async function loadTrending(): Promise<TrendingPick[]> {
         results.push({ ...slot, product });
     }
     return results;
-}
-
-function StarRating({ rating, reviewCount }: { rating?: number; reviewCount?: number }) {
-    if (typeof rating !== "number") return null;
-    const full = Math.floor(rating);
-    return (
-        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--color-ink-dim)]">
-            <span className="inline-flex gap-px" aria-hidden="true">
-                {Array.from({ length: 5 }).map((_, i) => (
-                    <span key={i} className={i < full ? "text-amber-500" : "text-[var(--color-bg-elevated)]"}>★</span>
-                ))}
-            </span>
-            <span className="font-mono tnum text-[var(--color-ink-muted)]">{rating.toFixed(1)}</span>
-            {typeof reviewCount === "number" && (
-                <span className="font-mono tnum text-[var(--color-ink-dim)]">({reviewCount.toLocaleString()})</span>
-            )}
-        </span>
-    );
 }
 
 function EditorialCard({ pick, featured = false }: { pick: TrendingPick; featured?: boolean }) {
@@ -147,17 +129,6 @@ function EditorialCard({ pick, featured = false }: { pick: TrendingPick; feature
                 <h3 className={`font-display font-medium text-[var(--color-ink)] leading-tight tracking-tight line-clamp-2 ${featured ? "text-2xl sm:text-3xl" : "text-lg"}`}>
                     {title}
                 </h3>
-
-                {product && (
-                    <div className="flex items-center gap-3 mt-3 flex-wrap">
-                        {product.price && (
-                            <span className="font-mono tnum text-base font-semibold text-[var(--color-ink)]">
-                                {product.price}
-                            </span>
-                        )}
-                        <StarRating rating={product.rating} reviewCount={product.reviewCount} />
-                    </div>
-                )}
 
                 {/* What to look for — generic category guidance, not a product endorsement.
                     Frames the line as "what to evaluate" rather than "we picked this". */}
@@ -223,8 +194,8 @@ export async function TrendingProducts() {
                             These are example categories with a one-line note on what to look for. Run any of them through the search bar above to get a real, AI-generated shortlist.
                         </p>
                     </div>
-                    <p className="text-xs text-[var(--color-ink-dim)] leading-relaxed max-w-[18rem]">
-                        As an Amazon Associate we earn from qualifying purchases. Prices and availability update at Amazon — click to see current.
+                    <p className="text-xs text-[var(--color-ink-dim)] leading-relaxed max-w-[22rem]">
+                        As an Amazon Associate I earn from qualifying purchases. CERTAIN CONTENT THAT APPEARS ON THIS SITE COMES FROM AMAZON. THIS CONTENT IS PROVIDED &quot;AS IS&quot; AND IS SUBJECT TO CHANGE OR REMOVAL AT ANY TIME.
                     </p>
                 </div>
 

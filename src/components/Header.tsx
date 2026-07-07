@@ -35,20 +35,16 @@ export function Header() {
 
                     <nav className="hidden md:flex items-center gap-8">
                         <Link
+                            href="/#how-it-works"
+                            className="text-[14px] font-medium text-[var(--color-ink-muted)] hover:text-[var(--color-ink)] transition-colors"
+                        >
+                            How it works
+                        </Link>
+                        <Link
                             href="/about"
                             className="text-[14px] font-medium text-[var(--color-ink-muted)] hover:text-[var(--color-ink)] transition-colors"
                         >
                             About
-                        </Link>
-                        <Link
-                            href="/extension"
-                            className="inline-flex items-center gap-2 text-[14px] font-semibold text-[var(--color-ink)] bg-[var(--color-bg-card-solid)] border border-[var(--color-border-strong)] hover:border-[var(--color-plum)] hover:text-[var(--color-plum)] px-4 py-2 rounded-full transition-all shadow-[0_2px_6px_-2px_rgba(91,33,182,0.10)]"
-                        >
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                                <circle cx="12" cy="12" r="10" />
-                                <circle cx="12" cy="12" r="3.5" />
-                            </svg>
-                            Get the Chrome extension
                         </Link>
                     </nav>
 
@@ -65,18 +61,18 @@ export function Header() {
                 {mobileOpen && (
                     <nav className="md:hidden border-t border-[var(--color-border)] bg-[var(--color-bg)]/95 backdrop-blur-xl px-5 py-4 space-y-1">
                         <Link
+                            href="/#how-it-works"
+                            className="flex items-center text-[15px] font-medium text-[var(--color-ink-muted)] hover:text-[var(--color-ink)] min-h-[44px]"
+                            onClick={() => setMobileOpen(false)}
+                        >
+                            How it works
+                        </Link>
+                        <Link
                             href="/about"
                             className="flex items-center text-[15px] font-medium text-[var(--color-ink-muted)] hover:text-[var(--color-ink)] min-h-[44px]"
                             onClick={() => setMobileOpen(false)}
                         >
                             About
-                        </Link>
-                        <Link
-                            href="/extension"
-                            className="flex items-center gap-2 text-[15px] font-semibold text-[var(--color-ink)] min-h-[44px]"
-                            onClick={() => setMobileOpen(false)}
-                        >
-                            Get the Chrome extension
                         </Link>
                     </nav>
                 )}
