@@ -1,8 +1,8 @@
 import { TrendingProducts } from "@/components/TrendingProducts";
 import { HeroShowcase } from "@/components/HeroShowcase";
 
-// Re-render the home page (and refresh trending PA-API data) every 30 min.
-// Stays well under PA-API's 1-hour price-cache ceiling.
+// Re-render the home page (and refresh official Amazon data) every 30 min.
+// Stays well under Amazon's 1-hour price-bearing content cache ceiling.
 export const revalidate = 1800;
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://productfindai.com";
@@ -118,7 +118,7 @@ export default function HomePage() {
                 </div>
             </section>
 
-            {/* ── EDITORIAL TRENDING — server-rendered, real PA-API or fallback search-link cards ── */}
+            {/* ── EDITORIAL TRENDING — server-rendered, official Amazon data or fallback search-link cards ── */}
             <TrendingProducts />
 
         </div>

@@ -7,7 +7,6 @@
         "build": "next build",
         "start": "next start",
         "lint": "eslint .",
-
         "prepare": "git config core.hooksPath .githooks 2>/dev/null || true"
     },
     "dependencies": {
@@ -17,7 +16,6 @@
         "@supabase/supabase-js": "^2.49.0",
         "ai": "^6.0.116",
         "amazon-paapi": "^1.1.0",
-        "cheerio": "^1.2.0",
         "lucide-react": "^0.469.0",
         "next": "^15.1.0",
         "react": "^19.0.0",

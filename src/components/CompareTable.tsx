@@ -143,8 +143,8 @@ export function CompareTable({
                     </thead>
 
                     <tbody className="text-sm">
-                        {/* Price row — Associates compliance: only show a price that comes
-                            live from PA-API (verified). Otherwise point to Amazon. */}
+                        {/* Price row: only show a price that comes from Amazon's official
+                            product API (verified). Otherwise point to Amazon. */}
                         <CompareRow label="Price">
                             {cols.map((p) => (
                                 <td key={p.rank} className="p-4 align-top border-x border-b border-[var(--color-border)] bg-[var(--color-bg-card-solid)]">
@@ -162,7 +162,7 @@ export function CompareTable({
                             ))}
                         </CompareRow>
 
-                        {/* Rating row — same compliance rule as price. */}
+                        {/* Rating row: same compliance rule as price. */}
                         <CompareRow label="Rating">
                             {cols.map((p) => (
                                 <td key={p.rank} className="p-4 align-top border-x border-b border-[var(--color-border)] bg-[var(--color-bg-card-solid)]">

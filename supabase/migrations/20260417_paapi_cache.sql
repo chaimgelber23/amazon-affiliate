@@ -1,17 +1,16 @@
 -- ============================================
--- PureFind — PA-API Response Cache
+-- PureFind - Official Amazon Product API Response Cache
 -- ============================================
 -- Applied: 2026-04-17
 --
--- Amazon Product Advertising API 5.0 has tight throttling
--- (1 TPS default, scales with revenue). Caching identical
--- SearchItems calls for 24h keeps us under throttle during
--- traffic spikes and avoids duplicate billing events.
+-- Amazon official product APIs are quota-limited. Caching identical SearchItems
+-- calls for up to 1 hour keeps us under throttle while respecting the freshness
+-- window for price-bearing product content.
 --
 -- query_hash = sha256(lowercase(trim(query)) + "|" + searchIndex + "|" + itemCount)
 --
--- Reads auto-evict rows older than 24h via the WHERE clause
--- in `getPaapiCache()`; a weekly cron sweep removes old rows.
+-- Reads refuse rows older than 1 hour; the app also best-effort deletes stale
+-- rows. This helper is kept for manual or scheduled cleanup.
 -- ============================================
 
 CREATE TABLE IF NOT EXISTS pf_paapi_cache (
@@ -31,14 +30,14 @@ ALTER TABLE pf_paapi_cache ENABLE ROW LEVEL SECURITY;
 -- No policies = denied for non-service-role clients.
 -- The API route uses SUPABASE_SERVICE_ROLE_KEY which bypasses RLS.
 
--- Helper: one-shot eviction sweep (run weekly via cron).
+-- Helper: one-shot eviction sweep.
 CREATE OR REPLACE FUNCTION evict_stale_paapi_cache()
 RETURNS INTEGER AS $$
 DECLARE
   rows_deleted INTEGER;
 BEGIN
   DELETE FROM pf_paapi_cache
-   WHERE created_at < NOW() - INTERVAL '24 hours';
+   WHERE created_at < NOW() - INTERVAL '1 hour';
   GET DIAGNOSTICS rows_deleted = ROW_COUNT;
   RETURN rows_deleted;
 END;

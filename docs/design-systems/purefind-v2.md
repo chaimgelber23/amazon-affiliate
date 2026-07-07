@@ -116,12 +116,12 @@ UX affordances:
 `src/components/TrendingProducts.tsx`. Server-rendered for compliance (Amazon Associates wants curated specific products visible on landing). Magazine layout — 1 featured (lg:col-span-2 lg:row-span-2) + 5 secondary cards.
 
 Each card has:
-- Image area (16:10 featured, 4:3 secondary) — PA-API product image, falls back to placeholder
+- Image area (16:10 featured, 4:3 secondary) — official Amazon product image, falls back to placeholder
 - "Editor's take" — Wirecutter-style hand-written one-liner
 - Category blurb
 - Affiliate-link CTA
 
-PA-API graceful fallback preserved: if creds missing or PA-API errors, falls back to search-link cards (still affiliate-tagged).
+Official Amazon product API fallback preserved: if creds are missing or API calls error, falls back to search-link cards (still affiliate-tagged).
 
 ## Component contracts changed
 
@@ -140,8 +140,8 @@ All 18 points from `/amazon-associates-compliance-audit` pass code-side as of th
 - Disclosure exact phrase appears **above the search bar** (page.tsx:104), above results (SearchBox.tsx:367), in TrendingProducts masthead (216), and in footer (Footer.tsx:11)
 - No misleading AI claims (greps for "return rate", "expert curation", "review pattern", "price history", "verified seller" all return zero)
 - No hero product imagery (Chaim's call) — replaced with abstract organic loop, no compliance risk on demo content labeling
-- PA-API price cache stays 30min (page-level `revalidate = 1800`), well under 1h ceiling
-- Legacy cheerio scraper (`amazon-lookup.legacy.ts`) confirmed unimported by any active code
+- Official Amazon price-bearing content cache stays 30min at the page level (`revalidate = 1800`), under the 1h ceiling
+- Legacy scraper path removed; Amazon product content must come from official APIs only
 
 ## File map
 

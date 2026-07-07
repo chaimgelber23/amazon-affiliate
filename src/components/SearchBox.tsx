@@ -279,8 +279,6 @@ export function SearchBox({
                 priorProducts: results.products.map((p) => ({
                     rank: p.rank,
                     title: p.title,
-                    priceEstimate: p.verified && p.priceEstimate ? p.priceEstimate : undefined,
-                    rating: p.verified && p.rating > 0 ? p.rating : undefined,
                     category: p.category,
                 })),
             }
@@ -459,7 +457,7 @@ export function SearchBox({
                             {results.enriched && (
                                 <span
                                     className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold rounded-full"
-                                    title="Prices and ratings fetched live from Amazon's PA-API at search time"
+                                    title="Prices and ratings fetched from Amazon's official product API at search time"
                                 >
                                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                                     Live Amazon data
@@ -523,7 +521,7 @@ export function SearchBox({
                                             {product.verified && (
                                                 <span
                                                     className="px-2.5 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase tracking-[0.15em] rounded-md border border-emerald-200"
-                                                    title="Live data fetched from Amazon's Product Advertising API at search time"
+                                                    title="Live data fetched from Amazon's official product API at search time"
                                                 >
                                                     Live data
                                                 </span>
@@ -535,9 +533,9 @@ export function SearchBox({
 
                                         <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-3">
                                             {/* Amazon Associates compliance: a price or rating may only be
-                                                shown when it comes live from the Product Advertising API.
-                                                Until PA-API is live (verified === true) we show neither —
-                                                no AI-estimated numbers presented as Amazon's. */}
+                                                shown when it comes from Amazon's official product API.
+                                                Until verified === true we show neither — no AI-estimated
+                                                numbers presented as Amazon's. */}
                                             {hasVerifiedPrice || hasVerifiedRating ? (
                                                 <>
                                                     {hasVerifiedPrice && (

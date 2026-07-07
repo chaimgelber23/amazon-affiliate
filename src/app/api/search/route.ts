@@ -8,7 +8,7 @@ import { enrichProducts } from "@/lib/amazon-paapi";
 import { logSearch, logError } from "@/lib/analytics";
 
 // 60s ceiling — Pro+grounding can take 8-15s, Flash fallback adds another
-// 4-8s, PA-API enrichment up to 6s, Claude repair (rare) +3-5s. At 25s the
+// 4-8s, Amazon product-data enrichment up to 6s, Claude repair (rare) +3-5s. At 25s the
 // chain reliably timed out for cold queries.
 export const maxDuration = 60;
 
@@ -30,8 +30,9 @@ function isQuotaError(msg: string): boolean {
     return /429|RESOURCE_EXHAUSTED|quota|rate.?limit|Too Many Requests/i.test(msg);
 }
 
-// Server-side AI response cache TTL. Identical normalized query → same picks
-// for 24h. Saves Gemini quota; PA-API enrichment still re-runs (cached 1h).
+// Server-side AI response cache TTL. Identical normalized query -> same picks
+// for 24h. Saves Gemini quota; official Amazon enrichment still re-runs or
+// uses only its 1-hour server cache.
 const AI_CACHE_TTL_HOURS = 24;
 
 const SITE_ORIGIN = process.env.NEXT_PUBLIC_SITE_URL || "https://productfindai.com";
@@ -92,8 +93,6 @@ interface AIResponse {
 interface PriorProduct {
     rank: number;
     title: string;
-    priceEstimate?: string;
-    rating?: number;
     category?: string;
 }
 
@@ -108,8 +107,6 @@ function coercePriorProducts(raw: unknown): PriorProduct[] | null {
         out.push({
             rank: typeof o.rank === "number" ? o.rank : out.length + 1,
             title,
-            priceEstimate: typeof o.priceEstimate === "string" ? o.priceEstimate : undefined,
-            rating: typeof o.rating === "number" ? o.rating : undefined,
             category: typeof o.category === "string" ? o.category : undefined,
         });
     }
@@ -123,9 +120,9 @@ const BASE_RULES = `RULES:
 - Diversify across brands and use cases when relevant. Don't return 8 near-identical models from the same brand.
 - Be honest about cons. Every product has them. Pros and cons must be specific (not "great quality" or "good value").
 - ALWAYS use "SEARCH" for the asin field. Never guess or invent an ASIN — they change constantly and wrong ASINs break product links.
-- Price estimates should reflect typical Amazon pricing as of the current year, not historical pricing.
+- Leave priceEstimate as an empty string and rating as 0. Official Amazon API data fills those fields later when available.
 - The "whyThisPick" field: 1-2 sentences explaining why this beats the alternatives. Reference specific specs, reviewer consensus, or use-case fit — not vague praise.
-- For product titles, use the EXACT full product name as it appears on Amazon (brand + model + key specs). This is critical for PA-API matching.
+- For product titles, use the EXACT full product name as it appears on Amazon (brand + model + key specs). This is critical for official API matching.
 - Set "confidence" to "high" only when you'd recommend this to a friend without hesitation; "medium" if it's a reasonable pick with caveats; "low" if you're guessing. Be calibrated — overconfidence is a bug.
 - If you used Google Search to ground these picks, do NOT include citation markers, footnote numbers, or source URLs anywhere in the JSON. Use the search results to inform your reasoning silently. Output the JSON object only.`;
 
@@ -140,8 +137,8 @@ const JSON_SCHEMA_BLOCK = `JSON SCHEMA:
       "whyThisPick": "Why this is the best option",
       "pros": ["specific pro 1", "specific pro 2", "specific pro 3"],
       "cons": ["honest con 1", "honest con 2"],
-      "priceEstimate": "$XX.XX",
-      "rating": 4.5,
+      "priceEstimate": "",
+      "rating": 0,
       "category": "Category Name",
       "confidence": "high",
       "tier": "mid"
@@ -161,8 +158,6 @@ ${JSON_SCHEMA_BLOCK}`;
 function buildRefinementSystemPrompt(prior: PriorProduct[], originalQuery: string, newConstraint: string): string {
     const priorList = prior.slice(0, 8).map((p) => {
         const bits = [`${p.rank}. ${p.title}`];
-        if (p.priceEstimate) bits.push(`(${p.priceEstimate})`);
-        if (typeof p.rating === "number") bits.push(`★${p.rating}`);
         return bits.join(" ");
     }).join("\n");
 
@@ -267,7 +262,7 @@ async function repairJsonWithClaude(text: string): Promise<AIResponse | null> {
             messages: [
                 {
                     role: "user" as const,
-                    content: `Repair this into valid JSON matching {summary: string, products: Array<{rank, title, asin, whyThisPick, pros, cons, priceEstimate, rating, category, confidence?, tier?}>}. Preserve every product. Input:\n\n${text}`,
+                    content: `Repair this into valid JSON matching {summary: string, products: Array<{rank, title, asin, whyThisPick, pros, cons, priceEstimate, rating, category, confidence?, tier?}>}. Preserve every product. Use empty string for priceEstimate and 0 for rating unless already present. Input:\n\n${text}`,
                 },
             ],
         });
@@ -522,9 +517,8 @@ export async function POST(req: NextRequest) {
             }
         }
 
-        // Enrich with real Amazon data via PA-API 5.0 (ASINs, prices, images, ratings).
-        // The partner tag is sourced inside amazon-paapi.ts from AMAZON_PAAPI_PARTNER_TAG
-        // (falling back to NEXT_PUBLIC_AMAZON_TAG).
+        // Enrich with official Amazon data (ASINs, prices, images, ratings when available).
+        // Creators API is preferred; legacy PA-API is still supported as a fallback.
         const productsForEnrichment = aiData.products.map((p) => ({
             ...p,
             title: p.title,
@@ -535,10 +529,10 @@ export async function POST(req: NextRequest) {
         try {
             enriched = await enrichProducts(productsForEnrichment);
         } catch (paapiErr) {
-            const msg = paapiErr instanceof Error ? paapiErr.message : "PA-API call failed";
+            const msg = paapiErr instanceof Error ? paapiErr.message : "Amazon product API call failed";
             logError({
                 route: "/api/search",
-                error: `PA-API failure: ${msg}`,
+                error: `Amazon product API failure: ${msg}`,
                 ip,
                 extra: { query: userQuery },
             });

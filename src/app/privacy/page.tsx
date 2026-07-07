@@ -30,7 +30,7 @@ export default function PrivacyPage() {
                             </li>
                             <li>
                                 Request metadata: result count, whether the result was verified against Amazon&apos;s
-                                Product Advertising API, and the duration of the request.
+                                official product API, and the duration of the request.
                             </li>
                         </ul>
                         <p className="mt-2">
@@ -42,9 +42,9 @@ export default function PrivacyPage() {
                         <h2 className="text-lg font-bold text-[var(--color-surface)] mb-3">Amazon Product Data</h2>
                         <p>
                             Product details (titles, prices, images, ratings, review counts) are fetched from
-                            Amazon via the official <strong>Amazon Product Advertising API 5.0</strong> under
-                            our Associates account. We do <strong>not</strong> scrape Amazon pages or extract
-                            data from the Amazon website. PA-API responses are cached in our database for up
+                            Amazon via its official product APIs under our Associates account. We do{" "}
+                            <strong>not</strong> scrape Amazon pages or extract data from the Amazon website.
+                            Official Amazon product API responses are cached in our database for up
                             to 1 hour to reduce load and improve response time.
                         </p>
                     </section>
@@ -53,7 +53,7 @@ export default function PrivacyPage() {
                         <h2 className="text-lg font-bold text-[var(--color-surface)] mb-3">Cookies &amp; Local Storage</h2>
                         <p>
                             ProductFindAI uses browser session storage to cache non-verified recent search results
-                            for faster repeat searches. Search results that include Amazon Product Advertising API
+                            for faster repeat searches. Search results that include official Amazon product API
                             data are not cached in browser session storage. Session storage stays on your device
                             and is cleared when you close your browser tab. We do not use tracking cookies, pixels,
                             or third-party analytics.
@@ -103,7 +103,7 @@ export default function PrivacyPage() {
                         <p>
                             We use <strong>Google Gemini</strong> (via the official AI SDK) to generate product
                             recommendations from your search query. Your query is transmitted to Google for
-                            processing under Google&apos;s API terms. We also use <strong>Amazon PA-API</strong>{" "}
+                            processing under Google&apos;s API terms. We also use Amazon&apos;s official product APIs
                             to retrieve product data. We do not share any personal information with these
                             services because we do not collect any.
                         </p>

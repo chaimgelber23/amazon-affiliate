@@ -21,7 +21,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://productfindai.com"
 const ABOUT_FAQS: { q: string; a: string }[] = [
     {
         q: "How is ProductFindAI different from Wirecutter or NerdWallet?",
-        a: "Wirecutter and NerdWallet publish fixed editorial picks. ProductFindAI creates a shortlist from the Amazon search you type, then uses Amazon Product Advertising API data when it is available. We do not claim lab testing. We show why each pick may fit and send you to Amazon to confirm current details.",
+        a: "Wirecutter and NerdWallet publish fixed editorial picks. ProductFindAI creates a shortlist from the Amazon search you type, then uses Amazon's official product data when it is available. We do not claim lab testing. We show why each pick may fit and send you to Amazon to confirm current details.",
     },
     {
         q: "Are the recommendations independent or paid?",
@@ -29,7 +29,7 @@ const ABOUT_FAQS: { q: string; a: string }[] = [
     },
     {
         q: "Do you show prices and ratings, or is the AI making them up?",
-        a: "The AI's job is picking which products to show. We do not present a price or star rating as Amazon's unless it comes live from Amazon's Product Advertising API at search time. Until that live data is connected, we leave the numbers off and link you to the product on Amazon so you confirm the current price and rating there.",
+        a: "The AI's job is picking which products to show. We do not present a price or star rating as Amazon's unless it comes from Amazon's official product API at search time. Until that live data is connected, we leave the numbers off and link you to the product on Amazon so you confirm the current price and rating there.",
     },
     {
         q: "Can I refine a search after I see results?",
@@ -128,8 +128,8 @@ export default function AboutPage() {
                             <strong className="text-[var(--color-ink)]">AI shortlists.</strong> Our AI builds
                             a shortlist of products in your category and ranks them by typical
                             specs, common complaints, and reasonable price bands. When live
-                            Amazon data is available, we use Amazon&apos;s official Product Advertising
-                            API for product titles, images, prices, ratings, and review counts.
+                            Amazon data is available, we use Amazon&apos;s official product API for
+                            product titles, images, prices, ratings, and review counts.
                         </p>
                         <p className="text-xs text-[var(--color-surface-dim)] italic">
                             ProductFindAI is a shortlist generator. It does not track prices,

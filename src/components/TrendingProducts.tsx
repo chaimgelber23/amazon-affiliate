@@ -7,13 +7,13 @@
 // without any interaction.
 //
 // Strategy:
-//   - Try PA-API for live data (title/price/rating/image).
-//   - If PA-API isn't configured yet (pre-approval) or errors, fall back to
+//   - Try Amazon's official product API for live data (title/price/rating/image).
+//   - If official product API access isn't configured yet or errors, fall back to
 //     curated category cards with affiliate-tagged search links. Both paths
 //     produce real, clickable, properly-tagged Amazon links.
 //
 // Caching: 30-min server-side cache via Next ISR (page-level `revalidate`).
-// Stays within PA-API's 1-hour price cache rule.
+// Stays within Amazon's 1-hour price-bearing content cache rule.
 
 import { searchAmazon, type AmazonProduct } from "@/lib/amazon-paapi";
 import { buildAffiliateSearchUrl } from "@/lib/affiliate";
@@ -84,7 +84,7 @@ function EditorialCard({ pick, featured = false }: { pick: TrendingPick; feature
     const { product } = pick;
     const isLiveProduct = !!product;
 
-    // Pre-PA-API state: card is a CATEGORY example, not a product pick. Title and CTA reflect that.
+    // Pre-official-API state: card is a CATEGORY example, not a product pick. Title and CTA reflect that.
     const href = product?.url ?? buildAffiliateSearchUrl(pick.query);
     const title = product?.title ?? `Sample shortlist · ${pick.query}`;
     const ctaLabel = product ? "Open on Amazon" : "Try this category";
@@ -116,7 +116,7 @@ function EditorialCard({ pick, featured = false }: { pick: TrendingPick; feature
                     {pick.category}
                 </span>
                 {/* Pre-launch / non-live "Example" badge — pinned to top-right.
-                    Only renders when there's no live PA-API product. Compliance #7. */}
+                    Only renders when there's no live official Amazon product data. */}
                 {!isLiveProduct && (
                     <span className="absolute top-4 right-4 inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50/95 backdrop-blur-sm border border-amber-200 rounded-full text-[10px] font-bold uppercase tracking-[0.18em] text-amber-800">
                         Example only
@@ -208,7 +208,7 @@ export async function TrendingProducts() {
                         <line x1="12" y1="16" x2="12.01" y2="16" />
                     </svg>
                     <p className="text-sm text-amber-900 leading-relaxed">
-                        <strong className="font-semibold">Heads-up:</strong> the cards below are <strong>example categories</strong>, not actual product picks. ProductFindAI is awaiting Amazon Associates approval, which unlocks live product data via Amazon&apos;s Product Advertising API. The search bar above already produces real shortlists in the meantime.
+                        <strong className="font-semibold">Heads-up:</strong> the cards below are <strong>example categories</strong>, not actual product picks. ProductFindAI is awaiting final Amazon Associates / Creators API access, which unlocks live product data from Amazon&apos;s official product API. The search bar above already produces real shortlists in the meantime.
                     </p>
                 </div>
 

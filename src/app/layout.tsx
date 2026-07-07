@@ -140,7 +140,7 @@ function JsonLd() {
                         name: "How is ProductFindAI different from Wirecutter or NerdWallet?",
                         acceptedAnswer: {
                             "@type": "Answer",
-                            text: "Wirecutter and NerdWallet publish fixed editorial picks. ProductFindAI creates a shortlist from the Amazon search you type, then uses Amazon Product Advertising API data when it is available. We show why each pick may fit and send you to Amazon to confirm current details.",
+                            text: "Wirecutter and NerdWallet publish fixed editorial picks. ProductFindAI creates a shortlist from the Amazon search you type, then uses Amazon's official product data when it is available. We show why each pick may fit and send you to Amazon to confirm current details.",
                         },
                     },
                     {
@@ -156,7 +156,7 @@ function JsonLd() {
                         name: "Do you actually verify prices and ratings?",
                         acceptedAnswer: {
                             "@type": "Answer",
-                            text: "We never present a price or star rating as Amazon's unless it is pulled live from Amazon's Product Advertising API at search time. Until that live data is connected, we link you straight to the product on Amazon so you confirm the current price and rating there before you buy.",
+                            text: "We never present a price or star rating as Amazon's unless it is pulled from Amazon's official product API at search time. Until that live data is connected, we link you straight to the product on Amazon so you confirm the current price and rating there before you buy.",
                         },
                     },
                     {

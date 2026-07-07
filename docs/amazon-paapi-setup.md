@@ -1,98 +1,133 @@
-# Amazon PA-API 5.0 — Credential Setup
+# Amazon Official Product API Credential Setup
 
-This guide walks through provisioning Amazon Product Advertising API (PA-API) 5.0 credentials for PureFind. These replace the old HTML scraper and are a requirement for legal operation under the Associates Operating Agreement.
+ProductFindAI must use Amazon's official product-data APIs. It must not scrape
+Amazon pages, extract rendered Amazon content, or display AI-guessed Amazon
+prices, ratings, images, or review counts.
 
----
-
-## 0. Prerequisite — Associates Account in Good Standing
-
-PA-API credentials are only issued to Amazon Associates accounts that:
-
-1. Have an approved Associates account in your target locale (US = amazon.com).
-2. Have generated **at least 3 qualifying sales within the last 180 days** through any of your existing associate tags. Amazon re-checks this silently — if you fall below threshold, they'll suspend your keys with a single email.
-
-If you're below threshold, apply for PA-API access anyway; Amazon often grants a probationary key pair and will revoke if you don't hit 3 sales in the first 180 days.
+The preferred integration is now the Amazon Creators API. Legacy Product
+Advertising API 5.0 credentials are still supported by the code as a fallback
+while older accounts migrate.
 
 ---
 
-## 1. Generate Credentials
+## 0. Prerequisite - Associates Account in Good Standing
 
-1. Log in to https://affiliate-program.amazon.com
-2. Open **Tools → Product Advertising API**, or go directly to: https://affiliate-program.amazon.com/assoc_credentials/home
-3. Click **Add credentials**. Amazon will show your:
-   - **Access Key** — roughly 20 chars, starts with `AKIA…`
-   - **Secret Key** — shown once; copy it immediately (you can regenerate if lost, but existing keys stop working)
-4. Note your **Associate Tag** (e.g. `purefind-20`). If you run multiple sites, create a separate tracking tag per site so commission attribution is clean.
+For Creators API, Amazon's current docs say you need:
+
+1. An Amazon Associates account that has received final acceptance.
+2. Qualifying referred sales; the Creators API introduction currently says at
+   least 10 qualifying sales within the past 30 days.
+3. API access registered through Associates Central by the primary account owner.
+
+Official docs:
+
+- Creators API introduction: https://affiliate-program.amazon.com/creatorsapi/docs/en-us/introduction
+- Register for Creators API: https://affiliate-program.amazon.com/creatorsapi/docs/en-us/onboarding/register-for-creators-api
+- Migration guide: https://affiliate-program.amazon.com/creatorsapi/docs/en-us/migrating-to-creatorsapi-from-paapi
+
+---
+
+## 1. Generate Creators API Credentials
+
+1. Log in to https://affiliate-program.amazon.com as the primary account owner.
+2. Open Tools -> Creators API.
+3. Choose Create Application.
+4. Enter an application name such as `ProductFindAI`.
+5. Add a credential and copy the values immediately:
+   - Credential ID
+   - Credential Secret
+   - Version, such as `3.1` for North America v3 credentials
+6. Confirm your Associate tracking tag for the US marketplace, for example
+   `purefind-20`.
+
+Creators API credentials are not the same as old PA-API AWS access keys.
 
 ---
 
 ## 2. Add to Environment
 
-In Vercel (**Settings → Environment Variables**) add these four, Production + Preview:
+In Vercel Settings -> Environment Variables, add these for Production and
+Preview:
 
 | Key | Value |
-|-----|-------|
-| `AMAZON_PAAPI_ACCESS_KEY` | Access Key from step 1 |
-| `AMAZON_PAAPI_SECRET_KEY` | Secret Key from step 1 |
-| `AMAZON_PAAPI_PARTNER_TAG` | Your tracking tag (e.g. `purefind-20`) |
-| `AMAZON_PAAPI_HOST` | `webservices.amazon.com` (US) |
-| `AMAZON_PAAPI_REGION` | `us-east-1` |
+| --- | --- |
+| `AMAZON_CREATORS_API_CREDENTIAL_ID` | Credential ID from Associates Central |
+| `AMAZON_CREATORS_API_CREDENTIAL_SECRET` | Credential Secret from Associates Central |
+| `AMAZON_CREATORS_API_CREDENTIAL_VERSION` | Credential version, for example `3.1` |
+| `AMAZON_CREATORS_API_PARTNER_TAG` | Your tracking tag, for example `purefind-20` |
+| `AMAZON_CREATORS_API_MARKETPLACE` | `www.amazon.com` for the US marketplace |
 
-For locales other than US see https://webservices.amazon.com/paapi5/documentation/common-request-parameters.html#host-and-region — most non-US marketplaces use a different `Host`/`Region` pair.
+For local development, mirror them into `.env.local`. `.env.example` has the
+full template.
 
-For local dev, mirror these into `.env.local`. `.env.example` has the full template.
+If Amazon has only issued you legacy PA-API credentials, the fallback env vars
+remain supported:
+
+| Key | Value |
+| --- | --- |
+| `AMAZON_PAAPI_ACCESS_KEY` | Legacy PA-API access key |
+| `AMAZON_PAAPI_SECRET_KEY` | Legacy PA-API secret key |
+| `AMAZON_PAAPI_PARTNER_TAG` | Your tracking tag |
+| `AMAZON_PAAPI_HOST` | `webservices.amazon.com` for US |
+| `AMAZON_PAAPI_REGION` | `us-east-1` for US |
 
 ---
 
 ## 3. Redeploy and Smoke-Test
 
 ```bash
-# Hit the search endpoint with a known-safe query:
-curl -s -X POST https://purefind.vercel.app/api/search \
+curl -s -X POST https://productfindai.com/api/search \
   -H 'Content-Type: application/json' \
   -d '{"messages":[{"role":"user","content":"quiet mechanical keyboard"}]}' \
   | jq '.products[0]'
 ```
 
-Expected: a product object with `asin`, `title`, a real `priceEstimate`, a `imageUrl` from `m.media-amazon.com`, and `verified: true`.
+Expected when official Amazon data is available:
 
-If you see a 503 "Product verification unavailable" response, check Vercel logs — the most likely causes are:
+- `asin` is a real 10-character ASIN
+- `verified` is `true`
+- `imageUrl` is from Amazon's official API response
+- `priceEstimate` is present only if Amazon returned a current offer price
+- `rating` / `reviewCount` are present only if Amazon returned them
 
-- Credentials not set → log will contain "PA-API not configured"
-- Wrong region/host pair → log shows signed-request failure from the SDK
-- Throttling (1 TPS default) → retry after 2s; persistent 429s mean your account needs more qualifying sales before Amazon raises the ceiling
+If official data is not available yet, the site should still return a shortlist,
+but it should not show prices, star ratings, product images, or product-specific
+Amazon claims as if they came from Amazon.
 
 ---
 
-## 4. Throttle & Cost Model
+## 4. Cache and Token Rules
 
-PA-API pricing summary (as of April 2026):
-
-- **Baseline:** 1 TPS (transaction per second), 8,640 TPD (transactions per day)
-- **Scaling:** each $1 in attributed revenue in the prior 30 days buys +1 TPS capacity (up to ~10 TPS) and scales TPD accordingly
-- **Cost:** $0 per call — it's a free quota that expands with sales
-- If you blow past TPD you get `429 TooManyRequestsException` and calls are rejected until the next UTC day rollover
-
-PureFind's 24h Supabase cache (`pf_paapi_cache`) materially reduces call volume for repeated queries — a single popular query like "best wireless earbuds" may only hit PA-API once/day regardless of traffic.
+- Creators API access tokens are cached server-side until shortly before their
+  1-hour expiration.
+- Official Amazon product API responses are cached server-side for at most 1
+  hour because price-bearing content has a strict freshness rule.
+- The browser does not cache verified Amazon product result payloads in session
+  storage.
+- ProductFindAI does not use a service worker page cache, because caching a
+  rendered homepage could retain official Amazon product content too long.
 
 ---
 
 ## 5. Known Gotchas
 
 | Symptom | Cause | Fix |
-|---------|-------|-----|
-| `InvalidSignature` from SDK | Clock drift > 5 min, or secret key copy-paste added whitespace | Re-copy key; `sudo sntp -sS time.apple.com` on Mac, `w32tm /resync` on Windows |
-| `InvalidPartnerTag` | Using a tag that doesn't belong to the same Associates account as your access key | Generate a tag inside the same account or use the default from step 1 |
-| Empty `CustomerReviews` | Some items don't expose reviews to PA-API, or your account lacks CustomerReviews resource access | Expected — the code degrades gracefully; rating/reviewCount will be `undefined` |
-| PA-API deprecation notice | Amazon is migrating from PA-API to the Creators API | Track https://affiliate-program.amazon.com/creatorsapi/docs/en-us/introduction — no action required until formal sunset announcement |
+| --- | --- | --- |
+| `Invalid Credentials` | Using legacy PA-API keys as Creators API credentials | Generate Creators API credentials from Tools -> Creators API |
+| `Token Expired` | OAuth token expired after 1 hour | The code refreshes automatically; check logs if it repeats |
+| `Missing Marketplace Header` | Creators API requires `x-marketplace` | Keep `AMAZON_CREATORS_API_MARKETPLACE=www.amazon.com` |
+| 429 / throttling | API quota or token endpoint rate limit | Keep token caching enabled and reduce request volume |
+| Missing price/rating | Amazon did not return that resource | Expected; the UI must link users to Amazon to confirm |
 
 ---
 
 ## 6. Revocation / Rotation
 
-If a key leaks:
+If a credential leaks:
 
-1. `affiliate-program.amazon.com/assoc_credentials/home` → **Deactivate** the compromised pair
-2. Create a new pair
-3. Update Vercel env vars (Production + Preview), redeploy
-4. Remove the compromised key from any `.env.local`, git history (use `git filter-repo`), and any CI secret stores
+1. Delete or deactivate the compromised credential in Associates Central.
+2. Create a new credential.
+3. Update Vercel env vars for Production and Preview.
+4. Redeploy.
+5. Remove the compromised value from any local `.env.local`, shell history,
+   logs, and CI secret stores.
