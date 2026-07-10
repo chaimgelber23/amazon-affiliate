@@ -11,11 +11,24 @@ function HomeJsonLd() {
     const schema = {
         "@context": "https://schema.org",
         "@type": "WebApplication",
+        "@id": `${siteUrl}/#webapplication`,
         name: "ProductFindAI",
         url: siteUrl,
         applicationCategory: "ShoppingApplication",
+        operatingSystem: "Any",
+        browserRequirements: "Requires JavaScript",
+        inLanguage: "en-US",
+        isAccessibleForFree: true,
+        publisher: { "@id": `${siteUrl}/#organization` },
         description:
             "We do the product research. Type what you want and ProductFindAI returns about 7 ranked picks, each with the catch. Refine in place without starting over.",
+        featureList: [
+            "Plain-language Amazon product search",
+            "Ranked shortlist of about 7 picks per search",
+            "One-line reason and one stated trade-off on every pick",
+            "Search-within-search refinement that narrows the same list",
+            "Links to Amazon to confirm current price, rating, and availability",
+        ],
         offers: {
             "@type": "Offer",
             price: "0",
@@ -69,6 +82,9 @@ export default function HomePage() {
                             You search once.{" "}
                             <span className="text-[var(--color-ink-dim)]">We hand back the short list.</span>
                         </h2>
+                        <p className="mt-7 text-base sm:text-lg text-[var(--color-ink-muted)] max-w-2xl mx-auto leading-relaxed">
+                            ProductFindAI is a free product research tool that turns a plain-English request into a ranked shortlist of about 7 Amazon picks. Every pick carries one line on why it ranks and one line on the catch. Every link goes to Amazon, where you confirm the current price and details before you buy.
+                        </p>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 sm:gap-8 lg:gap-12">

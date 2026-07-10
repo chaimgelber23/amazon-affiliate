@@ -105,6 +105,8 @@ function JsonLd() {
                 "@id": `${siteUrl}/#website`,
                 url: siteUrl,
                 name: "ProductFindAI",
+                inLanguage: "en-US",
+                publisher: { "@id": `${siteUrl}/#organization` },
                 description:
                     "Tell ProductFindAI what you want and get a short ranked list to compare before you click through to Amazon.",
                 potentialAction: {
@@ -122,52 +124,25 @@ function JsonLd() {
                 name: "ProductFindAI",
                 legalName: "SYE Group LLC",
                 url: siteUrl,
+                logo: {
+                    "@type": "ImageObject",
+                    url: `${siteUrl}/icons/icon-512.png`,
+                    width: 512,
+                    height: 512,
+                },
                 description:
-                    "ProductFindAI creates short ranked Amazon product lists from plain-language searches.",
+                    "ProductFindAI is a free product research tool that turns a plain-language search into a ranked shortlist of Amazon products, each with a one-line reason and a stated trade-off.",
+                knowsAbout: [
+                    "Amazon product research",
+                    "product comparison",
+                    "product shortlists",
+                ],
                 contactPoint: {
                     "@type": "ContactPoint",
                     contactType: "customer support",
                     email: "hello@productfindai.com",
                     availableLanguage: "English",
                 },
-            },
-            {
-                "@type": "FAQPage",
-                "@id": `${siteUrl}/#faq`,
-                mainEntity: [
-                    {
-                        "@type": "Question",
-                        name: "How is ProductFindAI different from Wirecutter or NerdWallet?",
-                        acceptedAnswer: {
-                            "@type": "Answer",
-                            text: "Wirecutter and NerdWallet publish fixed editorial picks. ProductFindAI creates a shortlist from the Amazon search you type, then uses Amazon's official product data when it is available. We show why each pick may fit and send you to Amazon to confirm current details.",
-                        },
-                    },
-                    {
-                        "@type": "Question",
-                        name: "Are the recommendations independent or paid?",
-                        acceptedAnswer: {
-                            "@type": "Answer",
-                            text: "No seller pays for placement. As an Amazon Associate I earn from qualifying purchases. ProductFindAI may earn a referral fee when you buy through links on this site, at no extra cost to you.",
-                        },
-                    },
-                    {
-                        "@type": "Question",
-                        name: "Do you actually verify prices and ratings?",
-                        acceptedAnswer: {
-                            "@type": "Answer",
-                            text: "We never present a price or star rating as Amazon's unless it is pulled from Amazon's official product API at search time. Until that live data is connected, we link you straight to the product on Amazon so you confirm the current price and rating there before you buy.",
-                        },
-                    },
-                    {
-                        "@type": "Question",
-                        name: "Is ProductFindAI free?",
-                        acceptedAnswer: {
-                            "@type": "Answer",
-                            text: "Yes. Search is free and there is nothing to sign up for. Amazon Associates referral fees help fund the site.",
-                        },
-                    },
-                ],
             },
             {
                 "@type": "HowTo",
