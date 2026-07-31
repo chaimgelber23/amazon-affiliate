@@ -32,3 +32,4 @@ next-env.d.ts
 
 # Local Claude Code settings — never commit (may contain tokens)
 .claude/settings.local.json
+.env*.local
