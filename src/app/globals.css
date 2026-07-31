@@ -14,32 +14,38 @@
   --color-bg-elevated: #F0E9DD;
   --color-bg-hover: #E8DFD0;
 
-  --color-ink: #1A0F08;
-  --color-ink-muted: #4A3D34;
-  --color-ink-dim: #8A7B6E;
+  --color-ink: #10213C;
+  --color-ink-muted: #44546A;
+  --color-ink-dim: #667085;
 
   /* Legacy aliases (existing components reference these — keep mapped to the new palette) */
-  --color-surface: #1A0F08;
-  --color-surface-muted: #4A3D34;
-  --color-surface-dim: #8A7B6E;
+  --color-surface: #10213C;
+  --color-surface-muted: #44546A;
+  --color-surface-dim: #667085;
 
   /* ── Brand gradient — deep plum → warm rose (organic cool→warm shift) ── */
-  --color-plum: #5B21B6;
-  --color-plum-deep: #4C1D95;
-  --color-rose: #E11D48;
-  --color-rose-deep: #BE123C;
-  --color-amber: #D97706;
+  --color-brand-navy: #002264;
+  --color-brand-navy-deep: #021F4E;
+  --color-cart-orange: #FE721D;
+  --color-cart-orange-text: #B94400;
 
-  --color-accent: #5B21B6;
-  --color-accent-hover: #4C1D95;
-  --color-accent-gradient: linear-gradient(135deg, #5B21B6 0%, #E11D48 100%);
-  --color-accent-gradient-soft: linear-gradient(135deg, rgba(91, 33, 182, 0.12) 0%, rgba(225, 29, 72, 0.12) 100%);
-  --color-accent-muted: rgba(91, 33, 182, 0.08);
+  --color-plum: #002264;
+  --color-plum-deep: #021F4E;
+  --color-rose: #B94400;
+  --color-rose-deep: #933800;
+  --color-amber: #B45309;
+
+  --color-accent: #002264;
+  --color-accent-hover: #021F4E;
+  --color-accent-gradient: linear-gradient(135deg, #002264 0%, #0B4D98 100%);
+  --color-brand-signal-gradient: linear-gradient(90deg, #002264 0%, #FE721D 100%);
+  --color-accent-gradient-soft: linear-gradient(135deg, rgba(0, 34, 100, 0.11) 0%, rgba(254, 114, 29, 0.10) 100%);
+  --color-accent-muted: rgba(0, 34, 100, 0.08);
 
   --color-success: #047857;
   --color-success-muted: rgba(4, 120, 87, 0.1);
   --color-warning: #B45309;
-  --color-danger: #BE123C;
+  --color-danger: #B42318;
 
   /* Amazon CTA — preserved (compliance + recognizability) */
   --color-amazon: #FF9900;
@@ -47,12 +53,12 @@
   --color-amazon-gradient: linear-gradient(135deg, #FF9900 0%, #FFB03A 100%);
 
   /* ── Borders — soft warm tones, not cold slate ── */
-  --color-border: rgba(26, 15, 8, 0.08);
-  --color-border-strong: rgba(26, 15, 8, 0.16);
+  --color-border: rgba(2, 31, 78, 0.09);
+  --color-border-strong: rgba(2, 31, 78, 0.18);
   --color-border-glass: rgba(255, 253, 250, 0.6);
 
-  --color-badge-best: #5B21B6;
-  --color-badge-popular: #E11D48;
+  --color-badge-best: #002264;
+  --color-badge-popular: #B94400;
   --color-badge-value: #047857;
 }
 
@@ -68,10 +74,10 @@ body {
   background-color: var(--color-bg);
   /* Organic gradient field — deep plum + warm rose pools (replaces the cold mesh-orb stack) */
   background-image:
-    radial-gradient(ellipse 70% 50% at 18% 12%, rgba(91, 33, 182, 0.10) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 45% at 85% 18%, rgba(225, 29, 72, 0.08) 0%, transparent 65%),
-    radial-gradient(ellipse 70% 50% at 90% 85%, rgba(217, 119, 6, 0.07) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 50% at 10% 92%, rgba(91, 33, 182, 0.06) 0%, transparent 60%);
+    radial-gradient(ellipse 70% 50% at 18% 12%, rgba(0, 34, 100, 0.09) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 45% at 85% 18%, rgba(254, 114, 29, 0.075) 0%, transparent 65%),
+    radial-gradient(ellipse 70% 50% at 90% 85%, rgba(255, 153, 0, 0.055) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 10% 92%, rgba(0, 34, 100, 0.055) 0%, transparent 60%);
   background-attachment: fixed;
   color: var(--color-ink);
   font-family: var(--font-sans);
@@ -81,7 +87,7 @@ body {
 }
 
 ::selection {
-  background: rgba(91, 33, 182, 0.18);
+  background: rgba(0, 34, 100, 0.16);
   color: var(--color-ink);
 }
 
@@ -92,8 +98,13 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
@@ -140,6 +151,11 @@ body {
   50% { opacity: 0.7; }
 }
 
+@keyframes search-progress {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(350%); }
+}
+
 /* Organic shapes — appear from nothing, then disappear back to nothing, in place.
    Position + scale are set statically inline; only opacity animates here. */
 @keyframes blob-fade {
@@ -177,6 +193,22 @@ body {
   animation: shimmer 1.5s infinite;
 }
 
+.search-progress-track {
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(0, 34, 100, 0.10);
+}
+
+.search-progress-bar {
+  display: block;
+  width: 28%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-brand-signal-gradient);
+  animation: search-progress 1.7s ease-in-out infinite;
+}
+
 /* ============================================
    UTILITY CLASSES
    ============================================ */
@@ -189,23 +221,23 @@ body {
   border-top: 1px solid var(--color-border-glass);
   border-left: 1px solid var(--color-border-glass);
   box-shadow:
-    0 4px 24px -2px rgba(26, 15, 8, 0.04),
-    0 1px 2px -1px rgba(26, 15, 8, 0.03);
+    0 4px 24px -2px rgba(16, 33, 60, 0.05),
+    0 1px 2px -1px rgba(16, 33, 60, 0.03);
 }
 
 .card {
   background: var(--color-bg-card-solid);
   border: 1px solid var(--color-border);
   border-radius: 20px;
-  box-shadow: 0 1px 3px 0 rgba(26, 15, 8, 0.04);
+  box-shadow: 0 1px 3px 0 rgba(16, 33, 60, 0.04);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .card:hover {
   border-color: var(--color-border-strong);
   box-shadow:
-    0 12px 32px -8px rgba(91, 33, 182, 0.10),
-    0 1px 3px -1px rgba(26, 15, 8, 0.04);
+    0 12px 32px -8px rgba(0, 34, 100, 0.11),
+    0 1px 3px -1px rgba(16, 33, 60, 0.04);
   transform: translateY(-2px);
 }
 
@@ -214,16 +246,16 @@ body {
   border: 1px solid var(--color-border);
   border-radius: 24px;
   box-shadow:
-    0 1px 3px 0 rgba(26, 15, 8, 0.03),
-    0 1px 2px -1px rgba(26, 15, 8, 0.02);
+    0 1px 3px 0 rgba(16, 33, 60, 0.03),
+    0 1px 2px -1px rgba(16, 33, 60, 0.02);
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .product-card:hover {
   border-color: var(--color-border-strong);
   box-shadow:
-    0 28px 56px -16px rgba(91, 33, 182, 0.14),
-    0 4px 12px -4px rgba(225, 29, 72, 0.06);
+    0 28px 56px -16px rgba(0, 34, 100, 0.16),
+    0 4px 12px -4px rgba(254, 114, 29, 0.07);
   transform: translateY(-4px);
 }
 
@@ -276,16 +308,16 @@ body {
   font-size: 15px;
   letter-spacing: -0.01em;
   box-shadow:
-    0 8px 20px -4px rgba(91, 33, 182, 0.32),
-    0 2px 4px -1px rgba(225, 29, 72, 0.10),
+    0 8px 20px -4px rgba(0, 34, 100, 0.32),
+    0 2px 4px -1px rgba(0, 77, 152, 0.12),
     inset 0 1px 0 rgba(255,255,255,0.18);
 }
 
 .btn-primary:hover {
   transform: translateY(-1px);
   box-shadow:
-    0 16px 32px -6px rgba(91, 33, 182, 0.42),
-    0 4px 8px -2px rgba(225, 29, 72, 0.14),
+    0 16px 32px -6px rgba(0, 34, 100, 0.38),
+    0 4px 8px -2px rgba(254, 114, 29, 0.12),
     inset 0 1px 0 rgba(255,255,255,0.18);
 }
 

@@ -11,7 +11,7 @@ export default function PrivacyPage() {
         <div className="min-h-screen pt-28 pb-20 px-4 sm:px-6">
             <div className="max-w-2xl mx-auto prose prose-slate">
                 <h1 className="text-3xl font-black text-[var(--color-surface)] mb-8">Privacy Policy</h1>
-                <p className="text-xs text-[var(--color-surface-dim)] mb-8">Last updated: April 17, 2026</p>
+                <p className="text-xs text-[var(--color-surface-dim)] mb-8">Last updated: July 30, 2026</p>
 
                 <div className="space-y-8 text-sm text-[var(--color-surface-muted)] leading-relaxed">
                     <section>
@@ -24,9 +24,9 @@ export default function PrivacyPage() {
                         <ul className="list-disc pl-5 mt-2 space-y-1">
                             <li><strong>Search queries</strong> you submit (the text of what you searched)</li>
                             <li>
-                                A <strong>non-reversible hash of your IP address</strong> — used only for per-IP
-                                rate limiting and to group repeated abuse patterns. The raw IP is never written to
-                                our database.
+                                An <strong>HMAC-pseudonymized version of your IP address</strong>, created with a
+                                server-only secret. It is used for rate limiting and to group repeated abuse
+                                patterns. The raw IP address is not written to our database.
                             </li>
                             <li>
                                 Request metadata: result count, whether the result was verified against Amazon&apos;s
@@ -34,18 +34,23 @@ export default function PrivacyPage() {
                             </li>
                         </ul>
                         <p className="mt-2">
-                            We cannot identify you from this data. We do not profile users across sessions.
+                            We do not use this operational data to build advertising profiles or track you across
+                            unrelated websites.
                         </p>
                     </section>
 
                     <section>
                         <h2 className="text-lg font-bold text-[var(--color-surface)] mb-3">Amazon Product Data</h2>
                         <p>
-                            Product details (titles, prices, images, ratings, review counts) are fetched from
-                            Amazon via its official product APIs under our Associates account. We do{" "}
+                            Product details (titles, available prices, images, and listing features) are fetched from
+                            Amazon through the official Creators API under our Associates account. We do{" "}
                             <strong>not</strong> scrape Amazon pages or extract data from the Amazon website.
-                            Official Amazon product API responses are cached in our database for up
-                            to 1 hour to reduce load and improve response time.
+                            Amazon Program Content is filtered and ranked on ProductFindAI&apos;s server and is not
+                            sent to an AI provider. Cached Amazon content is never read after it is 1 hour old.
+                            Before an active cache read or write, ProductFindAI synchronously deletes expired
+                            rows. If that deletion fails, it bypasses the stored cache and does not write new
+                            Amazon content. A database cleanup also runs every 15 minutes and begins deleting
+                            cached Amazon content after 30 minutes, leaving headroom before the 1-hour limit.
                         </p>
                     </section>
 
@@ -60,7 +65,7 @@ export default function PrivacyPage() {
                         </p>
                     </section>
 
-                    <section>
+                    <section id="amazon-affiliate-links">
                         <h2 className="text-lg font-bold text-[var(--color-surface)] mb-3">Amazon Affiliate Links</h2>
                         <p>
                             Product links include our Amazon Associates tracking tag. As an Amazon Associate I
@@ -92,31 +97,56 @@ export default function PrivacyPage() {
                     <section id="chrome-extension">
                         <h2 className="text-lg font-bold text-[var(--color-surface)] mb-3">Chrome Extension Status</h2>
                         <p>
-                            The Chrome extension is paused while ProductFindAI completes Amazon Associates
-                            approval. The approval-facing website works in the browser and does not require an
-                            extension.
+                            The Chrome extension is a paused prototype. It must not be installed, used, or
+                            distributed unless and until Amazon gives express written approval for that use.
+                            Approval of the ProductFindAI website for an Amazon Associates account does not
+                            approve the extension as a separate application or Site.
                         </p>
                     </section>
 
                     <section>
-                        <h2 className="text-lg font-bold text-[var(--color-surface)] mb-3">Third-Party Services</h2>
+                        <h2 className="text-lg font-bold text-[var(--color-surface)] mb-3">AI Query Planning</h2>
                         <p>
-                            We use <strong>Google Gemini</strong> (via the official AI SDK) to generate product
-                            recommendations from your search query. Your query is transmitted to Google for
-                            processing under Google&apos;s API terms. We also use Amazon&apos;s official product APIs
-                            to retrieve product data. We do not share any personal information with these
-                            services because we do not collect any.
+                            Depending on server configuration, we send the words in your search query through{" "}
+                            <strong>Vercel AI Gateway</strong> or directly to <strong>Google Gemini</strong> to
+                            turn the query into a small set of Amazon catalog search phrases. AI does not receive
+                            Amazon Program Content and does not choose or
+                            rank the final products. Product filtering and ranking use deterministic checks
+                            against official Amazon evidence on our server. Query plans may be cached for up to
+                            24 hours and are never reused after that point. Do not include sensitive personal
+                            information in a product search.
                         </p>
+                    </section>
+
+                    <section>
+                        <h2 className="text-lg font-bold text-[var(--color-surface)] mb-3">Retention</h2>
+                        <p className="mb-2">
+                            The database schedules retention cleanup every 15 minutes. Cleanup thresholds start
+                            30 minutes before the Amazon cache limit and 1 hour before the other limits below,
+                            providing headroom for normal scheduling delay. Expired cache entries are never used.
+                            Cleanup is also attempted before new operational logs are written; if it is
+                            unavailable, ProductFindAI skips the new log. A database outage can delay physical
+                            deletion, and delayed rows are removed by the next successful cleanup.
+                        </p>
+                        <ul className="list-disc pl-5 space-y-1">
+                            <li>Search and error logs: 90-day deletion target.</li>
+                            <li>Rate-limit windows: 2-day deletion target.</li>
+                            <li>AI-generated query plans: never reused after 24 hours; 24-hour deletion target.</li>
+                            <li>
+                                Official Amazon Program Content: never read after 1 hour; expired rows are deleted
+                                synchronously during active cache operations.
+                            </li>
+                        </ul>
                     </section>
 
                     <section>
                         <h2 className="text-lg font-bold text-[var(--color-surface)] mb-3">Data Requests &amp; Contact</h2>
                         <p>
-                            We don&apos;t store data tied to an identity, so most data requests (access, deletion)
-                            are trivially satisfied — there&apos;s nothing linked to you to begin with. For any
-                            other questions or requests related to this policy, contact us at{" "}
-                            <a href="mailto:support@productfindai.com" className="text-[var(--color-accent)] hover:underline">
-                                support@productfindai.com
+                            ProductFindAI does not require an account, so we may not be able to connect a stored
+                            operational record to a particular person. For questions or requests related to this
+                            policy, contact us at{" "}
+                            <a href="mailto:hello@seohandoff.com" className="text-[var(--color-accent)] hover:underline">
+                                hello@seohandoff.com
                             </a>.
                         </p>
                     </section>

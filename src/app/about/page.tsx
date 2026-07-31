@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     openGraph: {
         title: "About ProductFindAI - Save time on Amazon research",
         description:
-            "A small AI tool that turns 'standing desk under $300' into a six-pick shortlist with a one-line take on each.",
+            "When official catalog access is available, ProductFindAI turns 'standing desk under $300' into an evidence-backed Amazon shortlist.",
     },
 };
 
@@ -21,15 +21,15 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://productfindai.com"
 const ABOUT_FAQS: { q: string; a: string }[] = [
     {
         q: "How is ProductFindAI different from Wirecutter or NerdWallet?",
-        a: "Wirecutter and NerdWallet publish fixed editorial picks. ProductFindAI creates a shortlist from the Amazon search you type, then uses Amazon's official product data when it is available. We do not claim lab testing. We show why each pick may fit and send you to Amazon to confirm current details.",
+        a: "Wirecutter and NerdWallet publish fixed editorial picks. When official catalog access is available, ProductFindAI interprets the search you type, checks exact listings through Amazon's official product API, and ranks the evidence-backed matches against your requirements. If that access is unavailable, we do not invent a shortlist. We offer an honestly labeled Amazon search instead.",
     },
     {
         q: "Are the recommendations independent or paid?",
         a: "No seller pays for placement. As an Amazon Associate I earn from qualifying purchases. ProductFindAI may earn a referral fee when you buy through links on this site, at no extra cost to you.",
     },
     {
-        q: "Do you show prices and ratings, or is the AI making them up?",
-        a: "The AI's job is picking which products to show. We do not present a price or star rating as Amazon's unless it comes from Amazon's official product API at search time. Until that live data is connected, we leave the numbers off and link you to the product on Amazon so you confirm the current price and rating there.",
+        q: "Does the AI make up prices or ratings?",
+        a: "No. We show a price only when Amazon's official product API returns it for that exact listing at search time. The current Creators API does not supply customer ratings, so ProductFindAI sends you to Amazon to confirm ratings and other purchase details.",
     },
     {
         q: "Can I refine a search after I see results?",
@@ -111,7 +111,7 @@ export default function AboutPage() {
                         <span className="italic text-[var(--color-plum)]">time on research</span>.
                     </h1>
                     <p className="mt-7 text-base sm:text-lg text-[var(--color-ink-muted)] max-w-xl mx-auto leading-relaxed">
-                        Finding the right product on Amazon can be difficult. ProductFindAI reads through the listings in your category and hands you a short ranked list with a one-line take on each, so you spend less time sorting through lookalike products.
+                        Finding the right product on Amazon can be difficult. When official catalog access is available, ProductFindAI checks the listings returned for your request and hands you a focused ranked list. When it is unavailable, we say so and do not pretend products were checked.
                     </p>
                 </div>
 
@@ -125,11 +125,11 @@ export default function AboutPage() {
                             for a small apartment.&quot; Plain-language searches work.
                         </p>
                         <p>
-                            <strong className="text-[var(--color-ink)]">AI shortlists.</strong> Our AI builds
-                            a shortlist of products in your category and ranks them by typical
-                            specs, common complaints, and reasonable price bands. When live
-                            Amazon data is available, we use Amazon&apos;s official product API for
-                            product titles, images, prices, ratings, and review counts.
+                            <strong className="text-[var(--color-ink)]">Official data, when available.</strong> AI helps
+                            interpret your request and plan a focused catalog query. Amazon&apos;s official
+                            product API supplies the exact candidate listings, titles, images, available
+                            prices, and feature fields. ProductFindAI then applies your requirements and
+                            ranks the verified matches locally.
                         </p>
                         <p className="text-xs text-[var(--color-surface-dim)] italic">
                             ProductFindAI is a shortlist generator. It does not track prices,
@@ -164,7 +164,7 @@ export default function AboutPage() {
                         {
                             icon: Heart,
                             title: "Honest",
-                            desc: "Every pick includes trade-offs so you can see the catch before you click.",
+                            desc: "We show a tradeoff only when the exact listing supports it. Otherwise, we say none was verified.",
                         },
                     ].map(({ icon: Icon, title, desc }) => (
                         <div key={title} className="card p-5 flex gap-4 items-start">
@@ -206,7 +206,12 @@ export default function AboutPage() {
                             >
                                 <summary className="cursor-pointer font-semibold text-sm text-[var(--color-ink)] list-none flex items-center justify-between">
                                     <span>{f.q}</span>
-                                    <span className="text-[var(--color-surface-dim)] group-open:rotate-45 transition-transform">+</span>
+                                    <span
+                                        className="text-[var(--color-surface-dim)] group-open:rotate-45 transition-transform"
+                                        aria-hidden="true"
+                                    >
+                                        +
+                                    </span>
                                 </summary>
                                 <p className="mt-4 text-sm text-[var(--color-surface-muted)] leading-relaxed">
                                     {f.a}

@@ -1,0 +1,32 @@
+# Secrets and machine-local configuration. Keep the public template.
+.env*
+!.env.example
+amazonapi*
+**/amazonapi*
+
+# Local build and package-manager state.
+.git/
+.next/
+.vercel/
+node_modules/
+.tmp/
+
+# Logs, scratch work, and private audit artifacts.
+*.log
+**/*.log
+.scratch/
+**/.scratch/
+search_output*.md
+**/private-audit*
+*.audit-output.*
+
+# Local agent and archived working material are not build inputs.
+.claude/
+archive/
+antiskills/
+directives/
+
+# The paused Chrome prototype must not be included in website deployments.
+/chrome-web-store/
+/extension/
+scripts/package-extension.ps1

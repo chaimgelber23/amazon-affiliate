@@ -32,7 +32,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const viewport: Viewport = {
-    themeColor: "#FAF7F2",
+    themeColor: "#021F4E",
     width: "device-width",
     initialScale: 1,
     maximumScale: 5,
@@ -41,11 +41,11 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
     title: {
-        default: "ProductFindAI: we do the Amazon product research, you get about 7 ranked picks",
+        default: "ProductFindAI: Amazon product research done for you",
         template: "%s | ProductFindAI",
     },
     description:
-        "Type what you want and ProductFindAI returns a short ranked list with the catch on each pick. Refine in place without starting over.",
+        "Describe what you need. ProductFindAI uses official Amazon listing data when available and gives you a clearly labeled Amazon fallback when it is not.",
     metadataBase: new URL(siteUrl),
     manifest: "/manifest.json",
     appleWebApp: {
@@ -57,16 +57,25 @@ export const metadata: Metadata = {
         type: "website",
         locale: "en_US",
         siteName: "ProductFindAI",
-        title: "We do the product research. You get about 7 ranked picks.",
+        title: "Amazon product research done for you.",
         description:
-            "Type what you want and ProductFindAI returns a short ranked list with the catch on each pick. Refine in place without starting over.",
+            "ProductFindAI uses official Amazon listing data when available and gives you a clearly labeled Amazon fallback when it is not.",
         url: siteUrl,
+        images: [
+            {
+                url: "/opengraph-image",
+                width: 1200,
+                height: 630,
+                alt: "ProductFindAI turns a detailed shopping request into an honest next step.",
+            },
+        ],
     },
     twitter: {
         card: "summary_large_image",
-        title: "We do the product research. You get about 7 ranked picks.",
+        title: "Amazon product research done for you.",
         description:
-            "Type what you want and ProductFindAI returns a short ranked list with the catch on each pick. Refine in place without starting over.",
+            "ProductFindAI uses official Amazon listing data when available and gives you a clearly labeled Amazon fallback when it is not.",
+        images: ["/opengraph-image"],
     },
     robots: {
         index: true,
@@ -83,8 +92,26 @@ export const metadata: Metadata = {
         canonical: siteUrl,
     },
     icons: {
-        icon: "/icons/icon-192.png",
-        apple: "/icons/icon-192.png",
+        icon: [
+            {
+                url: "/icons/productfindai-favicon-32.png",
+                sizes: "32x32",
+                type: "image/png",
+            },
+            {
+                url: "/icons/productfindai-icon-192.png",
+                sizes: "192x192",
+                type: "image/png",
+            },
+        ],
+        shortcut: "/icons/productfindai-favicon-32.png",
+        apple: [
+            {
+                url: "/icons/productfindai-apple-touch-icon.png",
+                sizes: "180x180",
+                type: "image/png",
+            },
+        ],
     },
     keywords: [
         "amazon product finder",
@@ -109,14 +136,6 @@ function JsonLd() {
                 publisher: { "@id": `${siteUrl}/#organization` },
                 description:
                     "Tell ProductFindAI what you want and get a short ranked list to compare before you click through to Amazon.",
-                potentialAction: {
-                    "@type": "SearchAction",
-                    target: {
-                        "@type": "EntryPoint",
-                        urlTemplate: `${siteUrl}/?q={search_term_string}`,
-                    },
-                    "query-input": "required name=search_term_string",
-                },
             },
             {
                 "@type": "Organization",
@@ -126,12 +145,12 @@ function JsonLd() {
                 url: siteUrl,
                 logo: {
                     "@type": "ImageObject",
-                    url: `${siteUrl}/icons/icon-512.png`,
+                    url: `${siteUrl}/icons/productfindai-icon-512.png`,
                     width: 512,
                     height: 512,
                 },
                 description:
-                    "ProductFindAI is a free product research tool that turns a plain-language search into a ranked shortlist of Amazon products, each with a one-line reason and a stated trade-off.",
+                    "ProductFindAI is a free product research tool that uses official Amazon listing data when available and provides an honest Amazon fallback when it is not.",
                 knowsAbout: [
                     "Amazon product research",
                     "product comparison",
@@ -140,7 +159,7 @@ function JsonLd() {
                 contactPoint: {
                     "@type": "ContactPoint",
                     contactType: "customer support",
-                    email: "hello@productfindai.com",
+                    email: "hello@seohandoff.com",
                     availableLanguage: "English",
                 },
             },
@@ -192,7 +211,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <ScrollToTopOnLoad />
                 <ServiceWorkerRegistration />
                 <Header />
-                <main className="min-h-screen">{children}</main>
+                <main id="main-content" tabIndex={-1} className="min-h-screen">{children}</main>
                 <Footer />
             </body>
         </html>

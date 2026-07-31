@@ -1,6 +1,7 @@
 name: Lint
 
-# Keeps ESLint at zero and TypeScript green on every push / PR.
+# Proves the same Node runtime, offline search regressions, and production build
+# on every push / pull request.
 on:
   push:
   pull_request:
@@ -12,10 +13,14 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
       - run: npm ci
       - name: ESLint (zero warnings)
         run: npx eslint . --max-warnings 0
+      - name: Offline search regressions
+        run: npm run evaluate:search:synthetic
+      - name: Production build
+        run: npm run build
       - name: TypeScript (no emit)
-        run: npx tsc --noEmit
+        run: npx tsc --noEmit --pretty false --incremental false

@@ -2,9 +2,9 @@ import type { SiteConfig } from "./types";
 
 export const siteConfig: SiteConfig = {
     name: process.env.NEXT_PUBLIC_SITE_NAME || "ProductFindAI",
-    tagline: "Find the best. Skip the noise.",
+    tagline: "Official listing evidence when available. Honest fallback when not.",
     description:
-        "ProductFindAI turns an Amazon product search into a short ranked list with trade-offs on each pick.",
+        "ProductFindAI uses official Amazon listing data when catalog access is available and provides a clearly labeled Amazon fallback when it is not.",
     url: process.env.NEXT_PUBLIC_SITE_URL || "https://productfindai.com",
 };
 
